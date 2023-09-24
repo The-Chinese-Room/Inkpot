@@ -1,8 +1,8 @@
 using UnrealBuildTool;
 
-public class InkPotEditor : ModuleRules
+public class InkpotEditor : ModuleRules
 {
-	public InkPotEditor(ReadOnlyTargetRules Target) : base(Target)
+	public InkpotEditor(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
@@ -33,7 +33,7 @@ public class InkPotEditor : ModuleRules
 				"UnrealEd",
 
                 "InkPlusPlus",
-                "InkPot",
+                "Inkpot",
                 "Json",
 			}
 		);
