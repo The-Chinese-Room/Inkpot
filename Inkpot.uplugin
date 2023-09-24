@@ -28,7 +28,7 @@
     },
     {
       "Name": "InkpotEditor",
-	  "Type": "Editor",
+      "Type": "Editor",
       "LoadingPhase": "Default"
     }
   ],
