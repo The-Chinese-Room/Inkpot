@@ -17,7 +17,7 @@
   "Installed": false,
   "Modules": [
     {
-      "Name": "InkPot",
+      "Name": "Inkpot",
       "Type": "Runtime",
       "LoadingPhase": "Default"
     },
@@ -27,8 +27,8 @@
       "LoadingPhase": "Default"
     },
     {
-      "Name": "InkPotEditor",
-      "Type": "Editor",
+      "Name": "InkpotEditor",
+	  "Type": "Editor",
       "LoadingPhase": "Default"
     }
   ],
