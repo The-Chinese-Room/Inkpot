@@ -1,0 +1,16 @@
+
+VAR x = c
+
+CONST c = 5
+
+{x}
+
+/*
+INK_TEST_STORY_START
+[
+	{"TEST_ERROR_EQUAL": 0},
+	{"TEST_WARNING_EQUAL": 0},
+	{"EXECUTE_STORY_CONTINUE": "5"}
+]
+INK_TEST_END
+*/

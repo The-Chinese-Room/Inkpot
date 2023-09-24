@@ -1,0 +1,15 @@
+
+=== stuff ===
+-> END
+
+VAR X = 1
+CONST Y = 2
+
+/*
+INK_TEST_START
+[
+	{"TEST_ERROR_EQUAL": 0},
+	{"TEST_WARNING_EQUAL": 0}
+]
+INK_TEST_END
+*/

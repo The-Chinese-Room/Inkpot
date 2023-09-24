@@ -1,0 +1,37 @@
+{
+  "FileVersion": 1,
+  "Version": 1,
+  "VersionName": "0.1",
+  "FriendlyName": "Ink Pot",
+  "Description": "A container for Ink in Unreal.",
+  "Category": "Scripting",
+  "CreatedBy": "The Chinese Room",
+  "CreatedByURL": "",
+  "DocsURL": "",
+  "MarketplaceURL": "",
+  "SupportURL": "",
+  "EnabledByDefault": false,
+  "CanContainContent": true,
+  "IsBetaVersion": false,
+  "IsExperimentalVersion": false,
+  "Installed": false,
+  "Modules": [
+    {
+      "Name": "InkPot",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "InkPlusPlus",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "InkPotEditor",
+      "Type": "Editor",
+      "LoadingPhase": "Default"
+    }
+  ],
+  "Plugins": [
+  ]
+}

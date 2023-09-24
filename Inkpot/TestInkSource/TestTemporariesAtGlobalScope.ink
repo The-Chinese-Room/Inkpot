@@ -1,0 +1,14 @@
+
+VAR x = 5
+~ temp y = 4
+{x}{y}
+
+/*
+INK_TEST_STORY_START
+[
+	{"TEST_ERROR_EQUAL": 0},
+	{"TEST_WARNING_EQUAL": 0},
+    {"EXECUTE_STORY_CONTINUE": "54\n"},
+]
+INK_TEST_END
+*/

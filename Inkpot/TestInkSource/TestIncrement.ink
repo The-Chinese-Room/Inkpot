@@ -1,0 +1,17 @@
+
+VAR x = 5
+~ x++
+{x}
+
+~ x--
+{x}
+
+/*
+INK_TEST_STORY_START
+[
+	{"TEST_ERROR_EQUAL": 0},
+	{"TEST_WARNING_EQUAL": 0},
+    {"EXECUTE_CONTINUE_MAXIMALLY": "6\n5\n"}
+]
+INK_TEST_END
+*/
