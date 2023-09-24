@@ -1,8 +1,8 @@
 using UnrealBuildTool;
 
-public class InkPot : ModuleRules
+public class Inkpot : ModuleRules
 {
-	public InkPot(ReadOnlyTargetRules Target) : base(Target)
+	public Inkpot(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
