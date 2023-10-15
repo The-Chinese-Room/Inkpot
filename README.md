@@ -19,16 +19,17 @@ When porting the code from C# to C++ we came to the conclusion that we should ke
 That said we took the code in the summer of 2021 and have not had a need to update as it works for our purposes. 
 The Ink version we are running is therefore behind that of the offical Ink release being at Inkversion 20.
 
-### Inpot 
+### Inkpot 
 A set of wrapper classes for InkPlusPlus to simplify Blueprint coding.
-This manages the lifetime of the Ink story and provides the interface for Ink variable setting, getting and change notification.
+Manages the lifetime of the Ink story and provides the interface for Ink variable setting, getting and change notification.
 
-### InpotEditor 
+### InkpotEditor 
 This is the unreal editor facing part of Ink pot.
-This manages the defintion of data types in Unreal for inkpot and the compilation of new Ink scripts as they are added to the project. It also contains the unit tests for InkPlusPlus. 
+This manages the defintion of data types in Unreal for inkpot and the compilation of new Ink scripts as they are added to the project. 
+It also contains the unit tests for InkPlusPlus. 
 
 ## Other folders
-There area couple of supporting folders that make up the Inpot distribution 
+There area couple of supporting folders that make up the Inkpot distribution 
 
 ### TestInkSource
 All the Unit tests for Ink. 
