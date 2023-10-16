@@ -1,16 +1,18 @@
 # Inkpot
-Inkpot - An container for Ink in the Unreal engine. v0.1.20 </br>
-This plugin allows you to use the wonderful narrative scripting language developed by Inkle.</br>
-[Ink by Inkle](https://github.com/inkle/ink)
+**Inkpot** - An container for **Ink** within the Unreal Engine developed by [The Chinese Room](https://www.thechineseroom.co.uk/).<br><br>
+This is a plugin for Unreal Engine 5.3 or later.<br>
+This is version 0.1.20 of the plugin.</br>
+
+Inkpot is a wrapper for the wonderful narrative scripting language **Ink** developed by [Inkle Studios](https://www.inklestudios.com/ink/).<br>
 
 ## Requirements 
-Inkpot works with version 5.3 of Unreal.
-Inkpot includes a C++ port of Ink-engine-runtime version 20, which can be found in the InkPlusPlus module.
+Inkpot works with version 5.3 of Unreal.<br>
+Inkpot includes a C++ port of Ink-engine-runtime version 20, which can be found in the InkPlusPlus module.<br>
 
-As Inkpot compiles the Ink source directly on import, it should be compatible with any Ink editor version as long as you only use features from Ink version 20.
+As Inkpot compiles the Ink source directly on import, it should be compatible with any Ink editor version as long as you only use features from Ink version 20.<br>
 
 ## Module Structure
-Inkpot is made from three modules. 
+Inkpot is made from three modules. <br>
 
 ### InkPlusPlus
 InkPlusPlus is the name of the module that contains the C++ port of the Ink Engine Runtime which can be found here</br>
@@ -21,8 +23,8 @@ That said we took the code in the summer of 2021 and have not had a need to upda
 The Ink version we are running is therefore behind that of the offical Ink release being at Inkversion 20.</br>
 
 ### Inkpot 
-A set of wrapper classes for InkPlusPlus to simplify Blueprint coding.
-Manages the lifetime of the Ink story and provides the interface for Ink variable setting, getting and change notification.
+A set of wrapper classes for InkPlusPlus to simplify Blueprint coding.<br>
+Manages the lifetime of the Ink story and provides the interface for Ink variable setting, getting and change notification.<br>
 
 ### InkpotEditor 
 This is the unreal editor facing part of Ink pot.</br>
@@ -30,14 +32,14 @@ This manages the defintion of data types in Unreal for inkpot and the compilatio
 It also contains the unit tests for InkPlusPlus.</br>
 
 ## Other folders
-There area couple of supporting folders that make up the Inkpot distribution.
+There area couple of supporting folders that make up the Inkpot distribution.<br>
 
 ### TestInkSource
 All the Unit tests for Ink.</br> 
 Currently 168 tests.
 
 ### Third Party 
-This contains a copy of InkleCate and is used by the script importer to compile the scripts.
+This contains a copy of InkleCate and is used by the script importer to compile the scripts.<br>
 
 ## What we did not do
 You will note that 2 of the tests fail, these are the JSON serialisation tests & we simply did not need to implement them in our usage case.</br>
@@ -49,4 +51,4 @@ for creating Ink. We've used this for much more than narrative.</br></br>
 **[UnrealInk](https://github.com/DavidColson/UnrealInk)**</br>
 for giving us a good basis for creating InkPlusPlus.</br></br>
 **Colin, Seb & Canute at TCR**</br>
-for the port of Ink Engine Runtime to C++, along with the editor asset handling and unit tests. 
+for the port of Ink Engine Runtime to C++, along with the editor asset handling and unit tests. <br>
