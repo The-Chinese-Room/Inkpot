@@ -51,4 +51,4 @@ for creating Ink. We've used this for much more than narrative.</br></br>
 **[UnrealInk](https://github.com/DavidColson/UnrealInk)**</br>
 for giving us a good basis for creating InkPlusPlus.</br></br>
 **Colin, Seb & Canute at TCR**</br>
-for the port of Ink Engine Runtime to C++, along with the editor asset handling and unit tests. <br>
+for the brilliant job in porting the Ink Engine Runtime to C++, along with the editor asset handling, unit tests and Unreal integration, most of the work here in fact.<br>
