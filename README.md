@@ -19,7 +19,9 @@ https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-3.1.32-wind
 Unreal 5.3 will by default use the Cpp20 standard.<br>
 This code base will only compile using the Cpp17 standard (this will be fixed soon).<br>
 You will therefore need to add this line to your GameEditor.Target.cs build script. ( The 5.2 compilation settings)<br>
-''DefaultBuildSettings = BuildSettingsVersion.V3;''<br>
+
+    DefaultBuildSettings = BuildSettingsVersion.V3;
+    
 (Without this your game will not compile)<br>
 
 ## Module Structure
