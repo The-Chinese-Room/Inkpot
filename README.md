@@ -8,8 +8,19 @@ Inkpot is a wrapper for the wonderful narrative scripting language **Ink** devel
 ## Requirements 
 Inkpot works with version 5.3 of Unreal.<br>
 Inkpot includes a C++ port of Ink-engine-runtime version 20, which can be found in the InkPlusPlus module.<br>
-
 As Inkpot compiles the Ink source directly on import, it should be compatible with any Ink editor version as long as you only use features from Ink version 20.<br>
+
+### .Net framework 
+InkleCate requires the .net framework 3.1 which you can download from here.<br>
+https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-3.1.32-windows-x64-installer <br>
+(Without this you will not be able to import Ink source)<br>
+
+### Note on Unreal C++ version 
+Unreal 5.3 will by default use the Cpp20 standard.<br>
+This code base will only compile using the Cpp17 standard (this will be fixed soon).<br>
+You will therefore need to add this line to your GameEditor.Target.cs build script. ( The 5.2 compilation settings)<br>
+	DefaultBuildSettings = BuildSettingsVersion.V3;<br>
+(Without this your game will not compile)<br>
 
 ## Module Structure
 Inkpot is made from three modules. <br>
