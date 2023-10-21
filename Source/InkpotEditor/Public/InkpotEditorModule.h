@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 #include "Modules/ModuleInterface.h"
 #include "Modules/ModuleManager.h"
-#include "AssetTools/public/AssetTypeCategories.h"
+#include "AssetTypeCategories.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 
 class FInkpotEditorModule : public IModuleInterface
