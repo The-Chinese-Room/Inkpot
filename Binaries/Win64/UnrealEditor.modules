@@ -1,0 +1,9 @@
+{
+	"BuildId": "27405482",
+	"Modules": 
+	{
+		"InkPlusPlus": "UnrealEditor-InkPlusPlus.dll",
+		"Inkpot": "UnrealEditor-Inkpot.dll",
+		"InkpotEditor": "UnrealEditor-InkpotEditor.dll"
+	}
+}
