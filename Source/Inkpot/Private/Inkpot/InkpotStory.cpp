@@ -6,7 +6,7 @@
 #include "Utility/InkpotLog.h"
 
 static const int32 dbgIndent{12};
-#define INKPOT_DBG( section, msg, ... )   INKPOT_LOG( "%- *s: "msg, dbgIndent, TEXT(section), ##__VA_ARGS__ )
+#define INKPOT_DBG( section, msg, ... )   INKPOT_LOG( "%- *s: " msg, dbgIndent, TEXT(section), ##__VA_ARGS__ )
 
 void UInkpotStory::Initialise( TSharedRef<FInkpotStoryInternal>  InInkpotStory )
 {
