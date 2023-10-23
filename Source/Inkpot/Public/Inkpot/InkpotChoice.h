@@ -28,10 +28,10 @@ public:
 
 private:
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category="Inkpot|Choice")
 	int32 Index;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category="Inkpot|Choice")
 	FString String;
 	
 };
