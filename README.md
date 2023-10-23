@@ -21,11 +21,13 @@ You will need to install Visual Studio 2022.<br>
 https://visualstudio.microsoft.com/vs/<br>
 
 ## Installing the plugin
-Copy to the plugins folder of your project. 
+Copy to the plugins folder of your project.<br>
 
     [Project Root Directory]/Plugins/Inkpot/
 
-or add as a git submodule to your project.
+or add via git as a submodule.<br><br>
+For an example of how this plugin should sit in your project see the InkpotDemo.<br>
+https://github.com/The-Chinese-Room/InkpotDemo
 
 
 ## Module Structure
