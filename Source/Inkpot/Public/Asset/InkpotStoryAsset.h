@@ -29,10 +29,10 @@ public:
 #endif
 
 private:
-	UPROPERTY( VisibleAnywhere )
+	UPROPERTY( VisibleAnywhere, Category="Inkpot|StoryAsset" )
 	FString Source;
 
-	UPROPERTY( VisibleAnywhere )
+	UPROPERTY( VisibleAnywhere, Category="Inkpot|StoryAsset" )
 	FString JSON;
 
 #if WITH_EDITORONLY_DATA

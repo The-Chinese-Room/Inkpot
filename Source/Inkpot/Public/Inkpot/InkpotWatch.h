@@ -31,6 +31,6 @@ private:
 	FOnVariableChangeMulti EventOnVariableChange; 
 
 	/* the name of the Ink declared variable that we want to get change notifications for */
-	UPROPERTY( EditAnywhere )
+	UPROPERTY( EditAnywhere, Category="Inkpot|Watch" )
 	FString VariableWatch;
 };
