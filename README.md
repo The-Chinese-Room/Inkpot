@@ -10,10 +10,23 @@ Inkpot works with version 5.3 of Unreal.<br>
 Inkpot includes a C++ port of Ink-engine-runtime version 20, which can be found in the InkPlusPlus module.<br>
 As Inkpot compiles the Ink source directly on import, it should be compatible with any Ink editor version as long as you only use features from Ink version 20.<br>
 
-### .Net framework 
+### .Net framework 3.1
 InkleCate requires the .net framework 3.1 which you can download from here.<br>
 https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-3.1.32-windows-x64-installer <br>
 (Without this you will not be able to import Ink source)<br>
+
+### Visual Studio 2022
+This plugin is distributed as source code which needs compiling.<br>
+You will need to install Visual Studio 2022.<br>
+https://visualstudio.microsoft.com/vs/<br>
+
+## Installing the plugin
+Copy to the plugins folder of your project. 
+
+    [Project Root Directory]/Plugins/Inkpot/
+
+or add as a git submodule to your project.
+
 
 ## Module Structure
 Inkpot is made from three modules. <br>
