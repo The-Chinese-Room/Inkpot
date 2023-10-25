@@ -25,8 +25,6 @@ public class Inkpot : ModuleRules
                 "CoreUObject",
                 "Engine",
 
-                "Settings",
-
                 "InkPlusPlus",
             }
         );
