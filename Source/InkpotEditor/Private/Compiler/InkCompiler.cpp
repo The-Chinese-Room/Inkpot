@@ -16,13 +16,15 @@ namespace InkCompiler
 	{
 		// Check if inklecate exists
 		const FString inkExePath = InkleCatePath;
-		FString args = TEXT(" -j ") + InkFilePath;
+		FString InkFilePathStripped = InkFilePath;
+		FPaths::CollapseRelativeDirectories(InkFilePathStripped);
+		FString args = TEXT(" -j ") + InkFilePathStripped;
 		if (shouldCountVisits)
 			args = TEXT(" -c") + args;
 
 		if (!FPaths::FileExists(inkExePath))
 		{
-			INKPOT_WARN("CompileInkString - %s could not locate inklecate.exe.", *InkFilePath);
+			INKPOT_WARN("CompileInkString - %s could not locate inklecate.exe.", *InkFilePathStripped);
 			return false;
 		}
 
@@ -33,7 +35,7 @@ namespace InkCompiler
 		bool bSuccess = FPlatformProcess::ExecProcess(*inkExePath, *args, &returnCode, &stdOut, &stdErr);
 		if (!bSuccess)
 		{
-			INKPOT_WARN("CompileInkString - %s failed ExecProcess. Error %s: ", *InkFilePath, *(stdOut + stdErr));
+			INKPOT_WARN("CompileInkString - %s failed ExecProcess. Error %s: ", *InkFilePathStripped, *(stdOut + stdErr));
 			return false;
 		}
 
@@ -42,12 +44,12 @@ namespace InkCompiler
 		ParseInklecateOutput(stdOut, Errors, Warnings, bCompiled, bExported);
 		if (!bCompiled)
 		{
-			INKPOT_WARN("CompileInkString - %s failed to compile ink string. Error %s: ", *InkFilePath, *(stdOut + stdErr));
+			INKPOT_WARN("CompileInkString - %s failed to compile ink string. Error %s: ", *InkFilePathStripped, *(stdOut + stdErr));
 			return false;
 		}
 		if (!bExported)
 		{
-			INKPOT_WARN("CompileInkFile - %s failed to export ink.json string. Error : %s", *InkFilePath, *(stdOut + stdErr));
+			INKPOT_WARN("CompileInkFile - %s failed to export ink.json string. Error : %s", *InkFilePathStripped, *(stdOut + stdErr));
 			return false;
 		}
 
