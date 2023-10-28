@@ -65,7 +65,7 @@ void UAsyncAction_WaitVariableChange::EndTask()
 	{
 		// Story still in progress but the user wants to force End this Task
 		// If we Clear Delegate Variable in the same tick while broadcasting all Delegates
-		// It will trigger to ensure "Array has changed during ranged-for iteration!"
+		// It will trigger ensure "Array has changed during ranged-for iteration!"
 		// We don't want to do that. So let's do clean up next tick, just to be safe
 		World->GetTimerManager().SetTimerForNextTick([this]
 		{
