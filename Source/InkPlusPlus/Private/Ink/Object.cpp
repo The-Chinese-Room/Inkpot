@@ -241,7 +241,7 @@ int32 Ink::FObject::DebugLineNumberOfPath(TSharedPtr<Ink::FPath> InPath) const
 		}
 	}
 
-	UE_LOG(InkPlusPlus, Error, TEXT("Object: failed to get a debug line :("))
+	//UE_LOG(InkPlusPlus, Error, TEXT("Object: failed to get a debug line :("))
 	return -1;
 }
 
