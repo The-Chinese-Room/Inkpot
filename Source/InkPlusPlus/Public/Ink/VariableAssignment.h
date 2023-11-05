@@ -4,7 +4,7 @@
 
 namespace Ink
 {
-	class FVariableAssignment : public Ink::FObject
+	class INKPLUSPLUS_API FVariableAssignment : public Ink::FObject
 	{
 	public:
 		static EInkObjectClass GetInkObjectClass() { return EInkObjectClass::FVariableAssignment; }

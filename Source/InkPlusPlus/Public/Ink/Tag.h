@@ -6,7 +6,7 @@
 
 namespace Ink
 {
-	class FTag : public Ink::FObject
+	class INKPLUSPLUS_API FTag : public Ink::FObject
 	{
 	public:
 		static EInkObjectClass GetInkObjectClass() { return EInkObjectClass::FTag; }

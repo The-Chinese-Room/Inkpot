@@ -16,7 +16,7 @@ namespace Ink
 	typedef TFunction<FNativeFunctionOp(FNativeFunctionOp InValue)> FUnaryOperation;
 	
 	
-	class FNativeFunctionCall : public Ink::FObject
+	class INKPLUSPLUS_API FNativeFunctionCall : public Ink::FObject
 	{
 	public:
 		static EInkObjectClass GetInkObjectClass() { return EInkObjectClass::FNativeFunctionCall; }

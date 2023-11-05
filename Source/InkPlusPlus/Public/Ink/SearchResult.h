@@ -6,7 +6,7 @@ namespace Ink
 	class FContainer;
 
 
-	class FSearchResult
+	class INKPLUSPLUS_API FSearchResult
 	{
 	public:
 		FSearchResult();

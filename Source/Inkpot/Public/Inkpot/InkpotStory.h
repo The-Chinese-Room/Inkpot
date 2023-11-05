@@ -127,6 +127,10 @@ public:
 
 	TSharedPtr<FInkpotStoryInternal> GetStoryInternal();
 
+	void DumpMainContent();
+	void DumpContentAtPath( const FString& InName );
+	void DumpContentAtKnot( const FString& InName );
+
 private:
 	void OnContinueInternal();
 	void OnMakeChoiceInternal(TSharedPtr<Ink::FChoice> InChoice);
@@ -138,6 +142,8 @@ private:
 
 	void DumpDebug();
 	void DumpDebug(UInkpotChoice *Choice);
+
+	void DumpContainer( const FString& InName, TSharedPtr<Ink::FContainer> InContainer, int Indent = 0 );
 
 protected:
 	TSharedPtr<FInkpotStoryInternal> StoryInternal;
@@ -178,4 +184,5 @@ bool UInkpotStory::GetVariable( const FString& InVariable, Ink::EValueType InTyp
 	OutValue = variable->GetValue();
 	return success;
 }
+
  

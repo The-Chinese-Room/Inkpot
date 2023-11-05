@@ -337,7 +337,9 @@ void Ink::FStory::ContinueInternal(float MillisecondsLimitAsync)
 			State->GetVariableState()->SetBatchObservingVariableChanges(false);
 
 		_asyncContinueActive = false;
-		OnDidContinueEvent.Broadcast();
+
+		if(TemporaryEvaluationContainer == nullptr)
+			OnDidContinueEvent.Broadcast();
 	}
 
 	_recursiveContinueCount--;
