@@ -20,6 +20,7 @@ FString Ink::FControlCommand::ToString()
 	FString outputString;
 	if (CommandType == ECommandType::NotSet)					outputString = TEXT("NotSet");
 	else if (CommandType == ECommandType::EvalStart)			outputString = TEXT("EvalStart");
+	else if (CommandType == ECommandType::EvalOutput)			outputString = TEXT("EvalOutput");
 	else if (CommandType == ECommandType::EvalEnd)				outputString = TEXT("EvalEnd");
 	else if (CommandType == ECommandType::Duplicate)			outputString = TEXT("Duplicate");
 	else if (CommandType == ECommandType::PopEvaluatedValue) 	outputString = TEXT("PopEvaluatedValue");
@@ -35,7 +36,7 @@ FString Ink::FControlCommand::ToString()
 	else if (CommandType == ECommandType::Random)				outputString = TEXT("Random");
 	else if (CommandType == ECommandType::SeedRandom)			outputString = TEXT("SeedRandom");
 	else if (CommandType == ECommandType::VisitIndex)			outputString = TEXT("VisitIndex");
-	else if (CommandType == ECommandType::SequenceShuffleIndex)	outputString = TEXT("equenceShuffleIndex");
+	else if (CommandType == ECommandType::SequenceShuffleIndex)	outputString = TEXT("SequenceShuffleIndex");
 	else if (CommandType == ECommandType::StartThread)			outputString = TEXT("StartThread");
 	else if (CommandType == ECommandType::Done)					outputString = TEXT("Done");
 	else if (CommandType == ECommandType::End)					outputString = TEXT("End");

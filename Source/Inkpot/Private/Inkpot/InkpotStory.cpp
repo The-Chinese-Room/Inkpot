@@ -3,6 +3,8 @@
 #include "Inkpot/Inkpot.h"
 #include "Ink/Choice.h"
 #include "Ink/StoryState.h"
+#include "Ink/SearchResult.h"
+#include "Ink/Path.h"
 #include "Utility/InkpotLog.h"
 
 static const int32 dbgIndent{12};
@@ -404,5 +406,73 @@ void UInkpotStory::DumpDebug(UInkpotChoice *InChoice)
 	if(!InChoice)
 		return;
 	INKPOT_DBG( "Chose", "%d - %s", InChoice->GetIndex(), *InChoice->GetString() );
+}
+
+
+void UInkpotStory::DumpContainer(const FString &InName, TSharedPtr<Ink::FContainer> InContainer, int Indent)
+{
+	if(!InContainer)
+		return;
+
+	FString pad; 
+	for(int i=0;i<Indent;++i)
+		pad += '\t';
+
+	INKPOT_LOG("%s** container(%s) - Begin", *pad,*InName );
+	pad += '\t';
+
+	TArray<TSharedPtr<Ink::FObject>> *contents = InContainer->GetContent().Get();
+	for( TSharedPtr<Ink::FObject> obj : *contents)
+	{
+		TSharedPtr<Ink::FContainer> container = Ink::FObject::DynamicCastTo<Ink::FContainer>(obj);
+		if( container )
+		{
+			DumpContainer( "inline", container, Indent + 1 );
+		}
+		else
+		{
+			FString entry = obj->ToString();
+			entry.TrimEndInline();
+			if ( entry.Len() )
+				INKPOT_LOG( "%s%s", *pad, *entry );
+		}
+	}
+
+	TSharedPtr<TMap<FString, TSharedPtr<Ink::FObject>>> namedContentPtr = InContainer->GetNamedContent();
+	for( auto pair : *namedContentPtr )
+	{
+		TSharedPtr<Ink::FContainer> container = Ink::FObject::DynamicCastTo<Ink::FContainer>( pair.Value );
+		if(!container)
+			continue;
+		DumpContainer( pair.Key, container, Indent + 1 );
+	}
+
+	pad.LeftChopInline(1);
+	INKPOT_LOG("%s** container(%s) - End", *pad, *InName );
+}
+
+
+void UInkpotStory::DumpMainContent()
+{
+	TSharedPtr<Ink::FContainer> main = StoryInternal->GetMainContentContainer();
+	DumpContainer( "<root>", main );
+}
+
+void UInkpotStory::DumpContentAtPath( const FString& InName )
+{
+	TSharedPtr<Ink::FPath> path = MakeShared<Ink::FPath>( InName );
+	Ink::FSearchResult result = StoryInternal->ContentAtPath(path);
+	DumpContainer(InName, result.GetObjectAsContainer() );
+}
+
+void UInkpotStory::DumpContentAtKnot( const FString& InName )
+{
+	TSharedPtr<Ink::FContainer> knotContainer = StoryInternal->KnotContainerWithName(InName);
+	if(!knotContainer)
+	{
+		INKPOT_ERROR("%s is not a valid knot in this story", *InName );
+		return;
+	}
+	DumpContainer(InName, knotContainer  );
 }
 

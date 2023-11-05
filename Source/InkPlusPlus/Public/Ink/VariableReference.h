@@ -7,7 +7,7 @@ namespace Ink
 	class FPath;
 	class FContainer;
 	
-	class FVariableReference : public Ink::FObject
+	class INKPLUSPLUS_API FVariableReference : public Ink::FObject
 	{
 	public:
 		static EInkObjectClass GetInkObjectClass() { return EInkObjectClass::FVariableReference; }
