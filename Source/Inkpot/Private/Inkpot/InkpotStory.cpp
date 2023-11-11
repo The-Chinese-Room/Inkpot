@@ -83,6 +83,15 @@ FString UInkpotStory::ContinueMaximally()
 	return StoryInternal->ContinueMaximally();
 }
 
+FString UInkpotStory::ContinueMaximallyAtPath(const FString& InPath)
+{
+	FString ret; 
+	ChoosePath(InPath);
+	if (CanContinue())
+		ret = ContinueMaximally();
+	return ret;
+}
+
 bool UInkpotStory::CanContinue()
 {
 	return StoryInternal->CanContinue();
@@ -476,3 +485,42 @@ void UInkpotStory::DumpContentAtKnot( const FString& InName )
 	DumpContainer(InName, knotContainer  );
 }
 
+TArray<FString> UInkpotStory::GetNamedContent()
+{
+	TSharedPtr<Ink::FContainer> container = StoryInternal->GetMainContentContainer();
+	return GetNamedContent(container);
+}
+
+TArray<FString> UInkpotStory::GetNamedContentForKnot(const FString& InKnotName)
+{
+	TSharedPtr<Ink::FContainer> knotContainer = StoryInternal->KnotContainerWithName(InKnotName);
+	return GetNamedContent(knotContainer);
+}
+
+TArray<FString> UInkpotStory::GetNamedContentForPath(const FString& InPath)
+{
+	TSharedPtr<Ink::FPath> path = MakeShared<Ink::FPath>(InPath);
+	Ink::FSearchResult result = StoryInternal->ContentAtPath(path);
+	return GetNamedContent(result.GetObjectAsContainer());
+}
+
+TArray<FString> UInkpotStory::GetNamedContent(TSharedPtr<Ink::FContainer> InContainer)
+{
+	TArray<FString> keys;
+	if (!InContainer)
+	{
+		INKPOT_ERROR("Container is invalid, no content.");
+		return keys;
+	}
+
+	TSharedPtr<TMap<FString, TSharedPtr<Ink::FObject>>> namedContentPtr = InContainer->GetNamedContent();
+	for (auto pair : *namedContentPtr)
+	{
+		TSharedPtr<Ink::FContainer> container = Ink::FObject::DynamicCastTo<Ink::FContainer>(pair.Value);
+		if (!container)
+			continue;
+		keys.Add(pair.Key);
+	}
+
+	return keys;
+}
