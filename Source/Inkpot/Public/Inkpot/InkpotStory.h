@@ -26,6 +26,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
 	FString ContinueMaximally();
 
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
+	FString ContinueMaximallyAtPath(const FString &Path );
+
 	UFUNCTION(BlueprintPure, Category="Inkpot|Story")
 	bool CanContinue();
 
@@ -113,6 +116,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
 	void ClearVariableChange( const FString &Variable );
 
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
+	TArray<FString> GetNamedContent();
+
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
+	TArray<FString> GetNamedContentForKnot(const FString &KnotName);
+
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
+	TArray<FString> GetNamedContentForPath(const FString& Path);
+
 	int32 GetVariableKeys( TArray<FString> &OutKeys );
 
 	TSharedPtr<Ink::FObject> GetVariable( const FString& InVariable );
@@ -144,6 +156,8 @@ private:
 	void DumpDebug(UInkpotChoice *Choice);
 
 	void DumpContainer( const FString& InName, TSharedPtr<Ink::FContainer> InContainer, int Indent = 0 );
+	
+	TArray<FString> GetNamedContent( TSharedPtr<Ink::FContainer> Container );
 
 protected:
 	TSharedPtr<FInkpotStoryInternal> StoryInternal;
