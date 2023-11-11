@@ -50,14 +50,13 @@ bool UInkpotStoryAssetFactory::LoadAndCompileStory( const FString& InFilename, F
 	if ( !FFileHelper::LoadFileToString( OutStory, *InFilename ) )
 		return false;
 
-	const FString InkScratchFilePath = InkCompiler::GetScratchDirectory() + TEXT("1/2/TempInkFile.ink");
+	const FString InkScratchFilePath = InkCompiler::GetScratchDirectory() + TEXT("TempInkFile.ink");
 		
 	TArray<FString> errors;
 	TArray<FString> warnings;
 	InkCompiler::FlushScratchDirectory();
-	InkCompiler::CopyIncludeFoldersToScratchDirectory( InFilename );
 
-	if (InkCompiler::CompileInkString(OutStory, InkScratchFilePath, OutCompiledStory, errors, warnings))
+	if (InkCompiler::CompileInkFile(InFilename, InkScratchFilePath, OutCompiledStory, errors, warnings))
 	{
 		FMessageLog InkCompilerLog("InkCompiler");
 
