@@ -4,7 +4,6 @@ namespace InkCompiler
 {
 	INKPOTEDITOR_API FString GetScratchDirectory();
 	INKPOTEDITOR_API void FlushScratchDirectory();
-	INKPOTEDITOR_API void CopyIncludeFoldersToScratchDirectory(const FString& InSourceFilePath);
 	INKPOTEDITOR_API void CopyFilesMatchingFilter(const FString& SourceFolder, const FString& DestinationFolder, const FString& FileFilter);
 	INKPOTEDITOR_API bool CompileInkFile(const FString& SourceFilePath, const FString& ScratchFilePath, FString& OutCompiledJSON, TArray<FString>& Errors, TArray<FString>& Warnings, bool shouldCountVisits = false);
 	INKPOTEDITOR_API bool CompileInkString(const FString& SourceString, const FString& ScratchFilePath, FString& OutCompiledJSON, TArray<FString>& Errors, TArray<FString>& Warnings, bool shouldCountVisits = false);
