@@ -270,27 +270,34 @@ void UInkpotStory::ObserveVariable( const FString& InVariable, TSharedPtr<FStory
 	StoryInternal->ObserveVariable( InVariable, InObserver );
 }
 
-void UInkpotStory::SetOnVariableChange( FOnVariableChange InDelegate, const FString &InVariable )
+void UInkpotStory::SetOnVariableChange( const FOnVariableChange& InDelegate, const FString &InVariable )
 {
 	TSharedPtr<FStoryVariableObserver> observer = MakeShared<FStoryVariableObserver>();
-	observer->BindLambda
+	observer->BindWeakLambda
 	(
-		[this, InDelegate](const FString& InVar, Ink::FValueType InType)
+		InDelegate.GetUObject(), [this, InDelegate] (const FString& InVar, Ink::FValueType InType)
 		{
-	        InDelegate.Execute( this, InVar, FInkpotValue(InType) );
+			InDelegate.Execute( this, InVar, FInkpotValue(InType) );
 		}
 	);
-	VariableObservers.Emplace( InVariable, observer );
+	
+	VariableObservers.AddUnique( InVariable, observer );
 	StoryInternal->ObserveVariable( InVariable, observer );
 }
 
-void UInkpotStory::ClearVariableChange( const FString &InVariable )
+void UInkpotStory::ClearVariableChange( const UObject* Owner, const FString &InVariable )
 {
-	if(!VariableObservers.Contains(InVariable))
+	if (!Owner || !VariableObservers.Contains(InVariable))
 		return;
-	TSharedPtr<FStoryVariableObserver> observer = VariableObservers[InVariable];
-	StoryInternal->RemoveVariableObserver( observer, InVariable );
-	VariableObservers.Remove( InVariable );
+	
+	for (auto Iterator = VariableObservers.CreateConstKeyIterator(InVariable); Iterator; ++Iterator)
+	{
+		if (Owner == Iterator->Value->GetUObject())
+		{
+			StoryInternal->RemoveVariableObserver( Iterator->Value, InVariable );
+			VariableObservers.RemoveSingle( InVariable, Iterator->Value );
+		}
+	}
 }
 
 void UInkpotStory::OnContinueInternal()

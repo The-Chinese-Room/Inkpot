@@ -111,10 +111,10 @@ public:
 	void SetEmpty( const FString& Variable );
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
-	void SetOnVariableChange( UPARAM(DisplayName="Event") FOnVariableChange Delegate, const FString &Variable );
+	void SetOnVariableChange( UPARAM(DisplayName="Event") const FOnVariableChange& Delegate, const FString &Variable );
 
-	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
-	void ClearVariableChange( const FString &Variable );
+	UFUNCTION(BlueprintCallable, Meta = (DefaultToSelf = "Owner", HidePin = "Owner"), Category="Inkpot|Story")
+	void ClearVariableChange( const UObject* Owner, const FString &Variable );
 
 	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
 	TArray<FString> GetNamedContent();
@@ -161,8 +161,8 @@ private:
 
 protected:
 	TSharedPtr<FInkpotStoryInternal> StoryInternal;
-
-	TMap<FString, TSharedPtr<FStoryVariableObserver>> VariableObservers;
+	
+	TMultiMap<FString, TSharedPtr<FStoryVariableObserver>> VariableObservers;
 
 	UPROPERTY(BlueprintAssignable, Category="Inkpot|Story", meta=(DisplayName="OnContinue") )
 	FOnStoryContinue EventOnContinue; 
@@ -179,7 +179,6 @@ protected:
 private:
 	UPROPERTY(Transient)
 	TArray<UInkpotChoice*> Choices;
-
 };
 
 
