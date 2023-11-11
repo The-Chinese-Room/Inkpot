@@ -18,16 +18,13 @@ namespace InkCompiler
 		const FString inkExePath = InkleCatePath;
 		FString InkFilePathStripped = InkFilePath;
 		FPaths::CollapseRelativeDirectories(InkFilePathStripped);
-		FString args = TEXT(" -j ") + InkFilePathStripped;
-		if (shouldCountVisits)
-			args = TEXT(" -c") + args;
-
 		if (!FPaths::FileExists(inkExePath))
 		{
 			INKPOT_WARN("CompileInkString - %s could not locate inklecate.exe.", *InkFilePathStripped);
 			return false;
 		}
 
+		FString args = FString::Printf(TEXT("%s -j \"%s\""), shouldCountVisits?TEXT(" -c"):TEXT(""), *InkFilePathStripped );
 		// Execute compile using inklecate and output compiled JSON to Intermediate/InkCommandline.
 		FString stdOut;
 		FString stdErr;
