@@ -140,17 +140,38 @@ bool UInkpotStory::SwitchFlow( const FString &InFlowName )
 	bool isFlowAlive = IsFlowAlive( InFlowName );
 	StoryInternal->SwitchFlow( InFlowName );
 	UpdateChoices();
-	if(EventOnSwitchFlow.IsBound())
-		EventOnSwitchFlow.Broadcast( this, StoryInternal->GetCurrentFlowName() );
+	BroadcastFlowChange();
 	return !isFlowAlive; 
+}
+
+void UInkpotStory::RemoveFlow(const FString& InFlowName)
+{
+	FString currentFlow = GetCurrentFlowName();
+	StoryInternal->RemoveFlow( InFlowName );
+	if( !InFlowName.Equals( currentFlow ) )
+		return;
+	UpdateChoices();
+	BroadcastFlowChange();
+}
+
+FString UInkpotStory::GetCurrentFlowName()
+{
+	return StoryInternal->GetCurrentFlowName();
 }
 
 void UInkpotStory::SwitchToDefautFlow()
 {
 	StoryInternal->SwitchToDefaultFlow();
 	UpdateChoices();
-	if(EventOnSwitchFlow.IsBound())
-		EventOnSwitchFlow.Broadcast( this, StoryInternal->GetCurrentFlowName() );
+	BroadcastFlowChange();
+}
+
+void UInkpotStory::BroadcastFlowChange()
+{
+	if(!EventOnSwitchFlow.IsBound())
+		return;
+	FString currentFlow = GetCurrentFlowName();
+	EventOnSwitchFlow.Broadcast( this, currentFlow );
 }
 
 bool UInkpotStory::IsFlowAlive( const FString &InFlowName )
@@ -341,7 +362,7 @@ void UInkpotStory::OnChoosePathStringInternal(const FString& InPath, const TArra
 
 void UInkpotStory::DumpDebug()
 {
-	FString currentFlow = StoryInternal->GetCurrentFlowName();
+	FString currentFlow = GetCurrentFlowName();
 	INKPOT_DBG("Flow", "%s", *currentFlow);
 
 	if( GetAliveFlowCount() > 0 )
