@@ -51,6 +51,12 @@ public:
 	bool SwitchFlow( const FString &FlowName );
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
+	void RemoveFlow(const FString& FlowName);
+
+	UFUNCTION(BlueprintPure, Category="Inkpot|Story")
+	FString GetCurrentFlowName();
+
+	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
 	void SwitchToDefautFlow();
 
 	UFUNCTION(BlueprintPure, Category="Inkpot|Story")
@@ -116,13 +122,13 @@ public:
 	UFUNCTION(BlueprintCallable, Meta = (DefaultToSelf = "Owner", HidePin = "Owner"), Category="Inkpot|Story")
 	void ClearVariableChange( const UObject* Owner, const FString &Variable );
 
-	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
+	UFUNCTION(BlueprintPure, Category = "Inkpot|Story")
 	TArray<FString> GetNamedContent();
 
-	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
+	UFUNCTION(BlueprintPure, Category = "Inkpot|Story")
 	TArray<FString> GetNamedContentForKnot(const FString &KnotName);
 
-	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
+	UFUNCTION(BlueprintPure, Category = "Inkpot|Story")
 	TArray<FString> GetNamedContentForPath(const FString& Path);
 
 	int32 GetVariableKeys( TArray<FString> &OutKeys );
@@ -149,6 +155,7 @@ private:
 	void OnEvaluateFunctionInternal(const FString& InFunctionName, const TArray<TSharedPtr<Ink::FValueType>>& InFunctionParms);
 	void OnCompleteEvaluateFunctionInternal(const FString& InFunctionName, const TArray<TSharedPtr<Ink::FValueType>>& InFunctionParms, const FString& OutParmName, TSharedPtr<Ink::FValueType> OutParmType);
 	void OnChoosePathStringInternal(const FString& InPath, const TArray<TSharedPtr<Ink::FValueType>>& InPathType );
+	void BroadcastFlowChange();
 
 	void UpdateChoices();
 
