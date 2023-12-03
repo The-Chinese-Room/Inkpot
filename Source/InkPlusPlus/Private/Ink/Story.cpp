@@ -1743,7 +1743,105 @@ TSharedPtr<Ink::FObject> Ink::FStory::EvaluateExpression(TSharedPtr<Ink::FContai
 
 void Ink::FStory::CallExternalFunction(const FString& funcName, int numberOfArguments)
 {
-	// EXTERNAL FUNCTIONS FUNCTIONALITY
+
+	FStoryExternalFunctionDef *externalFuncDef = _externals.Find( funcName );
+	bool foundExternal = externalFuncDef != nullptr;
+	
+	TSharedPtr<Ink::FContainer> fallbackFunctionContainer;
+
+    if( foundExternal && externalFuncDef->lookaheadSafe && State->InStringEvaluation() ) {
+        // 16th Jan 2023: Example ink that was failing:
+        //
+        //      A line above
+        //      ~ temp text = "{theFunc()}" 
+        //      {text} 
+        //
+        //      === function theFunc() 
+        //          { external():
+        //              Boom
+        //          }
+        //
+        //      EXTERNAL external() 
+        //
+        // What was happening: The external() call would exit out early due to
+        // _stateSnapshotAtLastNewline having a value, leaving the evaluation stack
+        // without a return value on it. When the if-statement tried to pop a value,
+        // the evaluation stack would be empty, and there would be an exception.
+        //
+        // The snapshot rewinding code is only designed to work when outside of
+        // string generation code (there's a check for that in the snapshot rewinding code),
+        // hence these things are incompatible, you can't have unsafe functions that
+        // cause snapshot rewinding in the middle of string generation.
+        //
+        Error("External function "+funcName+" could not be called because 1) it wasn't marked as lookaheadSafe when BindExternalFunction was called and 2) the story is in the middle of string generation, either because choice text is being generated, or because you have ink like \"hello {func()}\". You can work around this by generating the result of your function into a temporary variable before the string or choice gets generated: ~ temp x = "+funcName+"()");
+        return;
+    }
+
+    // Should this function break glue? Abort run if we've already seen a newline.
+    // Set a bool to tell it to restore the snapshot at the end of this instruction.
+    if( foundExternal && !externalFuncDef->lookaheadSafe && _stateSnapshotAtLastNewline.IsValid() ) {
+        _sawLookaheadUnsafeFunctionAfterNewline = true;
+        return;
+    }
+
+    // Try to use fallback function?
+    if (!foundExternal) {
+        if (allowExternalFunctionFallbacks) {
+            fallbackFunctionContainer = KnotContainerWithName (funcName);
+            checkf(fallbackFunctionContainer.IsValid(), TEXT("Trying to call EXTERNAL function which has not been bound, and fallback ink function could not be found."));
+
+            // Divert direct into fallback function and we're done
+            State->CallStack()->Push (
+				Ink::EPushPopType::Function,
+				0,
+				State->OutputStream().Num()
+            );
+            State->SetDivertedPointer( FPointer::StartOf(fallbackFunctionContainer) );
+            return;
+
+        } else {
+            checkf (false, TEXT("Trying to call EXTERNAL function which has not been bound (and ink fallbacks disabled).") );
+        }
+    }
+
+    // Pop arguments
+    // insert arguments at zero to reverse the order they were popped in, so they're the right way round again.
+	TArray<Ink::FValueType> arguments;
+    for (int i = 0; i < numberOfArguments; ++i) {
+		TSharedPtr<FValue> poppedObj = DynamicCastTo<FValue>(State->PopEvaluationStack());
+        Ink::FValueType valueObj = poppedObj->GetValueObject();
+        arguments.Insert(valueObj, 0);
+    }
+
+    // Run the function!
+	TSharedPtr<Ink::FValueType> funcResult = nullptr;
+	if(foundExternal && externalFuncDef->function.IsValid() )
+		funcResult = externalFuncDef->function->Execute( arguments );
+
+    // Convert return value (if any) to the a type that the ink engine can use
+    TSharedPtr<Ink::FObject> returnObj = nullptr;
+    if (funcResult.IsValid()) {
+        returnObj = FValue::Create (*funcResult);
+        checkf(returnObj.IsValid(), TEXT("Could not create ink value from returned object of type "));
+    } else {
+        returnObj = MakeShared<FVoid>();
+    }
+                
+    State->PushEvaluationStack (returnObj);
+}
+
+void Ink::FStory::BindExternalFunctionGeneral(const FString& funcName, TSharedPtr<FStoryExternalFunction> func, bool lookaheadSafe)
+{
+	IfAsyncWeCant( "bind an external function" );
+    checkf(_externals.Find( funcName ) == nullptr, TEXT("Function has already been bound."));
+    _externals.Emplace( funcName, {func, lookaheadSafe} );
+}
+
+void Ink::FStory::UnbindExternalFunction(const FString& funcName)
+{
+	IfAsyncWeCant( "unbind an external a function" );
+    checkf(_externals.Find( funcName ), TEXT("Function has not been bound."));
+    _externals.Remove (funcName);
 }
 
 void Ink::FStory::ObserveAllVariables(TWeakPtr<FStoryVariableObserver> Observer)

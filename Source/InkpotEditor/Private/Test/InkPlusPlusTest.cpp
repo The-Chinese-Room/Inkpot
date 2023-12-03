@@ -23,6 +23,7 @@
 #include <Dom/JsonValue.h>
 #include <Serialization/JsonTypes.h>
 #include <Ink/VariableState.h>
+#include "Test/InkFunctionTests.h"
 
 static const FString TestFolderPath = FPaths::ProjectPluginsDir() + TEXT("Inkpot/TestInkSource/");
 static const FString InkScratchFilePath = InkCompiler::GetScratchDirectory() + "TempInkFile.ink";
@@ -129,7 +130,8 @@ static bool IsStoryInstruction(const FString& Instructions)
 		TEXT("EXPECTED_EXCEPTION"),
 		TEXT("OBSERVE_VARIABLE"),
 		TEXT("TEST_OBSERVED_VARIABLE"),
-		TEXT("TEST_OBSERVER_CALL_COUNT")
+		TEXT("TEST_OBSERVER_CALL_COUNT"),
+		TEXT("BIND_EXTERNAL_FUNCTION")
 	};
 
 	return storyInstructions.Contains(Instructions);
@@ -164,6 +166,9 @@ bool FInkTests::RunTest(const FString& InkTestName)
 	FString continueOutput = TEXT("");
 
 	TSharedPtr<FStoryVariableObserver> observer = MakeShared<FStoryVariableObserver>();
+
+	TArray<TSharedPtr<FInkpotExternalFunction>> boundExternalFunctionDelegates;
+	UInkFunctionTests *testFunctions = nullptr;
 
 	FString testFilePath = TestFolderPath + InkTestName + ".ink";
 	FString fileContents;
@@ -394,7 +399,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 									const bool executeSuccess = (expected != "-1") ? continueText.Equals(expected) : true;
 									if (!executeSuccess)
 									{
-										INKPOT_ERROR("%s : EXECUTE_CONTINUE_MAXIMALLY are not as expected.\nExpected: %s\nActual__: %s", *InkTestName, *expected, *continueText);
+										INKPOT_ERROR("%s : EXECUTE_CONTINUE_MAXIMALLY results are not as expected.\nExpected: %s\nActual__: %s\n", *InkTestName, *expected, *continueText);
 										return false;
 									}
 								}
@@ -970,6 +975,39 @@ bool FInkTests::RunTest(const FString& InkTestName)
 									INKPOT_ERROR("%s : TEST_OBSERVER_CALL_COUNT not as expected. \nExpected: %d\nActual__: %d", *InkTestName, expectedObserverCallCount, ObserverCallCount);
 									return false;
 								}
+							}
+						}
+						else if ( testInstruction->HasField( TEXT( "BIND_EXTERNAL_FUNCTION" ) ) )
+						{
+							if ( testInstruction->TryGetStringField(TEXT("BIND_EXTERNAL_FUNCTION"), jsonParsedString)) 
+							{
+								FString functionName = jsonParsedString;
+								if(!testFunctions)
+									testFunctions = NewObject<UInkFunctionTests>();
+								TSharedPtr<FInkpotExternalFunction> function = MakeShared<FInkpotExternalFunction>();
+								if(functionName.Equals(UInkFunctionTests::FuncName_Message))
+								{
+									function->BindDynamic( testFunctions, &UInkFunctionTests::Message );
+								}
+								else if(functionName.Equals(UInkFunctionTests::FuncName_Multiply))
+								{
+									function->BindDynamic( testFunctions, &UInkFunctionTests::Multiply );
+								}
+								else if(functionName.Equals(UInkFunctionTests::FuncName_Times))
+								{
+									function->BindDynamic( testFunctions, &UInkFunctionTests::Times );
+								}
+								else if(functionName.Equals(UInkFunctionTests::FuncName_TRUE))
+								{
+									function->BindDynamic( testFunctions, &UInkFunctionTests::TRUE );
+								}
+								else
+								{
+									INKPOT_ERROR( "Invalid test function binding : %s", *functionName );
+									return false;
+								}
+								boundExternalFunctionDelegates.Add( function  );
+								story->BindExternalFunction(functionName, *function );
 							}
 						}
 						else

@@ -11,6 +11,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnMakeChoice, UInkpotStory*, Story
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnChoosePath, UInkpotStory*, Story, const FString&, Path );
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSwitchFlow, UInkpotStory*, Story, const FString&, Flow );
 DECLARE_DYNAMIC_DELEGATE_ThreeParams(FOnVariableChange, UInkpotStory*, Story, const FString &, Variable, const FInkpotValue &, NewValue );
+DECLARE_DYNAMIC_DELEGATE_RetVal_OneParam(FInkpotValue, FInkpotExternalFunction, const TArray<FInkpotValue> & , Values );
 
 UCLASS(BlueprintType)
 class INKPOT_API UInkpotStory : public UObject
@@ -130,6 +131,12 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Inkpot|Story")
 	TArray<FString> GetNamedContentForPath(const FString& Path);
+
+	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
+	void BindExternalFunction( const FString &FunctionName, UPARAM(DisplayName="Function") const FInkpotExternalFunction& Function );
+
+	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
+	void UnbindExternalFunction( const FString &FunctionName );
 
 	int32 GetVariableKeys( TArray<FString> &OutKeys );
 

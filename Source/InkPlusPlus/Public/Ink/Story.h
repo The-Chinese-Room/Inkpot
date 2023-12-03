@@ -8,7 +8,8 @@
 #include "Value.h"
 #include "VariableState.h"
 
-DECLARE_DELEGATE_TwoParams(FStoryVariableObserver, const FString&, Ink::FValueType)
+DECLARE_DELEGATE_TwoParams( FStoryVariableObserver, const FString&, Ink::FValueType )
+DECLARE_DELEGATE_RetVal_OneParam( TSharedPtr<Ink::FValueType>, FStoryExternalFunction, const TArray<Ink::FValueType>& )
 
 namespace Ink
 {
@@ -20,7 +21,13 @@ namespace Ink
 	class FDebugMetadata;
 	class FStoryState;
 	class FListDefinition;
-	
+
+
+	struct INKPLUSPLUS_API FStoryExternalFunctionDef 
+	{
+		TSharedPtr<FStoryExternalFunction> function;
+		bool lookaheadSafe;
+    };
 	
 	class INKPLUSPLUS_API FStory : public Ink::FObject
 	{
@@ -97,10 +104,12 @@ namespace Ink
 		TSharedPtr<Ink::FObject> EvaluateExpression(TSharedPtr<Ink::FContainer> exprContainer);
 		void CallExternalFunction(const FString& funcName, int numberOfArguments);
 
+		void BindExternalFunctionGeneral(const FString& funcName, TSharedPtr<FStoryExternalFunction> func, bool lookaheadSafe = true);
+		void UnbindExternalFunction(const FString& funcName);
+
 		/* // EXTERNAL FUNCTIONS FUNCTIONALITY
 		 * 
 		 * public delegate object ExternalFunction(object[] args);
-		 * public void BindExternalFunctionGeneral(string funcName, ExternalFunction func, bool lookaheadSafe = true)
 		 * object TryCoerce<T>(object value)
 		 * public void BindExternalFunction(string funcName, Func<object> func, bool lookaheadSafe=false)
 		 * public void BindExternalFunction(string funcName, Action act, bool lookaheadSafe=false)
@@ -235,5 +244,7 @@ namespace Ink
 		int _recursiveContinueCount = 0;
 		bool _asyncSaving = false;
 		bool _sawLookaheadUnsafeFunctionAfterNewline = false;
+
+		TMap<FString, FStoryExternalFunctionDef> _externals;
 	};
 }
