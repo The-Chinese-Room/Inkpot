@@ -25,7 +25,7 @@ FInkpotValue UInkpotLibrary::MakeBoolInkpotValue(bool bInValue)
 	return FInkpotValue( MakeShared<Ink::FValueType>(bInValue) );
 }
 
-bool UInkpotLibrary::InkpotValueAsBool(FInkpotValue InValue)
+bool UInkpotLibrary::InkpotValueAsBool(const FInkpotValue &InValue)
 {
 	if( (*InValue)->HasSubtype<bool>() )
 		return (*InValue)->GetSubtype<bool>();
@@ -33,12 +33,17 @@ bool UInkpotLibrary::InkpotValueAsBool(FInkpotValue InValue)
 	return false;
 }
 
+bool UInkpotLibrary::InkpotArrayValueAsBool(const TArray<FInkpotValue> &InValues, int InIndex )
+{
+	return InkpotValueAsBool( InValues[InIndex] );
+}
+
 FInkpotValue UInkpotLibrary::MakeIntInkpotValue(int32 InValue)
 {
 	return FInkpotValue( MakeShared<Ink::FValueType>(InValue) );
 }
 
-int32 UInkpotLibrary::InkpotValueAsInt(FInkpotValue InValue)
+int32 UInkpotLibrary::InkpotValueAsInt(const FInkpotValue & InValue)
 {
 	if( (*InValue)->HasSubtype<int32>() )
 		return (*InValue)->GetSubtype<int32>();
@@ -46,17 +51,29 @@ int32 UInkpotLibrary::InkpotValueAsInt(FInkpotValue InValue)
 	return 0;
 }
 
+int32 UInkpotLibrary::InkpotArrayValueAsInt(const TArray<FInkpotValue> &InValues, int InIndex )
+{
+	return InkpotValueAsInt( InValues[InIndex] );
+}
+
 FInkpotValue UInkpotLibrary::MakeFloatInkpotValue(float InValue)
 {
 	return FInkpotValue( MakeShared<Ink::FValueType>(InValue) );
 }
 
-float UInkpotLibrary::InkpotValueAsFloat(FInkpotValue InValue)
+float UInkpotLibrary::InkpotValueAsFloat(const FInkpotValue &InValue)
 {
 	if( (*InValue)->HasSubtype<float>() )
 		return (*InValue)->GetSubtype<float>();
+	else if( (*InValue)->HasSubtype<int32>() )
+		return (float)((*InValue)->GetSubtype<int32>());
 	INKPOT_ERROR( "Value is not a float, returing default (0.0f)");
 	return 0.0f;
+}
+
+float UInkpotLibrary::InkpotArrayValueAsFloat(const TArray<FInkpotValue> &InValues, int InIndex )
+{
+	return InkpotValueAsFloat( InValues[InIndex] );
 }
 
 FInkpotValue UInkpotLibrary::MakeStringInkpotValue(const FString &InValue)
@@ -64,12 +81,17 @@ FInkpotValue UInkpotLibrary::MakeStringInkpotValue(const FString &InValue)
 	return FInkpotValue( MakeShared<Ink::FValueType>(InValue) );
 }
 
-FString UInkpotLibrary::InkpotValueAsString(FInkpotValue InValue)
+FString UInkpotLibrary::InkpotValueAsString(const FInkpotValue &InValue)
 {
 	if( (*InValue)->HasSubtype<FString>() )
 		return (*InValue)->GetSubtype<FString>();
 	INKPOT_ERROR( "Value is not a string, returing default (\"\")" );
 	return FString();
+}
+
+FString UInkpotLibrary::InkpotArrayValueAsString(const TArray<FInkpotValue> &InValues, int InIndex )
+{
+	return InkpotValueAsString( InValues[InIndex] );
 }
 
 FInkpotValue UInkpotLibrary::MakeInkpotList(const TArray<FString> &InValues)
@@ -89,7 +111,7 @@ FInkpotValue UInkpotLibrary::MakeInkpotNamedList(const FString &InName, const TA
 	return FInkpotValue( MakeShared<Ink::FValueType>( list ) );
 }
 
-TArray<FString> UInkpotLibrary::InkpotValueAsList(FInkpotValue InValue)
+TArray<FString> UInkpotLibrary::InkpotValueAsList(const FInkpotValue &InValue)
 {
 	TArray<FString> listEntries;
 	if( (*InValue)->HasSubtype<Ink::FInkList>() )
@@ -107,5 +129,14 @@ TArray<FString> UInkpotLibrary::InkpotValueAsList(FInkpotValue InValue)
 	return listEntries;
 }
 
+TArray<FString> UInkpotLibrary::InkpotArrayValueAsList(const TArray<FInkpotValue> &InValues, int InIndex )
+{
+	return InkpotValueAsList( InValues[InIndex] );
+}
+
+FInkpotValue UInkpotLibrary::DefaultInkpotValue()
+{
+	return FInkpotValue();
+}
 
 

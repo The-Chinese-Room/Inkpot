@@ -138,7 +138,7 @@ bool Ink::FValueInt::IsTruthy() const
 
 Ink::FValueType Ink::FValueInt::GetValueObject() const
 {
-	return FValueType(Value);
+	return FValueType( Value );
 }
 
 TSharedPtr<Ink::FValue> Ink::FValueInt::Cast(const EValueType& InNewType)
