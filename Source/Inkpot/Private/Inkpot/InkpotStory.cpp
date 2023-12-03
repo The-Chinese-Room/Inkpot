@@ -552,3 +552,27 @@ TArray<FString> UInkpotStory::GetNamedContent(TSharedPtr<Ink::FContainer> InCont
 
 	return keys;
 }
+
+void UInkpotStory::BindExternalFunction( const FString &InFunctionName, const FInkpotExternalFunction& InFunction )
+{
+	TSharedPtr<FStoryExternalFunction> function = MakeShared<FStoryExternalFunction>();
+	function->BindWeakLambda
+	(
+		InFunction.GetUObject(), [this, InFunction] (const TArray<Ink::FValueType> &InArguments) -> TSharedPtr<Ink::FValueType>
+		{
+			TArray<FInkpotValue> arguments;
+			for(auto &argument : InArguments )
+				arguments.Add( argument );
+
+			FInkpotValue value = InFunction.Execute( arguments );
+			return *value;
+		}
+	);
+	StoryInternal->BindExternalFunctionGeneral( InFunctionName, function );
+}
+
+void UInkpotStory::UnbindExternalFunction( const FString &InFunctionName )
+{
+	StoryInternal->UnbindExternalFunction( InFunctionName );
+}
+

@@ -29,13 +29,21 @@ class UInkpotLibrary : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 public:
+	/* Deafult value for returning from functions */
+	UFUNCTION(BlueprintPure, Category="Inkpot|Value")
+	static INKPOT_API FInkpotValue DefaultInkpotValue();
+
 	/* Create an Ink Value from a boolean */
 	UFUNCTION(BlueprintPure, Category="Inkpot|Value")
 	static INKPOT_API FInkpotValue MakeBoolInkpotValue(bool bValue);
 
 	/* Cast Ink value to a boolean */
 	UFUNCTION(BlueprintPure, Category="Inkpot|Value")
-	static INKPOT_API bool InkpotValueAsBool(FInkpotValue Value);
+	static INKPOT_API bool InkpotValueAsBool(const FInkpotValue &Value);
+
+	/* Cast Ink array value to a boolean */
+	UFUNCTION(BlueprintPure, Category="Inkpot|Value")
+	static INKPOT_API bool InkpotArrayValueAsBool(const TArray<FInkpotValue> &Values, int Index = 0);
 
 	/* Create an Ink Value from an integer */
 	UFUNCTION(BlueprintPure, Category="Inkpot|Value")
@@ -43,7 +51,11 @@ public:
 
 	/* Cast Ink value to an integer*/
 	UFUNCTION(BlueprintPure, Category="Inkpot|Value")
-	static INKPOT_API int32 InkpotValueAsInt(FInkpotValue Value);
+	static INKPOT_API int32 InkpotValueAsInt(const FInkpotValue &Value);
+
+	/* Cast Ink array value to an integer */
+	UFUNCTION(BlueprintPure, Category="Inkpot|Value")
+	static INKPOT_API int32 InkpotArrayValueAsInt(const TArray<FInkpotValue> &Values, int Index = 0);
 
 	/* Create an Ink Value from a float */
 	UFUNCTION(BlueprintPure, Category="Inkpot|Value")
@@ -51,7 +63,11 @@ public:
 
 	/* Cast Ink value to a float*/
 	UFUNCTION(BlueprintPure, Category="Inkpot|Value")
-	static INKPOT_API float InkpotValueAsFloat(FInkpotValue Value);
+	static INKPOT_API float InkpotValueAsFloat(const FInkpotValue &Value);
+
+	/* Cast Ink array value to a float */
+	UFUNCTION(BlueprintPure, Category="Inkpot|Value")
+	static INKPOT_API float InkpotArrayValueAsFloat(const TArray<FInkpotValue> &Values, int Index = 0);
 
 	/* Create an Ink Value from a string */
 	UFUNCTION(BlueprintPure, Category="Inkpot|Value")
@@ -59,7 +75,11 @@ public:
 
 	/* Cast Ink value to a string*/
 	UFUNCTION(BlueprintPure, Category="Inkpot|Value")
-	static INKPOT_API FString InkpotValueAsString(FInkpotValue Value);
+	static INKPOT_API FString InkpotValueAsString(const FInkpotValue &Value);
+
+	/* Cast Ink array value to a string */
+	UFUNCTION(BlueprintPure, Category="Inkpot|Value")
+	static INKPOT_API FString InkpotArrayValueAsString(const TArray<FInkpotValue> &Values, int Index = 0);
 
 	/* Create an Ink List from an array of Strings */
 	UFUNCTION(BlueprintPure, Category="Inkpot|Value")
@@ -68,6 +88,10 @@ public:
 
 	/* Get an array of strings from an Ink List */
 	UFUNCTION(BlueprintPure, Category="Inkpot|Value")
-	static INKPOT_API TArray<FString> InkpotValueAsList(FInkpotValue Value);
+	static INKPOT_API TArray<FString> InkpotValueAsList(const FInkpotValue &Value);
+
+	/* Cast Ink array value to a list */
+	UFUNCTION(BlueprintPure, Category="Inkpot|Value")
+	static INKPOT_API TArray<FString> InkpotArrayValueAsList(const TArray<FInkpotValue> &Values, int Index = 0);
 };
 
