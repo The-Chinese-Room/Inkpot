@@ -1,9 +1,12 @@
 # Inkpot
 **Inkpot** - An container for **Ink** within the Unreal Engine developed by [The Chinese Room](https://www.thechineseroom.co.uk/).<br><br>
 This is a plugin for Unreal Engine 5.3 or later.<br>
-This is version 0.1.20 of the plugin.</br>
+This is version 0.2.20 of the plugin.</br>
 
 Inkpot is a wrapper for the wonderful narrative scripting language **Ink** developed by [Inkle Studios](https://www.inklestudios.com/ink/).<br>
+
+### Changes from 0.1.20
+External functions are now implemented, along with functional tests.
 
 ## Requirements 
 Inkpot works with version 5.3 of Unreal.<br>
@@ -28,7 +31,6 @@ Copy to the plugins folder of your project.<br>
 or add via git as a submodule.<br><br>
 For an example of how this plugin should sit in your project see the InkpotDemo.<br>
 https://github.com/The-Chinese-Room/InkpotDemo
-
 
 ## Module Structure
 Inkpot is made from three modules. <br>
@@ -55,14 +57,13 @@ There area couple of supporting folders that make up the Inkpot distribution.<br
 
 ### TestInkSource
 All the Unit tests for Ink.</br> 
-Currently 168 tests.
+Currently 170 tests.
 
 ### Third Party 
 This contains a copy of InkleCate and is used by the script importer to compile the scripts.<br>
 
 ## What we did not do
 You will note that 2 of the tests fail, these are the JSON serialisation tests & we simply did not need to implement them in our usage case.</br>
-We have also not implemented custom function definition.
 
 ## Thanks to 
 **[Inkle](https://www.inklestudios.com/)** </br>
