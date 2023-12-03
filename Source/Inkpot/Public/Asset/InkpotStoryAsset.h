@@ -4,7 +4,7 @@
 #include "Engine/DataAsset.h"
 #include "InkpotStoryAsset.generated.h"
 
-UCLASS()
+UCLASS(BlueprintType)
 class INKPOT_API UInkpotStoryAsset : public UDataAsset
 {
 	GENERATED_BODY()
