@@ -10,7 +10,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStoryContinue, UInkpotStory*, Sto
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnMakeChoice, UInkpotStory*, Story, UInkpotChoice*, Choice );
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnChoosePath, UInkpotStory*, Story, const FString&, Path );
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSwitchFlow, UInkpotStory*, Story, const FString&, Flow );
-DECLARE_DYNAMIC_DELEGATE_ThreeParams(FOnVariableChange, UInkpotStory*, Story, const FString &, Variable, const FInkpotValue &, NewValue );
+DECLARE_DYNAMIC_DELEGATE_ThreeParams(FOnInkpotVariableChange, UInkpotStory*, Story, const FString &, Variable, const FInkpotValue &, NewValue );
 DECLARE_DYNAMIC_DELEGATE_RetVal_OneParam(FInkpotValue, FInkpotExternalFunction, const TArray<FInkpotValue> & , Values );
 
 UCLASS(BlueprintType)
@@ -118,7 +118,7 @@ public:
 	void SetEmpty( const FString& Variable );
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
-	void SetOnVariableChange( UPARAM(DisplayName="Event") const FOnVariableChange& Delegate, const FString &Variable );
+	void SetOnVariableChange( UPARAM(DisplayName="Event") FOnInkpotVariableChange Delegate, const FString &Variable );
 
 	UFUNCTION(BlueprintCallable, Meta = (DefaultToSelf = "Owner", HidePin = "Owner"), Category="Inkpot|Story")
 	void ClearVariableChange( const UObject* Owner, const FString &Variable );
@@ -133,7 +133,7 @@ public:
 	TArray<FString> GetNamedContentForPath(const FString& Path);
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
-	void BindExternalFunction( const FString &FunctionName, UPARAM(DisplayName="Function") const FInkpotExternalFunction& Function );
+	void BindExternalFunction( const FString &FunctionName, UPARAM(DisplayName="Function") FInkpotExternalFunction Function );
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
 	void UnbindExternalFunction( const FString &FunctionName );
