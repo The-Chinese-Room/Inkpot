@@ -17,7 +17,7 @@ void UInkpotWatch::BindOnBeginStory()
 
 void UInkpotWatch::OnBeginStory( UInkpotStory* InStory )
 {
-	FOnVariableChange delegate;
+	FOnInkpotVariableChange delegate;
 	delegate.BindDynamic(this, &UInkpotWatch::OnVariableChange );
 	InStory->SetOnVariableChange( delegate, VariableWatch );
 }
