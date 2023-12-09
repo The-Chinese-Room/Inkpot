@@ -291,7 +291,7 @@ void UInkpotStory::ObserveVariable( const FString& InVariable, TSharedPtr<FStory
 	StoryInternal->ObserveVariable( InVariable, InObserver );
 }
 
-void UInkpotStory::SetOnVariableChange( const FOnVariableChange& InDelegate, const FString &InVariable )
+void UInkpotStory::SetOnVariableChange( FOnInkpotVariableChange InDelegate, const FString &InVariable )
 {
 	TSharedPtr<FStoryVariableObserver> observer = MakeShared<FStoryVariableObserver>();
 	observer->BindWeakLambda
@@ -553,7 +553,7 @@ TArray<FString> UInkpotStory::GetNamedContent(TSharedPtr<Ink::FContainer> InCont
 	return keys;
 }
 
-void UInkpotStory::BindExternalFunction( const FString &InFunctionName, const FInkpotExternalFunction& InFunction )
+void UInkpotStory::BindExternalFunction( const FString &InFunctionName, FInkpotExternalFunction InFunction )
 {
 	TSharedPtr<FStoryExternalFunction> function = MakeShared<FStoryExternalFunction>();
 	function->BindWeakLambda

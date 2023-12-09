@@ -32,7 +32,7 @@ void UAsyncAction_WaitVariableChange::OnBeginStory(UInkpotStory* InStory)
 	check(Inkpot);
 	Inkpot->EventOnStoryEnd.AddUniqueDynamic(this, &UAsyncAction_WaitVariableChange::OnEndStory);
 	
-	FOnVariableChange Delegate;
+	FOnInkpotVariableChange Delegate;
 	Delegate.BindDynamic(this, &UAsyncAction_WaitVariableChange::OnVariableChange);
 	InStory->SetOnVariableChange(Delegate, VariableToListen);
 }
