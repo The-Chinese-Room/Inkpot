@@ -133,7 +133,7 @@ public:
 	TArray<FString> GetNamedContentForPath(const FString& Path);
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
-	void BindExternalFunction( const FString &FunctionName, UPARAM(DisplayName="Function") FInkpotExternalFunction Function );
+	void BindExternalFunction( const FString &FunctionName, UPARAM(DisplayName="Function") FInkpotExternalFunction Function, bool bLookAheadSafe = true );
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
 	void UnbindExternalFunction( const FString &FunctionName );

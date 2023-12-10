@@ -553,7 +553,7 @@ TArray<FString> UInkpotStory::GetNamedContent(TSharedPtr<Ink::FContainer> InCont
 	return keys;
 }
 
-void UInkpotStory::BindExternalFunction( const FString &InFunctionName, FInkpotExternalFunction InFunction )
+void UInkpotStory::BindExternalFunction( const FString &InFunctionName, FInkpotExternalFunction InFunction, bool bInLookAheadSafe  )
 {
 	TSharedPtr<FStoryExternalFunction> function = MakeShared<FStoryExternalFunction>();
 	function->BindWeakLambda
@@ -568,7 +568,7 @@ void UInkpotStory::BindExternalFunction( const FString &InFunctionName, FInkpotE
 			return *value;
 		}
 	);
-	StoryInternal->BindExternalFunctionGeneral( InFunctionName, function );
+	StoryInternal->BindExternalFunctionGeneral( InFunctionName, function, bInLookAheadSafe );
 }
 
 void UInkpotStory::UnbindExternalFunction( const FString &InFunctionName )
