@@ -199,7 +199,7 @@ void Ink::FStory::SwitchToDefaultFlow() const
 /// <returns>The line of text content.</returns>
 FString Ink::FStory::Continue()
 {
-	constexpr float millisecondsLimitAsync = 2.0f;
+	constexpr float millisecondsLimitAsync = 0.0f;
 	ContinueAsync(millisecondsLimitAsync);
 	return GetCurrentText();
 }
