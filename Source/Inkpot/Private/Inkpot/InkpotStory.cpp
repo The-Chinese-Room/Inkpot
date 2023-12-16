@@ -41,7 +41,9 @@ bool UInkpotStory::IsValid() const
 
 FString UInkpotStory::GetCurrentText()
 {
-	return StoryInternal->GetCurrentText();
+	FString currentText = StoryInternal->GetCurrentText();
+	currentText.TrimEndInline();
+	return currentText;
 }
 
 const TArray<FString>& UInkpotStory::GetCurrentTags()
@@ -576,3 +578,30 @@ void UInkpotStory::UnbindExternalFunction( const FString &InFunctionName )
 	StoryInternal->UnbindExternalFunction( InFunctionName );
 }
 
+
+FOnStoryContinue& UInkpotStory::OnContinue()
+{
+	return EventOnContinue;
+}
+
+FOnMakeChoice& UInkpotStory::OnMakeChoice()
+{
+	return EventOnMakeChoice;
+}
+
+FOnChoosePath& UInkpotStory::OnChoosePath()
+{
+	return EventOnChoosePath;
+}
+
+FOnSwitchFlow& UInkpotStory::OnSwitchFlow()
+{
+	return EventOnSwitchFlow;
+}
+
+UInkpotLine *UInkpotStory::GetCurrentLine()
+{
+	UInkpotLine* line = NewObject<UInkpotLine>( this );
+	line->Initialise( GetCurrentText() );
+	return line;
+}

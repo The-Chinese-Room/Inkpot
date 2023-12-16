@@ -3,6 +3,7 @@
 #include "Coreminimal.h"
 #include "Inkpot/InkpotStoryInternal.h"
 #include "Inkpot/InkpotChoice.h"
+#include "Inkpot/InkpotLine.h"
 #include "Inkpot/InkpotValue.h"
 #include "InkpotStory.generated.h"
 
@@ -35,6 +36,9 @@ public:
 
 	UFUNCTION(BlueprintPure, Category="Inkpot|Story")
 	FString GetCurrentText();
+
+	UFUNCTION(BlueprintPure, Category="Inkpot|Story")
+	UInkpotLine *GetCurrentLine();
 
 	UFUNCTION(BlueprintPure, Category="Inkpot|Story")
 	bool HasChoices();
@@ -146,6 +150,11 @@ public:
 	bool GetVariable( const FString& InVariable, Ink::EValueType InType, T& OutValue );
 
 	void ObserveVariable( const FString& Variable, TSharedPtr<FStoryVariableObserver> Observer );
+
+	FOnStoryContinue& OnContinue(); 
+	FOnMakeChoice& OnMakeChoice(); 
+	FOnChoosePath& OnChoosePath(); 
+	FOnSwitchFlow& OnSwitchFlow(); 
 
 	int32 GetID() const;
 	bool IsValid() const;
