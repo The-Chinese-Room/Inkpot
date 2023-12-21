@@ -15,18 +15,39 @@ UInkpotStories::UInkpotStories()
 void UInkpotStories::Initialise()
 {
 	BadStory->Initialise( MakeShared<FInkpotStoryInternal>( BadInkJSON , FInkpotStoryInternal::BadStoryHandle ) );
+	Reset();
 }
 
-UInkpotStory* UInkpotStories::BeginStory( UInkpotStoryAsset* InStory )
+void UInkpotStories::Reset()
 {
-	if(!InStory)
+	NextStoryHandle = 0;
+	Stories.Empty();
+	StoryAssets.Empty();
+	StoryHistories.Empty();
+}
+
+TSharedPtr<FInkpotStoryInternal> UInkpotStories::CreateStoryInternal(UInkpotStoryAsset* InInkpotStoryAsset, int32 InHandle )
+{
+	if(!InInkpotStoryAsset)
 	{
 		INKPOT_ERROR("No story asset.");
-		return BadStory;
+		return nullptr;
 	}
 
-	const FString &json = InStory->GetCompiledJSON();
-	TSharedRef<FInkpotStoryInternal> storyInternal = MakeShared<FInkpotStoryInternal>( json, NextStoryHandle );
+	const FString &json = InInkpotStoryAsset->GetCompiledJSON();
+	return MakeShared<FInkpotStoryInternal>( json, InHandle );
+}
+
+UInkpotStory* UInkpotStories::BeginStory( UInkpotStoryAsset* InInkpotStoryAsset )
+{
+	int32 handle;
+	const int32 *keyptr = StoryAssets.FindKey( InInkpotStoryAsset );
+	if(keyptr)
+		handle = *keyptr;
+	else
+		handle = NextStoryHandle++;
+
+	TSharedPtr<FInkpotStoryInternal> storyInternal = CreateStoryInternal( InInkpotStoryAsset, handle );
 	if(!storyInternal->IsValidStory())
 	{
 		INKPOT_ERROR("Story asset is not a valid Ink story.");
@@ -35,8 +56,11 @@ UInkpotStory* UInkpotStories::BeginStory( UInkpotStoryAsset* InStory )
 
 	UInkpotStory *storyNew = NewObject<UInkpotStory>(this);
 	storyNew->Initialise( storyInternal );
-	Stories.Emplace( NextStoryHandle, storyNew );
-	NextStoryHandle++;
+	Stories.Emplace( handle, storyNew );
+	StoryAssets.Emplace( handle, InInkpotStoryAsset );
+	StoryHistories.Emplace( handle, FInkpotStoryHistory() );
+
+	storyNew->OnMakeChoice().AddDynamic( this, &UInkpotStories::OnStoryChoice );
 
 	return storyNew;
 }
@@ -53,6 +77,8 @@ void UInkpotStories::EndStory(int32 InStoryHandle)
 	if(!Stories.Contains(InStoryHandle))
 		return;
 	Stories.Remove( InStoryHandle );
+	StoryAssets.Remove( InStoryHandle );
+	StoryHistories.Remove( InStoryHandle );
 }
 
 UInkpotStory* UInkpotStories::GetStory( int32 InStoryHandle ) const
@@ -63,5 +89,61 @@ UInkpotStory* UInkpotStories::GetStory( int32 InStoryHandle ) const
 		return BadStory;
 	}
 	return Stories[InStoryHandle];
+}
+
+UInkpotStory* UInkpotStories::Reload( UInkpotStoryAsset* InInkpotStoryAsset )
+{
+	const int32 *keyptr = StoryAssets.FindKey( InInkpotStoryAsset );
+	if(!keyptr)
+		return nullptr;
+	int32 handle = *keyptr;
+
+	UInkpotStory **storyInProgressPtr = Stories.Find( handle );
+	if(!storyInProgressPtr)
+		return nullptr;
+
+	TSharedPtr<FInkpotStoryInternal> storyInternal = CreateStoryInternal( InInkpotStoryAsset, handle );
+	if(!storyInternal->IsValidStory())
+		return nullptr;
+
+	UInkpotStory *story = *storyInProgressPtr;
+	story->ResetContent( storyInternal );
+	return story;
+}
+
+void UInkpotStories::Replay( UInkpotStory* InStory, bool bInResetState )
+{
+	if(!InStory)
+		return;
+
+	int index = InStory->GetID();
+	FInkpotStoryHistory *history = StoryHistories.Find( index );
+	if(!history)
+		return;
+
+	history->bInReplay = true;
+
+	if(bInResetState)
+		InStory->ResetState();
+	InStory->ContinueMaximally();
+	for( int32 choice : history->Choices )
+	{
+		InStory->ChooseChoiceIndex( choice );
+		InStory->ContinueMaximally();
+	}
+
+	history->bInReplay = false;
+}
+
+void UInkpotStories::OnStoryChoice( UInkpotStory* InStory, UInkpotChoice* InChoice )
+{
+	int index = InStory->GetID();
+	FInkpotStoryHistory *history = StoryHistories.Find( index );
+	if(!history)
+		return;
+	if(history->bInReplay)
+		return;
+	int choice = InChoice->GetIndex();
+	history->Choices.Push( choice );
 }
 

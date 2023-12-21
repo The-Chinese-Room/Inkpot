@@ -28,3 +28,10 @@ bool FInkpotStoryInternal::HasChoices() const
 		return false;
 	return true;
 }
+
+void FInkpotStoryInternal::ResetContent( TSharedPtr<FInkpotStoryInternal> InStory )
+{
+	ListDefinitions = InStory->ListDefinitions;
+	MainContentContainer = InStory->MainContentContainer;
+	ResetState();
+}

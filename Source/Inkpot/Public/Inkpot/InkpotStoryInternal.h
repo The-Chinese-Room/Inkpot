@@ -12,6 +12,7 @@ public:
 	bool IsValidStory() const;
 
 	bool HasChoices() const;
+	void ResetContent( TSharedPtr<FInkpotStoryInternal> InStory );
 
 public:
 	static const int32 BadStoryHandle {-1};

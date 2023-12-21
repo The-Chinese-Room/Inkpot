@@ -20,7 +20,7 @@ class INKPOT_API UInkpotStory : public UObject
 	GENERATED_BODY()
 
 public:
-	void Initialise( TSharedRef<FInkpotStoryInternal>  InInkpotStory );
+	void Initialise( TSharedPtr<FInkpotStoryInternal>  InInkpotStory );
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
 	FString Continue();
@@ -155,6 +155,9 @@ public:
 	FOnMakeChoice& OnMakeChoice(); 
 	FOnChoosePath& OnChoosePath(); 
 	FOnSwitchFlow& OnSwitchFlow(); 
+
+	void ResetContent( TSharedPtr<FInkpotStoryInternal> InNewStoryContent ); 
+	void ResetState();
 
 	int32 GetID() const;
 	bool IsValid() const;
