@@ -12,7 +12,7 @@ const FString InkScratchDirectory = InkpotPath + TEXT("Intermediate/InkCommandLi
 
 namespace InkCompiler
 {
-	bool CompileInkFile_Internal(const FString& InkFilePath, const FString& InScratchFilePath, FString& OutCompiledJSON, TArray<FString>& Errors, TArray<FString>& Warnings, bool shouldCountVisits)
+	bool CompileInkFile_Internal(const FString& InkFilePath, const FString& InScratchFilePath, FString& OutCompiledJSON, TArray<FString>& Errors, TArray<FString>& Warnings, bool shouldCountVisits, bool bIsCompilationFailExpected )
 	{
 		// Check if inklecate exists
 		const FString inkExePath = InkleCatePath;
@@ -44,7 +44,11 @@ namespace InkCompiler
 		ParseInklecateOutput(stdOut, Errors, Warnings, bCompiled, bExported);
 		if (!bCompiled)
 		{
-			INKPOT_WARN("CompileInkString - %s failed to compile ink string. Error %s: ", *InkFilePathStripped, *(stdOut + stdErr));
+			// supress warnings for tests that we expect to fail compilation
+			if(!bIsCompilationFailExpected)
+			{
+				INKPOT_WARN( "CompileInkString - %s failed to compile ink string. Error %s: ", *InkFilePathStripped, *(stdOut + stdErr) );
+			}
 			return false;
 		}
 		if (!bExported)
@@ -99,18 +103,18 @@ namespace InkCompiler
 		}
 	}
 
-	bool CompileInkFile(const FString& InSourceFilePath, const FString& ScratchFilePath, FString& OutCompiledJSON, TArray<FString>& Errors, TArray<FString>& Warnings, bool shouldCountVisits)
+	bool CompileInkFile(const FString& InSourceFilePath, const FString& ScratchFilePath, FString& OutCompiledJSON, TArray<FString>& Errors, TArray<FString>& Warnings, bool shouldCountVisits, bool bIsCompilationFailExpected )
 	{
 		// Copy the ink source file to the scratch directory for compiling 
 		IFileManager::Get().Copy(*ScratchFilePath, *InSourceFilePath, true, false, false, nullptr);
-		return CompileInkFile_Internal(InSourceFilePath, ScratchFilePath, OutCompiledJSON, Errors, Warnings, shouldCountVisits);
+		return CompileInkFile_Internal(InSourceFilePath, ScratchFilePath, OutCompiledJSON, Errors, Warnings, shouldCountVisits, bIsCompilationFailExpected);
 	}
 
-	bool CompileInkString(const FString& SourceString, const FString& ScratchFilePath, FString& OutCompiledJSON, TArray<FString>& Errors, TArray<FString>& Warnings, bool shouldCountVisits)
+	bool CompileInkString(const FString& SourceString, const FString& ScratchFilePath, FString& OutCompiledJSON, TArray<FString>& Errors, TArray<FString>& Warnings, bool shouldCountVisits, bool bIsCompilationFailExpected )
 	{
 		// Save the ink source string to an ink file in the scratch directory for compiling 
 		FFileHelper::SaveStringToFile(SourceString, *ScratchFilePath);
-		return CompileInkFile_Internal(ScratchFilePath, ScratchFilePath, OutCompiledJSON, Errors, Warnings, shouldCountVisits);
+		return CompileInkFile_Internal(ScratchFilePath, ScratchFilePath, OutCompiledJSON, Errors, Warnings, shouldCountVisits, bIsCompilationFailExpected );
 	}
 
 	void ParseInklecateOutput(const FString& InklecateOutput, TArray<FString>& Errors, TArray<FString>& Warnings, bool& bCompileSuccess, bool& bExportSuccess)

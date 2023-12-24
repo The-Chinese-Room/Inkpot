@@ -142,6 +142,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
 	void UnbindExternalFunction( const FString &FunctionName );
 
+	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
+	FString ToJSON();
+
+	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
+	void LoadJSON(const FString &InJSON);
+
 	int32 GetVariableKeys( TArray<FString> &OutKeys );
 
 	TSharedPtr<Ink::FObject> GetVariable( const FString& InVariable );
@@ -155,6 +161,8 @@ public:
 	FOnMakeChoice& OnMakeChoice(); 
 	FOnChoosePath& OnChoosePath(); 
 	FOnSwitchFlow& OnSwitchFlow(); 
+
+	void ResetState();
 
 	int32 GetID() const;
 	bool IsValid() const;
