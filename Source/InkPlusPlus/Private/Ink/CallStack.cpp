@@ -393,7 +393,7 @@ void Ink::FCallStack::WriteJson(TJsonWriter<>* InJSONWriter)
 {
 	InJSONWriter->WriteObjectStart();
 	
-	InJSONWriter->WriteValue(TEXT("threads"));
+	InJSONWriter->WriteIdentifierPrefix(TEXT("threads"));
 	InJSONWriter->WriteArrayStart();
 	for (const TSharedPtr<Ink::FThread>& thread : Threads)
 	{
@@ -401,9 +401,7 @@ void Ink::FCallStack::WriteJson(TJsonWriter<>* InJSONWriter)
 	}
 	InJSONWriter->WriteArrayEnd();
 
-	InJSONWriter->WriteValue(TEXT("threadCounter"));
-	InJSONWriter->WriteObjectStart();
-	InJSONWriter->WriteValue(ThreadCounter);
+	InJSONWriter->WriteValue(TEXT("threadCounter"), ThreadCounter);
 	
 	InJSONWriter->WriteObjectEnd();
 }
@@ -422,7 +420,7 @@ void Ink::FCallStack::SetJsonToken(const FJsonObject& InJSONObject, Ink::FStory*
 	for (const TSharedPtr<FJsonValue>& jsonThreadToken : *jsonThreads)
 	{
 		const TSharedPtr<FJsonObject>* jsonThreadObject;
-		if (jsonThreadToken->TryGetObject(jsonThreadObject))
+		if (!jsonThreadToken->TryGetObject(jsonThreadObject))
 		{
 			UE_LOG(InkPlusPlus, Error, TEXT("CallStack : failed to get thread object out of the JSON Thread Token!"))
 			continue;
@@ -500,7 +498,13 @@ int32 Ink::FCallStack::ContextForVariableNamed(const FString& InName)
 
 TSharedPtr<Ink::FThread> Ink::FCallStack::ThreadWithIndex(int32 InIndex)
 {
-	return *Threads.FindByPredicate([&](const TSharedPtr<Ink::FThread>& InThread){return InThread->GetIndex() == InIndex;});
+	TSharedPtr<Ink::FThread> *found = Threads.FindByPredicate(
+		[&](const TSharedPtr<Ink::FThread>& InThread)
+		{
+			return InThread->GetIndex() == InIndex;
+		}
+	);
+	return found ? *found : nullptr;
 }
 
 FString Ink::FCallStack::CallStackTrace() const

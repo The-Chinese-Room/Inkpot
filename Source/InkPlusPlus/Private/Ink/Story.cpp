@@ -1626,7 +1626,8 @@ void Ink::FStory::ChooseChoiceIndex(int ChoiceIndex)
 	// can create multiple leading edges for the story, each of
 	// which has its own context.
 	const TSharedPtr<FChoice> choiceToChoose = GetCurrentChoices()[ChoiceIndex];
-	State->CallStack()->SetCurrentThread(choiceToChoose->GetThreadAtGeneration());
+	TSharedPtr<Ink::FThread> thread = choiceToChoose->GetThreadAtGeneration();
+	State->CallStack()->SetCurrentThread( thread );
 	ChoosePath(choiceToChoose->GetTargetPath());
 
 	OnMakeChoiceEvent.Broadcast(choiceToChoose);

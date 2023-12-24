@@ -605,3 +605,21 @@ UInkpotLine *UInkpotStory::GetCurrentLine()
 	line->Initialise( GetCurrentText() );
 	return line;
 }
+
+FString UInkpotStory::ToJSON()
+{
+	return StoryInternal->GetStoryState()->ToJson();
+}
+
+void UInkpotStory::LoadJSON(const FString &InJSON)
+{
+	StoryInternal->GetStoryState()->LoadJSON( InJSON );
+}
+
+void UInkpotStory::ResetState()
+{
+	StoryInternal->ResetState();
+}
+
+
+

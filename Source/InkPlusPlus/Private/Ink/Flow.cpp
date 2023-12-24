@@ -30,7 +30,6 @@ Ink::FFlow::FFlow(const FString& InName, Ink::FStory* InStory, const TSharedPtr<
 	if (!InJSONObject->TryGetArrayField(TEXT("outputStream"), outputStreamJsonArray))
 		UE_LOG(InkPlusPlus, Error, TEXT("Flow : failed to get Output Stream JSON array out of passed in JSON Object!"));
 
-
 	OutputStream = Ink::FJsonSerialisation::JsonArrayToRuntimeObjectList(*outputStreamJsonArray);
 
 	const TArray<TSharedPtr<FJsonValue>>* currentChoiceJsonArray;
@@ -48,6 +47,7 @@ Ink::FFlow::FFlow(const FString& InName, Ink::FStory* InStory, const TSharedPtr<
 void Ink::FFlow::WriteJSON(TJsonWriter<>* InJSONWriter)
 {
 	InJSONWriter->WriteObjectStart();
+
 	InJSONWriter->WriteIdentifierPrefix(TEXT("callstack"));
 	CallStack->WriteJson(InJSONWriter);
 
@@ -102,12 +102,6 @@ void Ink::FFlow::LoadFlowChoiceThreads(const TMap<FString, TSharedPtr<FJsonValue
 		}
 		else
 		{
-			if (choice->GetOriginalThreadIndex() > InJSONChoiceThreads.Num())
-			{
-				UE_LOG(InkPlusPlus, Error, TEXT("Flow : cannot get JSON Saved Choice Thread from Passed in Threads, as the accessing index is out of bounds!"))
-				return;
-			}
-			
 			const TSharedPtr<FJsonValue> jsonSavedChoiceThread = InJSONChoiceThreads[FString::FromInt(choice->GetOriginalThreadIndex())];
 			const TSharedPtr<FJsonObject>* jsonSavedChoiceThreadObject;
 			if (!jsonSavedChoiceThread->TryGetObject(jsonSavedChoiceThreadObject))

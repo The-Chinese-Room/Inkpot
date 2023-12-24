@@ -107,26 +107,6 @@ namespace Ink
 		void BindExternalFunctionGeneral(const FString& funcName, TSharedPtr<FStoryExternalFunction> func, bool lookaheadSafe = true);
 		void UnbindExternalFunction(const FString& funcName);
 
-		/* // EXTERNAL FUNCTIONS FUNCTIONALITY
-		 * 
-		 * public delegate object ExternalFunction(object[] args);
-		 * object TryCoerce<T>(object value)
-		 * public void BindExternalFunction(string funcName, Func<object> func, bool lookaheadSafe=false)
-		 * public void BindExternalFunction(string funcName, Action act, bool lookaheadSafe=false)
-		 * public void BindExternalFunction<T>(string funcName, Func<T, object> func, bool lookaheadSafe=false)
-		 * public void BindExternalFunction<T>(string funcName, Action<T> act, bool lookaheadSafe=false)
-		 * public void BindExternalFunction<T1, T2>(string funcName, Func<T1, T2, object> func, bool lookaheadSafe = false)
-		 * public void BindExternalFunction<T1, T2>(string funcName, Action<T1, T2> act, bool lookaheadSafe=false)
-		 * public void BindExternalFunction<T1, T2, T3>(string funcName, Func<T1, T2, T3, object> func, bool lookaheadSafe=false)
-		 * public void BindExternalFunction<T1, T2, T3>(string funcName, Action<T1, T2, T3> act, bool lookaheadSafe=false)
-		 * public void BindExternalFunction<T1, T2, T3, T4>(string funcName, Func<T1, T2, T3, T4, object> func, bool lookaheadSafe=false)
-		 * public void BindExternalFunction<T1, T2, T3, T4>(string funcName, Action<T1, T2, T3, T4> act, bool lookaheadSafe=false)
-		 * public void UnbindExternalFunction(string funcName)
-		 * public void ValidateExternalBindings()
-		 * void ValidateExternalBindings(Container c, HashSet<string> missingExternals)
-		 * void ValidateExternalBindings(Runtime.Object o, HashSet<string> missingExternals)
-		 */
-
 		void ObserveAllVariables(TWeakPtr<FStoryVariableObserver> Observer);
 		void ObserveVariable(const FString& VariableName, TWeakPtr<FStoryVariableObserver> Observer);
 		void ObserveVariables(const TArray<FString> VariableNames, TWeakPtr<FStoryVariableObserver> Observer);

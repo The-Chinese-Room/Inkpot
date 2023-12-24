@@ -1,4 +1,4 @@
-﻿VAR t2 = 5
+VAR t2 = 5
 
 The value of a variable in test file 2 is { t2 }.
 

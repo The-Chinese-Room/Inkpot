@@ -1,4 +1,3 @@
-
 LIST Food = Pizza, Pasta, Curry, Paella
 LIST Currency = Pound, Euro, Dollar
 LIST Numbers = One, Two, Three, Four, Five, Six, Seven
