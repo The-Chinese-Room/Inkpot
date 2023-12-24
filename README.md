@@ -6,7 +6,7 @@ This is version 0.3.20 of the plugin.</br>
 Inkpot is a wrapper for the wonderful narrative scripting language **Ink** developed by [Inkle Studios](https://www.inklestudios.com/ink/).<br>
 
 ### Changes from 0.2.20
-JSON serilaisation now functional.
+JSON serialisation now functional.
 
 ### Changes from 0.1.20
 External functions are now implemented, along with functional tests.
