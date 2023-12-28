@@ -614,6 +614,9 @@ FString UInkpotStory::ToJSON()
 void UInkpotStory::LoadJSON(const FString &InJSON)
 {
 	StoryInternal->GetStoryState()->LoadJSON( InJSON );
+	UpdateChoices();
+	if(EventOnStoryLoadJSON.IsBound())
+		EventOnStoryLoadJSON.Broadcast( this );
 }
 
 void UInkpotStory::ResetState()

@@ -13,6 +13,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnChoosePath, UInkpotStory*, Story
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSwitchFlow, UInkpotStory*, Story, const FString&, Flow );
 DECLARE_DYNAMIC_DELEGATE_ThreeParams(FOnInkpotVariableChange, UInkpotStory*, Story, const FString &, Variable, const FInkpotValue &, NewValue );
 DECLARE_DYNAMIC_DELEGATE_RetVal_OneParam(FInkpotValue, FInkpotExternalFunction, const TArray<FInkpotValue> & , Values );
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStoryLoadJSON, UInkpotStory*, Story );
 
 UCLASS(BlueprintType)
 class INKPOT_API UInkpotStory : public UObject
@@ -161,6 +162,7 @@ public:
 	FOnMakeChoice& OnMakeChoice(); 
 	FOnChoosePath& OnChoosePath(); 
 	FOnSwitchFlow& OnSwitchFlow(); 
+	FOnStoryLoadJSON OnStoryLoadJSON(); 
 
 	void ResetState();
 
@@ -206,6 +208,9 @@ protected:
 
 	UPROPERTY(BlueprintAssignable, Category="Inkpot|Story", meta=(DisplayName="OnSwitchFlow") )
 	FOnSwitchFlow EventOnSwitchFlow; 
+
+	UPROPERTY(BlueprintAssignable, Category="Inkpot|Story", meta=(DisplayName="OnStoryLoadJSON") )
+	FOnStoryLoadJSON EventOnStoryLoadJSON;
 
 private:
 	UPROPERTY(Transient)

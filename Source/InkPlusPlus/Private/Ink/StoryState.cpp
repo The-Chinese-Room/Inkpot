@@ -680,13 +680,13 @@ void Ink::FStoryState::WriteJson(TJsonWriter<>* Writer) const
 	Writer->WriteArrayEnd();
 
 	if (!DivertedPointer.IsNull())
-		WriteProperty(Writer, "currentDivertTarget", DivertedPointer.GetPath()->GetComponentsString());
+		Writer->WriteValue( TEXT("currentDivertTarget"), DivertedPointer.GetPath()->GetComponentsString());
 
 	Writer->WriteIdentifierPrefix("visitCounts");
 	Writer->WriteObjectStart();
 	for (const TTuple<FString, int>& pair: VisitCounts)
 	{
-		WriteProperty(Writer, pair.Key, pair.Value);
+		Writer->WriteValue( pair.Key, pair.Value );
 	}
 	Writer->WriteObjectEnd();
 
@@ -694,7 +694,7 @@ void Ink::FStoryState::WriteJson(TJsonWriter<>* Writer) const
 	Writer->WriteObjectStart();
 	for (const TTuple<FString, int>& pair : TurnIndices)
 	{
-		WriteProperty(Writer, pair.Key, pair.Value);
+		Writer->WriteValue( pair.Key, pair.Value );
 	}
 	Writer->WriteObjectEnd();
 
@@ -705,15 +705,6 @@ void Ink::FStoryState::WriteJson(TJsonWriter<>* Writer) const
 
 	// Not using this right now, but could do in future.
 	Writer->WriteValue(TEXT("inkFormatVersion"), Story->inkVersionCurrent );
-	Writer->WriteObjectEnd();
-}
-
-template<typename T>
-void Ink::FStoryState::WriteProperty(TJsonWriter<>* Writer, const FString& PropertyName, T PropertyValue) const
-{
-	Writer->WriteIdentifierPrefix(PropertyName);
-	Writer->WriteObjectStart();
-	Writer->WriteValue(PropertyValue);
 	Writer->WriteObjectEnd();
 }
 
