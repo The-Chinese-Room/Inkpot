@@ -60,7 +60,7 @@ There area couple of supporting folders that make up the Inkpot distribution.<br
 
 ### TestInkSource
 All the Unit tests for Ink.</br> 
-Currently 171 tests.
+Currently 175 tests.
 
 ### Third Party 
 This contains a copy of InkleCate and is used by the script importer to compile the scripts.<br>
