@@ -280,7 +280,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 				testInstruction->Values.GetKeys(keys);
 				if (keys.Num() != 1)
 				{
-					INKPOT_ERROR("Invalid test script, expected only one field per instruction: %s", *InkTestName);
+					INKPOT_ERROR("Invalid test script, expected only one field per instruction: %s\n", *InkTestName);
 					return false;
 				}
 
@@ -295,7 +295,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 							bool instructionSuccess = errors == compileErrors.Num();
 							if (!instructionSuccess)
 							{
-								INKPOT_ERROR("%s : TEST_ERROR_EQUAL are not as expected. \nExpected: %d\nActual__: %d", *InkTestName, errors, compileErrors.Num());
+								INKPOT_ERROR("%s : TEST_ERROR_EQUAL are not as expected. \nExpected: %d\nActual__: %d\n", *InkTestName, errors, compileErrors.Num());
 								return false;
 							}
 						}
@@ -315,7 +315,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 							}
 							if (!bFoundError)
 							{
-								INKPOT_ERROR("%s : TEST_ERROR_TYPE are not as expected. Expected error : %s ", *InkTestName, *errorString);
+								INKPOT_ERROR("%s : TEST_ERROR_TYPE are not as expected. Expected error : %s \n", *InkTestName, *errorString);
 								return false;
 							}
 						}
@@ -335,7 +335,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 							}
 							if (!bFoundError)
 							{
-								INKPOT_ERROR("%s : TEST_ERROR_TYPE are not as expected. Expected error : %s ", *InkTestName, *warningString);
+								INKPOT_ERROR("%s : TEST_ERROR_TYPE are not as expected. Expected error : %s \n", *InkTestName, *warningString);
 								return false;
 							}
 						}
@@ -347,7 +347,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 							int32 warnings = jsonParsedInt;
 							if (warnings != compileWarnings.Num())
 							{
-								INKPOT_ERROR("%s : TEST_WARNING_EQUAL are not as expected. \nExpected: %d\nActual__: %d", *InkTestName, warnings, compileWarnings.Num());
+								INKPOT_ERROR("%s : TEST_WARNING_EQUAL are not as expected. \nExpected: %d\nActual__: %d\n", *InkTestName, warnings, compileWarnings.Num());
 								return false;
 							}
 						}
@@ -368,7 +368,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 
 							if (story == nullptr)
 							{
-								INKPOT_ERROR("Failed to Compile test story: %s", *InkTestName);
+								INKPOT_ERROR("Failed to Compile test story: %s\n", *InkTestName);
 								return false;
 							}
 						}
@@ -398,7 +398,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 
 						if (story == nullptr)
 						{
-							INKPOT_ERROR("Failed to Compile test script: %s", *InkTestName);
+							INKPOT_ERROR("Failed to Compile test script: %s\n", *InkTestName);
 							return false;
 						}
 					}
@@ -431,7 +431,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 									const bool executeSuccess = (expected != "-1") ? continueText.Equals(expected) : true;
 									if (!executeSuccess)
 									{
-										INKPOT_ERROR("%s : EXECUTE_STORY_CONTINUE are not as expected. \nExpected: %s\nActual__: %s", *InkTestName, *expected, *continueText);
+										INKPOT_ERROR("%s : EXECUTE_STORY_CONTINUE are not as expected. \nExpected: %s\nActual__: %s\n", *InkTestName, *expected, *continueText);
 										return false;
 									}
 								}
@@ -463,7 +463,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 								}
 								else
 								{
-									INKPOT_ERROR("%s : EXECUTE_CONTINUE_MAXIMALLY Executing ContinueMaximally() ailed ", *InkTestName);
+									INKPOT_ERROR("%s : EXECUTE_CONTINUE_MAXIMALLY Executing ContinueMaximally() failed \n", *InkTestName);
 									return false;
 								}
 							}
@@ -481,7 +481,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 									const bool success = actual.Equals(expected);
 									if (!success)
 									{
-										INKPOT_ERROR("%s : TEST_CURRENT_STORY_TEXT not as expected. \nExpected: %s\nActual__: %s", *InkTestName, *expected, *actual);
+										INKPOT_ERROR("%s : TEST_CURRENT_STORY_TEXT not as expected. \nExpected: %s\nActual__: %s\n", *InkTestName, *expected, *actual);
 										return false;
 									}
 								}
@@ -497,7 +497,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 								const bool success = (choiceCount == storyChoiceCount);
 								if (!success)
 								{
-									INKPOT_ERROR("%s : TEST_CHOICE_COUNT are not as expected. \nExpected: %d\nActual__: %d", *InkTestName, choiceCount, storyChoiceCount );
+									INKPOT_ERROR("%s : TEST_CHOICE_COUNT are not as expected. \nExpected: %d\nActual__: %d\n", *InkTestName, choiceCount, storyChoiceCount );
 									return false;
 								}
 							}
@@ -511,7 +511,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 								const bool success = expectedStackCount == actualStackCount;
 								if (!success)
 								{
-									INKPOT_ERROR("%s : TEST_STORY_EVALUATION_STACK_COUNT are not as expected. \nExpected: %d\nActual__: %d", *InkTestName, expectedStackCount, actualStackCount);
+									INKPOT_ERROR("%s : TEST_STORY_EVALUATION_STACK_COUNT are not as expected. \nExpected: %d\nActual__: %d\n", *InkTestName, expectedStackCount, actualStackCount);
 									return false;
 								}
 							}
@@ -523,7 +523,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 							{
 								if (choiceArray->Num() != 2)
 								{
-									INKPOT_ERROR("%s : TEST_CHOICE_TEXT expected a choice and choice text in array eg [2, choiceText] ", *InkTestName);
+									INKPOT_ERROR("%s : TEST_CHOICE_TEXT expected a choice and choice text in array eg [2, choiceText] \n", *InkTestName);
 									return false;
 								}
 
@@ -540,31 +540,31 @@ bool FInkTests::RunTest(const FString& InkTestName)
 											const bool success = choiceText.Equals(expectedChoiceText);
 											if (!success)
 											{
-												INKPOT_ERROR("%s : TEST_CHOICE_TEXT are not as expected. \nExpected: %s\nActual__: %s", *InkTestName, *expectedChoiceText, *choiceText);
+												INKPOT_ERROR("%s : TEST_CHOICE_TEXT are not as expected. \nExpected: %s\nActual__: %s\n", *InkTestName, *expectedChoiceText, *choiceText);
 												return false;
 											}
 										}
 										else
 										{
-											INKPOT_ERROR("%s : TEST_CHOICE_TEXT not enough choices.", *InkTestName);
+											INKPOT_ERROR("%s : TEST_CHOICE_TEXT not enough choices.\n", *InkTestName);
 											return false;
 										}
 									}
 									else
 									{
-										INKPOT_ERROR("%s : TEST_CHOICE_TEXT could not parse choice string.", *InkTestName);
+										INKPOT_ERROR("%s : TEST_CHOICE_TEXT could not parse choice string.\n", *InkTestName);
 										return false;
 									}
 								}
 								else
 								{
-									INKPOT_ERROR("%s : TEST_CHOICE_TEXT could not parse choice index.", *InkTestName);
+									INKPOT_ERROR("%s : TEST_CHOICE_TEXT could not parse choice index.\n", *InkTestName);
 									return false;
 								}
 							}
 							else
 							{
-								INKPOT_ERROR("%s : TEST_CHOICE_TEXT could not parse choice array.", *InkTestName);
+								INKPOT_ERROR("%s : TEST_CHOICE_TEXT could not parse choice array.\n", *InkTestName);
 								return false;
 							}
 
@@ -596,7 +596,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 								}
 								else
 								{
-									INKPOT_ERROR("%s, Missing saved JSON, Call EXECUTE_SAVE_JSON_STATE before this", *InkTestName);
+									INKPOT_ERROR("%s, Missing saved JSON, Call EXECUTE_SAVE_JSON_STATE before this\n", *InkTestName);
 									return false;
 								}
 							}
@@ -677,7 +677,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 								const TArray<FString> &actualTags = story->GetCurrentTags();
 								if (expectedTags->Num() != actualTags.Num())
 								{
-									INKPOT_ERROR("%s : TEST_CURRENT_TAGS Tag count not equal: %s, \nExpected: %d\nActual__: %d", *InkTestName, expectedTags->Num(), actualTags.Num());
+									INKPOT_ERROR("%s : TEST_CURRENT_TAGS Tag count not equal: %s, \nExpected: %d\nActual__: %d\n", *InkTestName, expectedTags->Num(), actualTags.Num());
 									return false;
 								}
 
@@ -686,14 +686,14 @@ bool FInkTests::RunTest(const FString& InkTestName)
 									TSharedPtr<FJsonValue> value = (*expectedTags)[i];
 									if (value->Type != EJson::String)
 									{
-										INKPOT_ERROR("%s : TEST_CURRENT_TAGS Tag is not a string, check test script JSON", *InkTestName, expectedTags->Num(), actualTags.Num());
+										INKPOT_ERROR("%s : TEST_CURRENT_TAGS Tag is not a string, check test script JSON\n", *InkTestName, expectedTags->Num(), actualTags.Num());
 										return false;
 									}
 
 									const bool success = value->AsString().Equals(actualTags[i]);
 									if (!success)
 									{
-										INKPOT_ERROR("%s : TEST_CURRENT_TAGS tag string did not match. \nExpected: %s\nActual__: %s", *InkTestName, *value->AsString(), *actualTags[i]);
+										INKPOT_ERROR("%s : TEST_CURRENT_TAGS tag string did not match. \nExpected: %s\nActual__: %s\n", *InkTestName, *value->AsString(), *actualTags[i]);
 										return false;
 									}
 								}
@@ -707,7 +707,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 								TArray<FString> actualTags = story->GlobalTags();
 								if (expectedTags->Num() != actualTags.Num())
 								{
-									INKPOT_ERROR("%s : TEST_STORY_GLOBAL_TAGS Tag count not equal: %s, \nExpected: %d\nActual__: %d", *InkTestName, expectedTags->Num(), actualTags.Num());
+									INKPOT_ERROR("%s : TEST_STORY_GLOBAL_TAGS Tag count not equal: %s, \nExpected: %d\nActual__: %d\n", *InkTestName, expectedTags->Num(), actualTags.Num());
 									return false;
 								}
 
@@ -716,14 +716,14 @@ bool FInkTests::RunTest(const FString& InkTestName)
 									TSharedPtr<FJsonValue> value = (*expectedTags)[i];
 									if (value->Type != EJson::String)
 									{
-										INKPOT_ERROR("%s : TEST_STORY_GLOBAL_TAGS Tag is not a string, check test script JSON", *InkTestName, expectedTags->Num(), actualTags.Num());
+										INKPOT_ERROR("%s : TEST_STORY_GLOBAL_TAGS Tag is not a string, check test script JSON\n", *InkTestName, expectedTags->Num(), actualTags.Num());
 										return false;
 									}
 
 									const bool success = value->AsString().Equals(actualTags[i]);
 									if (!success)
 									{
-										INKPOT_ERROR("%s : TEST_STORY_GLOBAL_TAGS tag string did not match. \nExpected: %s\nActual__: %s", *InkTestName, *value->AsString(), *actualTags[i]);
+										INKPOT_ERROR("%s : TEST_STORY_GLOBAL_TAGS tag string did not match. \nExpected: %s\nActual__: %s\n", *InkTestName, *value->AsString(), *actualTags[i]);
 										return false;
 									}
 								}
@@ -743,7 +743,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 									{
 										if (expectedTags.Num() != actualTags.Num())
 										{
-											INKPOT_ERROR("%s : TEST_TAG_FOR_PATH Tag count not equal: %s, \nExpected: %d\nActual__: %d", *InkTestName, expectedTags.Num(), actualTags.Num());
+											INKPOT_ERROR("%s : TEST_TAG_FOR_PATH Tag count not equal: %s, \nExpected: %d\nActual__: %d\n", *InkTestName, expectedTags.Num(), actualTags.Num());
 											return false;
 										}
 
@@ -752,7 +752,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 											const bool success = expectedTags[i].Equals(expectedTags[i]);
 											if (!success)
 											{
-												INKPOT_ERROR("%s : TEST_TAG_FOR_PATH tag string did not match. \nExpected: %s\nActual__: %s", *InkTestName, *expectedTags[i], *actualTags[i]);
+												INKPOT_ERROR("%s : TEST_TAG_FOR_PATH tag string did not match. \nExpected: %s\nActual__: %s\n", *InkTestName, *expectedTags[i], *actualTags[i]);
 												return false;
 											}
 										}
@@ -760,13 +760,13 @@ bool FInkTests::RunTest(const FString& InkTestName)
 								}
 								else
 								{
-									INKPOT_ERROR("%s : TEST_TAG_FOR_PATH Could not find PATH in JSON object", *InkTestName);
+									INKPOT_ERROR("%s : TEST_TAG_FOR_PATH Could not find PATH in JSON object\n", *InkTestName);
 									return false;
 								}
 							}
 							else
 							{
-								INKPOT_ERROR("%s : TEST_TAG_FOR_PATH. Could not Deserialize to object ", *InkTestName);
+								INKPOT_ERROR("%s : TEST_TAG_FOR_PATH. Could not Deserialize to object \n", *InkTestName);
 								return false;
 							}
 						}
@@ -780,19 +780,19 @@ bool FInkTests::RunTest(const FString& InkTestName)
 									const bool success = expectedRandomOutputs.Contains(continueOutput);
 									if (!success)
 									{
-										INKPOT_ERROR("%s : TEST_RANDOM_LIST did not contain expected output", *InkTestName);
+										INKPOT_ERROR("%s : TEST_RANDOM_LIST did not contain expected output\n", *InkTestName);
 										return false;
 									}
 								}
 								else
 								{
-									INKPOT_ERROR("%s : TEST_RANDOM_LIST Call EXECUTE_STORY_CONTINUE before testing random", *InkTestName);
+									INKPOT_ERROR("%s : TEST_RANDOM_LIST Call EXECUTE_STORY_CONTINUE before testing random\n", *InkTestName);
 									return false;
 								}
 							}
 							else
 							{
-								INKPOT_ERROR("%s : TEST_RANDOM_LIST Expected a string array", *InkTestName);
+								INKPOT_ERROR("%s : TEST_RANDOM_LIST Expected a string array\n", *InkTestName);
 								return false;
 							}
 						}
@@ -811,20 +811,20 @@ bool FInkTests::RunTest(const FString& InkTestName)
 										const bool success = actualVisitCount == expectedVisitCount;
 										if (!success)
 										{
-											INKPOT_ERROR("%s : TEST_PATH_VISIT_COUNT \nExpected: %d\nActual__: %d", *InkTestName, expectedVisitCount, actualVisitCount);
+											INKPOT_ERROR("%s : TEST_PATH_VISIT_COUNT \nExpected: %d\nActual__: %d\n", *InkTestName, expectedVisitCount, actualVisitCount);
 											return false;
 										}
 									}
 								}
 								else
 								{
-									INKPOT_ERROR("%s : TEST_PATH_VISIT_COUNT Could not find PATH in JSON object", *InkTestName);
+									INKPOT_ERROR("%s : TEST_PATH_VISIT_COUNT Could not find PATH in JSON object\n", *InkTestName);
 									return false;
 								}
 							}
 							else
 							{
-								INKPOT_ERROR("%s : TEST_PATH_VISIT_COUNT. Could not Deserialize to object ", *InkTestName);
+								INKPOT_ERROR("%s : TEST_PATH_VISIT_COUNT. Could not Deserialize to object \n", *InkTestName);
 								return false;
 							}
 						}
@@ -838,13 +838,13 @@ bool FInkTests::RunTest(const FString& InkTestName)
 									const bool success = continueOutput.Contains(expected);
 									if (!success)
 									{
-										INKPOT_ERROR("%s : TEST_CONTINUE_CONTAINS did not contain expected output", *InkTestName);
+										INKPOT_ERROR("%s : TEST_CONTINUE_CONTAINS did not contain expected output\n", *InkTestName);
 										return false;
 									}
 								}
 								else
 								{
-									INKPOT_ERROR("%s : TEST_CONTINUE_CONTAINS Call EXECUTE_STORY_CONTINUE/EXECUTE_CONTINUE_MAXIMALLY before testing random", *InkTestName);
+									INKPOT_ERROR("%s : TEST_CONTINUE_CONTAINS Call EXECUTE_STORY_CONTINUE/EXECUTE_CONTINUE_MAXIMALLY before testing random\n", *InkTestName);
 									return false;
 								}
 							}
@@ -920,13 +920,13 @@ bool FInkTests::RunTest(const FString& InkTestName)
 												success &= ( intValue == storysIntValue );
 												if (!success)
 												{
-													INKPOT_ERROR("%s : TEST_VARIABLE not as expected. \nExpected: %d\nActual__: %d", *InkTestName, storysIntValue, intValue);
+													INKPOT_ERROR("%s : TEST_VARIABLE not as expected. \nExpected: %d\nActual__: %d\n", *InkTestName, storysIntValue, intValue);
 													return false;
 												}
 											}
 											else
 											{
-												INKPOT_ERROR("%s : TEST_VARIABLE Could not parse VARIABLE_VALUE as Int", *InkTestName);
+												INKPOT_ERROR("%s : TEST_VARIABLE Could not parse VARIABLE_VALUE as Int\n", *InkTestName);
 											}
 										}
 										else if (variableType.Equals("Float"))
@@ -939,13 +939,13 @@ bool FInkTests::RunTest(const FString& InkTestName)
 												success &= ((float)doubleValue == storysFloatValue);
 												if (!success)
 												{
-													INKPOT_ERROR("%s : TEST_VARIABLE not as expected. \nExpected: %f\nActual__: %f", *InkTestName, storysFloatValue, (float)doubleValue);
+													INKPOT_ERROR("%s : TEST_VARIABLE not as expected. \nExpected: %f\nActual__: %f\n", *InkTestName, storysFloatValue, (float)doubleValue);
 													return false;
 												}
 											}
 											else
 											{
-												INKPOT_ERROR("%s : TEST_VARIABLE Could not parse VARIABLE_VALUE as Float", *InkTestName);
+												INKPOT_ERROR("%s : TEST_VARIABLE Could not parse VARIABLE_VALUE as Float\n", *InkTestName);
 											}
 										}
 										else if (variableType.Equals("String"))
@@ -958,13 +958,13 @@ bool FInkTests::RunTest(const FString& InkTestName)
 												success &= (stringValue == storysStringValue);
 												if (!success)
 												{
-													INKPOT_ERROR("%s : TEST_VARIABLE not as expected. \nExpected: %s\nActual__: %s", *InkTestName, *storysStringValue, *stringValue);
+													INKPOT_ERROR("%s : TEST_VARIABLE not as expected. \nExpected: %s\nActual__: %s\n", *InkTestName, *storysStringValue, *stringValue);
 													return false;
 												}
 											}
 											else
 											{
-												INKPOT_ERROR("%s : TEST_VARIABLE Could not parse VARIABLE_VALUE as String", *InkTestName);
+												INKPOT_ERROR("%s : TEST_VARIABLE Could not parse VARIABLE_VALUE as String\n", *InkTestName);
 											}
 										}
 										else if (variableType.Equals("null"))
@@ -975,7 +975,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 												const bool success = variableValue->IsNull();
 												if (!success)
 												{
-													INKPOT_ERROR("%s : TEST_VARIABLE not as expected, Expected null.", *InkTestName);
+													INKPOT_ERROR("%s : TEST_VARIABLE not as expected, Expected null.\n", *InkTestName);
 													return false;
 												}
 											}
@@ -1020,7 +1020,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 								const bool success = expectedVariableValue == actualVariableValue;
 								if (!success)
 								{
-									INKPOT_ERROR("%s : TEST_OBSERVED_VARIABLE not as expected. \nExpected: %d\nActual__: %d", *InkTestName, expectedVariableValue, actualVariableValue);
+									INKPOT_ERROR("%s : TEST_OBSERVED_VARIABLE not as expected. \nExpected: %d\nActual__: %d\n", *InkTestName, expectedVariableValue, actualVariableValue);
 									return false;
 								}
 							}
@@ -1033,7 +1033,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 								const bool success = expectedObserverCallCount == ObserverCallCount;
 								if (!success)
 								{
-									INKPOT_ERROR("%s : TEST_OBSERVER_CALL_COUNT not as expected. \nExpected: %d\nActual__: %d", *InkTestName, expectedObserverCallCount, ObserverCallCount);
+									INKPOT_ERROR("%s : TEST_OBSERVER_CALL_COUNT not as expected. \nExpected: %d\nActual__: %d\n", *InkTestName, expectedObserverCallCount, ObserverCallCount);
 									return false;
 								}
 							}
@@ -1064,7 +1064,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 								}
 								else
 								{
-									INKPOT_ERROR( "Invalid test function binding : %s", *functionName );
+									INKPOT_ERROR( "Invalid test function binding : %s\n", *functionName );
 									return false;
 								}
 								boundExternalFunctionDelegates.Add( function  );
@@ -1084,13 +1084,13 @@ bool FInkTests::RunTest(const FString& InkTestName)
 						}
 						else
 						{
-							INKPOT_ERROR("UNKNOWN TEST COMMAND '%s' IN TEST %s", *instruction, *InkTestName);
+							INKPOT_ERROR("UNKNOWN TEST COMMAND '%s' IN TEST %s\n", *instruction, *InkTestName);
 							return false;
 						}
 					}
 					else
 					{
-						INKPOT_ERROR("Invalid test script, expected only one field per instruction: %s", *InkTestName);
+						INKPOT_ERROR("Invalid test script, expected only one field per instruction: %s\n", *InkTestName);
 						return false;
 					}
 				}
