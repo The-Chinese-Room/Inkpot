@@ -7,7 +7,7 @@ Inkpot is a wrapper for the wonderful narrative scripting language **Ink** devel
 
 ### Changes from 0.3.20
 Settings backed by CVars added.
-First pass on autload reload and replay.
+First pass on auto reload and replay of ink source.
 
 ### Changes from 0.2.20
 JSON serialisation now functional.
