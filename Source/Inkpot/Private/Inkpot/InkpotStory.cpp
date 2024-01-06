@@ -578,7 +578,6 @@ void UInkpotStory::UnbindExternalFunction( const FString &InFunctionName )
 	StoryInternal->UnbindExternalFunction( InFunctionName );
 }
 
-
 FOnStoryContinue& UInkpotStory::OnContinue()
 {
 	return EventOnContinue;
@@ -616,5 +615,16 @@ void UInkpotStory::ResetState()
 	StoryInternal->ResetState();
 }
 
+FString UInkpotStory::ToJSON()
+{
+	return StoryInternal->GetStoryState()->ToJson();
+}
 
+void UInkpotStory::LoadJSON(const FString &InJSON)
+{
+	StoryInternal->GetStoryState()->LoadJSON( InJSON );
+	UpdateChoices();
+	if(EventOnStoryLoadJSON.IsBound())
+		EventOnStoryLoadJSON.Broadcast( this );
+}
 

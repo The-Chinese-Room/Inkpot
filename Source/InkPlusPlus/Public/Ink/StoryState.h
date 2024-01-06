@@ -88,9 +88,6 @@ namespace Ink
 
 		void WriteJson(TJsonWriter<>* Writer) const;
 
-		template<typename T>
-		void WriteProperty(TJsonWriter<>* Writer, const FString& PropertyName, T PropertyValue) const;
-
 		void ResetErrors();
 		void ResetOutput();
 		void ResetOutput(TArray<TSharedPtr<Ink::FObject>>& objs);

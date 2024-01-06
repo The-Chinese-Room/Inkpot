@@ -1,9 +1,3 @@
-// (c) 2021 The Chinese Room, Sumo Digital Ltd. All rights reserved. 
-
-///<Author(s): 		Canute Crasto
-///<Date:			22/07/2021
-///<Description:	Test : Tests for Ink
-
 #if !UE_BUILD_SHIPPING
 
 #include "Misc/AutomationTest.h"
@@ -24,6 +18,51 @@
 #include <Serialization/JsonTypes.h>
 #include <Ink/VariableState.h>
 #include "Test/InkFunctionTests.h"
+
+
+#define TEST_ERROR_EQUAL                         TEXT("TEST_ERROR_EQUAL")
+#define TEST_ERROR_TEXT                          TEXT("TEST_ERROR_TEXT")
+#define TEST_WARNING_TEXT                        TEXT("TEST_WARNING_TEXT")
+#define TEST_WARNING_EQUAL                       TEXT("TEST_WARNING_EQUAL")
+#define COMPILE_STORY_STRING                     TEXT("COMPILE_STORY_STRING")
+#define COMPILE_STRING                           TEXT("COMPILE_STRING")
+#define EXECUTE_RECOMPILE_STORY                  TEXT("EXECUTE_RECOMPILE_STORY")
+
+#define EXECUTE_SWITCH_FLOW                      TEXT("EXECUTE_SWITCH_FLOW") 
+#define EXECUTE_STORY_CONTINUE                   TEXT("EXECUTE_STORY_CONTINUE") 
+#define EXECUTE_CONTINUE_MAXIMALLY               TEXT("EXECUTE_CONTINUE_MAXIMALLY") 
+#define TEST_CURRENT_STORY_TEXT                  TEXT("TEST_CURRENT_STORY_TEXT") 
+#define TEST_CHOICE_COUNT                        TEXT("TEST_CHOICE_COUNT") 
+#define TEST_CHOICE_TEXT                         TEXT("TEST_CHOICE_TEXT") 
+#define EXECUTE_STORY_CHOICE                     TEXT("EXECUTE_STORY_CHOICE") 
+#define EXECUTE_SAVE_JSON_STATE                  TEXT("EXECUTE_SAVE_JSON_STATE") 
+#define EXECUTE_LOAD_JSON_STATE                  TEXT("EXECUTE_LOAD_JSON_STATE") 
+#define EXECUTE_CHOOSE_STRING_PATH               TEXT("EXECUTE_CHOOSE_STRING_PATH") 
+#define EXECUTE_INK_FUNCTION                     TEXT("EXECUTE_INK_FUNCTION") 
+#define TEST_CURRENT_TAGS                        TEXT("TEST_CURRENT_TAGS") 
+#define TEST_STORY_GLOBAL_TAGS                   TEXT("TEST_STORY_GLOBAL_TAGS")
+#define TEST_STORY_EVALUATION_STACK_COUNT        TEXT("TEST_STORY_EVALUATION_STACK_COUNT")
+#define TEST_TAG_FOR_PATH                        TEXT("TEST_TAG_FOR_PATH")
+#define TEST_RANDOM_LIST_CONTINUE                TEXT("TEST_RANDOM_LIST_CONTINUE")
+#define TEST_PATH_VISIT_COUNT                    TEXT("TEST_PATH_VISIT_COUNT")
+#define TEST_CONTINUE_CONTAINS                   TEXT("TEST_CONTINUE_CONTAINS")
+#define SET_VARIABLE                             TEXT("SET_VARIABLE")
+#define TEST_VARIABLE                            TEXT("TEST_VARIABLE")
+#define EXPECTED_EXCEPTION                       TEXT("EXPECTED_EXCEPTION")
+#define OBSERVE_VARIABLE                         TEXT("OBSERVE_VARIABLE")
+#define TEST_OBSERVED_VARIABLE                   TEXT("TEST_OBSERVED_VARIABLE")
+#define TEST_OBSERVER_CALL_COUNT                 TEXT("TEST_OBSERVER_CALL_COUNT")
+#define BIND_EXTERNAL_FUNCTION                   TEXT("BIND_EXTERNAL_FUNCTION")
+#define EXECUTE_RESET                            TEXT("EXECUTE_RESET")
+#define EXECUTE_REMOVE_FLOW                      TEXT("EXECUTE_REMOVE_FLOW")
+
+#define FUNCTION_NAME                            TEXT("FUNCTION_NAME")
+#define FUNCTION_OUTPUT                          TEXT("FUNCTION_OUTPUT")
+
+#define VARIABLE_NAME                            TEXT("VARIABLE_NAME")
+#define VARIABLE_TYPE                            TEXT("VARIABLE_TYPE")
+#define VARIABLE_VALUE                           TEXT("VARIABLE_VALUE")
+
 
 static const FString TestFolderPath = FPaths::ProjectPluginsDir() + TEXT("Inkpot/TestInkSource/");
 static const FString InkScratchFilePath = InkCompiler::GetScratchDirectory() + "TempInkFile.ink";
@@ -104,34 +143,46 @@ static bool ExecuteChooseChoice(UInkpotStory* Story, const FString& ChoiceLine)
 	return false;
 }
 
+static int32 ParseValueInt( const TCHAR *stream, const TCHAR *match )
+{
+	int32 value = 0;
+	const TCHAR* foundInStream = FCString::Strifind( stream, match, false );
+	if(foundInStream)
+		FParse::Value( foundInStream, TEXT( ":" ), value );
+	return value;
+}
+
 static bool IsStoryInstruction(const FString& Instructions)
 {
 	const TArray<FString> storyInstructions = {
-		TEXT("EXECUTE_SWITCH_FLOW"),
-		TEXT("EXECUTE_STORY_CONTINUE"),
-		TEXT("EXECUTE_CONTINUE_MAXIMALLY"),
-		TEXT("TEST_CURRENT_STORY_TEXT"),
-		TEXT("TEST_CHOICE_COUNT"),
-		TEXT("TEST_CHOICE_TEXT"),
-		TEXT("EXECUTE_STORY_CHOICE"),
-		TEXT("EXECUTE_SAVE_JSON_STATE"),
-		TEXT("EXECUTE_LOAD_JSON_STATE"),
-		TEXT("EXECUTE_CHOOSE_STRING_PATH"),
-		TEXT("EXECUTE_INK_FUNCTION"),
-		TEXT("TEST_CURRENT_TAGS"),
-		TEXT("TEST_STORY_GLOBAL_TAGS"),
-		TEXT("TEST_STORY_EVALUATION_STACK_COUNT"),
-		TEXT("TEST_TAG_FOR_PATH"),
-		TEXT("TEST_RANDOM_LIST_CONTINUE"),
-		TEXT("TEST_PATH_VISIT_COUNT"),
-		TEXT("TEST_CONTINUE_CONTAINS"),
-		TEXT("SET_VARIABLE"),
-		TEXT("TEST_VARIABLE"),
-		TEXT("EXPECTED_EXCEPTION"),
-		TEXT("OBSERVE_VARIABLE"),
-		TEXT("TEST_OBSERVED_VARIABLE"),
-		TEXT("TEST_OBSERVER_CALL_COUNT"),
-		TEXT("BIND_EXTERNAL_FUNCTION")
+		EXECUTE_SWITCH_FLOW,
+		EXECUTE_STORY_CONTINUE,
+		EXECUTE_CONTINUE_MAXIMALLY,
+		TEST_CURRENT_STORY_TEXT,
+		TEST_CHOICE_COUNT,
+		TEST_CHOICE_TEXT,
+		EXECUTE_STORY_CHOICE,
+		EXECUTE_SAVE_JSON_STATE,
+		EXECUTE_LOAD_JSON_STATE,
+		EXECUTE_CHOOSE_STRING_PATH,
+		EXECUTE_INK_FUNCTION,
+		TEST_CURRENT_TAGS,
+		TEST_STORY_GLOBAL_TAGS,
+		TEST_STORY_EVALUATION_STACK_COUNT,
+		TEST_TAG_FOR_PATH,
+		TEST_RANDOM_LIST_CONTINUE,
+		TEST_PATH_VISIT_COUNT,
+		TEST_CONTINUE_CONTAINS,
+		SET_VARIABLE,
+		TEST_VARIABLE,
+		EXPECTED_EXCEPTION,
+		OBSERVE_VARIABLE,
+		TEST_OBSERVED_VARIABLE,
+		TEST_OBSERVER_CALL_COUNT,
+
+		BIND_EXTERNAL_FUNCTION,
+		EXECUTE_RESET,
+		EXECUTE_REMOVE_FLOW
 	};
 
 	return storyInstructions.Contains(Instructions);
@@ -161,9 +212,9 @@ bool FInkTests::RunTest(const FString& InkTestName)
 	const FString testStoryScriptStartPhrase = TEXT("INK_TEST_STORY_START");
 	const FString testEndPhrase = TEXT("INK_TEST_END");
 
-
-	FString jsonState = TEXT("");
 	FString continueOutput = TEXT("");
+
+	TMap<FString,FString> saveStates;
 
 	TSharedPtr<FStoryVariableObserver> observer = MakeShared<FStoryVariableObserver>();
 
@@ -184,7 +235,9 @@ bool FInkTests::RunTest(const FString& InkTestName)
 		int32 testPhraseStartIndex = bCompileAsStory ? testStoryScriptStartPhraseIndex : testScriptStartPhraseIndex;
 		int32 testPhraseEndIndex = fileContents.Find(testEndPhrase, ESearchCase::CaseSensitive);
 
-		const bool shouldCountVisits = fileContents.Contains("TEST_PATH_VISIT_COUNT");
+		const bool shouldCountVisits = fileContents.Contains(TEST_PATH_VISIT_COUNT);
+
+		int32 expectedErrors = ParseValueInt( *fileContents, TEST_ERROR_EQUAL );
 
 		UInkpotStory* story = nullptr;
 		UInkpotStoryAsset* storyAsset = nullptr;
@@ -194,7 +247,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 
 		TArray<FString> compileErrors, compileWarnings;
 		FString compiledJSON;
-		bool bCompileSuccess = InkCompiler::CompileInkString(fileContents, InkScratchFilePath, compiledJSON, compileErrors, compileWarnings, shouldCountVisits);
+		bool bCompileSuccess = InkCompiler::CompileInkString(fileContents, InkScratchFilePath, compiledJSON, compileErrors, compileWarnings, shouldCountVisits, expectedErrors>0 );
 
 		if (bCompileAsStory && bCompileSuccess)
 		{
@@ -227,29 +280,29 @@ bool FInkTests::RunTest(const FString& InkTestName)
 				testInstruction->Values.GetKeys(keys);
 				if (keys.Num() != 1)
 				{
-					INKPOT_ERROR("Invalid test script, expected only one field per instruction: %s", *InkTestName);
+					INKPOT_ERROR("Invalid test script, expected only one field per instruction: %s\n", *InkTestName);
 					return false;
 				}
 
 				const FString& instruction = keys[0];
 				if (!IsStoryInstruction(instruction))
 				{
-					if (testInstruction->HasField(TEXT("TEST_ERROR_EQUAL")))
+					if (testInstruction->HasField(TEST_ERROR_EQUAL))
 					{
-						if (testInstruction->TryGetNumberField(TEXT("TEST_ERROR_EQUAL"), jsonParsedInt))
+						if (testInstruction->TryGetNumberField(TEST_ERROR_EQUAL, jsonParsedInt))
 						{
 							int32 errors = jsonParsedInt;
 							bool instructionSuccess = errors == compileErrors.Num();
 							if (!instructionSuccess)
 							{
-								INKPOT_ERROR("%s : TEST_ERROR_EQUAL are not as expected. \nExpected: %d\nActual__: %d", *InkTestName, errors, compileErrors.Num());
+								INKPOT_ERROR("%s : TEST_ERROR_EQUAL are not as expected. \nExpected: %d\nActual__: %d\n", *InkTestName, errors, compileErrors.Num());
 								return false;
 							}
 						}
 					}
-					else if (testInstruction->HasField(TEXT("TEST_ERROR_TEXT")))
+					else if (testInstruction->HasField(TEST_ERROR_TEXT))
 					{
-						if (testInstruction->TryGetStringField(TEXT("TEST_ERROR_TEXT"), jsonParsedString))
+						if (testInstruction->TryGetStringField(TEST_ERROR_TEXT, jsonParsedString))
 						{
 							FString errorString = jsonParsedString;
 							bool bFoundError = false;
@@ -262,14 +315,14 @@ bool FInkTests::RunTest(const FString& InkTestName)
 							}
 							if (!bFoundError)
 							{
-								INKPOT_ERROR("%s : TEST_ERROR_TYPE are not as expected. Expected error : %s ", *InkTestName, *errorString);
+								INKPOT_ERROR("%s : TEST_ERROR_TYPE are not as expected. Expected error : %s \n", *InkTestName, *errorString);
 								return false;
 							}
 						}
 					}
-					else if (testInstruction->HasField(TEXT("TEST_WARNING_TEXT")))
+					else if (testInstruction->HasField(TEST_WARNING_TEXT))
 					{
-						if (testInstruction->TryGetStringField(TEXT("TEST_WARNING_TEXT"), jsonParsedString))
+						if (testInstruction->TryGetStringField(TEST_WARNING_TEXT, jsonParsedString))
 						{
 							FString warningString = jsonParsedString;
 							bool bFoundError = false;
@@ -282,30 +335,31 @@ bool FInkTests::RunTest(const FString& InkTestName)
 							}
 							if (!bFoundError)
 							{
-								INKPOT_ERROR("%s : TEST_ERROR_TYPE are not as expected. Expected error : %s ", *InkTestName, *warningString);
+								INKPOT_ERROR("%s : TEST_ERROR_TYPE are not as expected. Expected error : %s \n", *InkTestName, *warningString);
 								return false;
 							}
 						}
 					}
-					else if (testInstruction->HasField(TEXT("TEST_WARNING_EQUAL")))
+					else if (testInstruction->HasField(TEST_WARNING_EQUAL))
 					{
-						if (testInstruction->TryGetNumberField(TEXT("TEST_WARNING_EQUAL"), jsonParsedInt))
+						if (testInstruction->TryGetNumberField(TEST_WARNING_EQUAL, jsonParsedInt))
 						{
 							int32 warnings = jsonParsedInt;
 							if (warnings != compileWarnings.Num())
 							{
-								INKPOT_ERROR("%s : TEST_WARNING_EQUAL are not as expected. \nExpected: %d\nActual__: %d", *InkTestName, warnings, compileWarnings.Num());
+								INKPOT_ERROR("%s : TEST_WARNING_EQUAL are not as expected. \nExpected: %d\nActual__: %d\n", *InkTestName, warnings, compileWarnings.Num());
 								return false;
 							}
 						}
 					}
-					else if (testInstruction->HasField(TEXT("COMPILE_STORY_STRING")))
+					else if (testInstruction->HasField(COMPILE_STORY_STRING))
 					{
-						if (testInstruction->TryGetStringField(TEXT("COMPILE_STORY_STRING"), jsonParsedString))
+						if (testInstruction->TryGetStringField(COMPILE_STORY_STRING, jsonParsedString))
 						{
 							FString compiledStringJSON;
 							compileErrors.Empty();
 							compileWarnings.Empty();
+
 							InkCompiler::CompileInkString(jsonParsedString, InkScratchFilePath, compiledStringJSON, compileErrors, compileWarnings);
 							
 							storyAsset = NewObject<UInkpotStoryAsset>();
@@ -314,21 +368,25 @@ bool FInkTests::RunTest(const FString& InkTestName)
 
 							if (story == nullptr)
 							{
-								INKPOT_ERROR("Failed to Compile test story: %s", *InkTestName);
+								INKPOT_ERROR("Failed to Compile test story: %s\n", *InkTestName);
 								return false;
 							}
 						}
 					}
-					else if (testInstruction->HasField(TEXT("COMPILE_STRING")))
+					else if (testInstruction->HasField(COMPILE_STRING))
 					{
-						if (testInstruction->TryGetStringField(TEXT("COMPILE_STRING"), jsonParsedString))
+						if (testInstruction->TryGetStringField(COMPILE_STRING, jsonParsedString))
 						{
 							compileErrors.Empty();
 							compileWarnings.Empty();
-							InkCompiler::CompileInkString(jsonParsedString, InkScratchFilePath, compiledJSON, compileErrors, compileWarnings);
+
+							// for the moment we have one test that we expect to fail compilation here.
+							// tmp workaround, as parsing ahead to results value will be a fair refactor TODO!
+							bool bExpectFail = InkTestName.Equals("TestEndOfContent");
+							InkCompiler::CompileInkString(jsonParsedString, InkScratchFilePath, compiledJSON, compileErrors, compileWarnings, false, bExpectFail);
 						}
 					}
-					else if (testInstruction->HasField(TEXT("EXECUTE_RECOMPILE_STORY")))
+					else if (testInstruction->HasField(EXECUTE_RECOMPILE_STORY))
 					{
 						compileErrors.Empty();
 						compileWarnings.Empty();
@@ -340,7 +398,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 
 						if (story == nullptr)
 						{
-							INKPOT_ERROR("Failed to Compile test script: %s", *InkTestName);
+							INKPOT_ERROR("Failed to Compile test script: %s\n", *InkTestName);
 							return false;
 						}
 					}
@@ -350,17 +408,17 @@ bool FInkTests::RunTest(const FString& InkTestName)
 				{
 					if (story != nullptr)
 					{
-						if (testInstruction->HasField(TEXT("EXECUTE_SWITCH_FLOW")))
+						if (testInstruction->HasField(EXECUTE_SWITCH_FLOW))
 						{
 							FString switchText;
-							if (testInstruction->TryGetStringField(TEXT("EXECUTE_SWITCH_FLOW"), switchText))
+							if (testInstruction->TryGetStringField(EXECUTE_SWITCH_FLOW, switchText))
 							{
 								story->SwitchFlow(switchText);
 							}
 						}
-						else if (testInstruction->HasField(TEXT("EXECUTE_STORY_CONTINUE")))
+						else if (testInstruction->HasField(EXECUTE_STORY_CONTINUE))
 						{
-							if (testInstruction->TryGetStringField(TEXT("EXECUTE_STORY_CONTINUE"), jsonParsedString))
+							if (testInstruction->TryGetStringField(EXECUTE_STORY_CONTINUE, jsonParsedString))
 							{
 								FString expected = jsonParsedString;
 								FString continueText;
@@ -373,7 +431,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 									const bool executeSuccess = (expected != "-1") ? continueText.Equals(expected) : true;
 									if (!executeSuccess)
 									{
-										INKPOT_ERROR("%s : EXECUTE_STORY_CONTINUE are not as expected. \nExpected: %s\nActual__: %s", *InkTestName, *expected, *continueText);
+										INKPOT_ERROR("%s : EXECUTE_STORY_CONTINUE are not as expected. \nExpected: %s\nActual__: %s\n", *InkTestName, *expected, *continueText);
 										return false;
 									}
 								}
@@ -384,9 +442,9 @@ bool FInkTests::RunTest(const FString& InkTestName)
 								}
 							}
 						}
-						else if (testInstruction->HasField(TEXT("EXECUTE_CONTINUE_MAXIMALLY")))
+						else if (testInstruction->HasField(EXECUTE_CONTINUE_MAXIMALLY))
 						{
-							if (testInstruction->TryGetStringField(TEXT("EXECUTE_CONTINUE_MAXIMALLY"), jsonParsedString))
+							if (testInstruction->TryGetStringField(EXECUTE_CONTINUE_MAXIMALLY, jsonParsedString))
 							{
 								FString expected = jsonParsedString;
 								FString continueText;
@@ -405,14 +463,14 @@ bool FInkTests::RunTest(const FString& InkTestName)
 								}
 								else
 								{
-									INKPOT_ERROR("%s : EXECUTE_CONTINUE_MAXIMALLY Executing ContinueMaximally() ailed ", *InkTestName);
+									INKPOT_ERROR("%s : EXECUTE_CONTINUE_MAXIMALLY Executing ContinueMaximally() failed \n", *InkTestName);
 									return false;
 								}
 							}
 						}
-						else if (testInstruction->HasField(TEXT("TEST_CURRENT_STORY_TEXT")))
+						else if (testInstruction->HasField(TEST_CURRENT_STORY_TEXT))
 						{
-							if (testInstruction->TryGetStringField(TEXT("TEST_CURRENT_STORY_TEXT"), jsonParsedString))
+							if (testInstruction->TryGetStringField(TEST_CURRENT_STORY_TEXT, jsonParsedString))
 							{
 								FString expected = jsonParsedString;
 								FString actual;
@@ -423,15 +481,15 @@ bool FInkTests::RunTest(const FString& InkTestName)
 									const bool success = actual.Equals(expected);
 									if (!success)
 									{
-										INKPOT_ERROR("%s : TEST_CURRENT_STORY_TEXT not as expected. \nExpected: %s\nActual__: %s", *InkTestName, *expected, *actual);
+										INKPOT_ERROR("%s : TEST_CURRENT_STORY_TEXT not as expected. \nExpected: %s\nActual__: %s\n", *InkTestName, *expected, *actual);
 										return false;
 									}
 								}
 							}
 						}
-						else if (testInstruction->HasField(TEXT("TEST_CHOICE_COUNT")))
+						else if (testInstruction->HasField(TEST_CHOICE_COUNT))
 						{
-							if (testInstruction->TryGetNumberField(TEXT("TEST_CHOICE_COUNT"), jsonParsedInt))
+							if (testInstruction->TryGetNumberField(TEST_CHOICE_COUNT, jsonParsedInt))
 							{
 								int32 choiceCount = jsonParsedInt;
 								int32 storyChoiceCount = story->GetCurrentChoices().Num();
@@ -439,33 +497,33 @@ bool FInkTests::RunTest(const FString& InkTestName)
 								const bool success = (choiceCount == storyChoiceCount);
 								if (!success)
 								{
-									INKPOT_ERROR("%s : TEST_CHOICE_COUNT are not as expected. \nExpected: %d\nActual__: %d", *InkTestName, choiceCount, storyChoiceCount );
+									INKPOT_ERROR("%s : TEST_CHOICE_COUNT are not as expected. \nExpected: %d\nActual__: %d\n", *InkTestName, choiceCount, storyChoiceCount );
 									return false;
 								}
 							}
 						}
-						else if (testInstruction->HasField(TEXT("TEST_STORY_EVALUATION_STACK_COUNT")))
+						else if (testInstruction->HasField(TEST_STORY_EVALUATION_STACK_COUNT))
 						{
-							if (testInstruction->TryGetNumberField(TEXT("TEST_STORY_EVALUATION_STACK_COUNT"), jsonParsedInt))
+							if (testInstruction->TryGetNumberField(TEST_STORY_EVALUATION_STACK_COUNT, jsonParsedInt))
 							{
 								int32 expectedStackCount = jsonParsedInt;
 								int32 actualStackCount = story->GetStoryInternal()->GetStoryState()->GetEvaluationStack().Num();
 								const bool success = expectedStackCount == actualStackCount;
 								if (!success)
 								{
-									INKPOT_ERROR("%s : TEST_STORY_EVALUATION_STACK_COUNT are not as expected. \nExpected: %d\nActual__: %d", *InkTestName, expectedStackCount, actualStackCount);
+									INKPOT_ERROR("%s : TEST_STORY_EVALUATION_STACK_COUNT are not as expected. \nExpected: %d\nActual__: %d\n", *InkTestName, expectedStackCount, actualStackCount);
 									return false;
 								}
 							}
 						}
-						else if (testInstruction->HasField(TEXT("TEST_CHOICE_TEXT")))
+						else if (testInstruction->HasField(TEST_CHOICE_TEXT))
 						{
 							const TArray<TSharedPtr<FJsonValue>>* choiceArray;
-							if (testInstruction->TryGetArrayField(TEXT("TEST_CHOICE_TEXT"), choiceArray))
+							if (testInstruction->TryGetArrayField(TEST_CHOICE_TEXT, choiceArray))
 							{
 								if (choiceArray->Num() != 2)
 								{
-									INKPOT_ERROR("%s : TEST_CHOICE_TEXT expected a choice and choice text in array eg [2, choiceText] ", *InkTestName);
+									INKPOT_ERROR("%s : TEST_CHOICE_TEXT expected a choice and choice text in array eg [2, choiceText] \n", *InkTestName);
 									return false;
 								}
 
@@ -482,83 +540,86 @@ bool FInkTests::RunTest(const FString& InkTestName)
 											const bool success = choiceText.Equals(expectedChoiceText);
 											if (!success)
 											{
-												INKPOT_ERROR("%s : TEST_CHOICE_TEXT are not as expected. \nExpected: %s\nActual__: %s", *InkTestName, *expectedChoiceText, *choiceText);
+												INKPOT_ERROR("%s : TEST_CHOICE_TEXT are not as expected. \nExpected: %s\nActual__: %s\n", *InkTestName, *expectedChoiceText, *choiceText);
 												return false;
 											}
 										}
 										else
 										{
-											INKPOT_ERROR("%s : TEST_CHOICE_TEXT not enough choices.", *InkTestName);
+											INKPOT_ERROR("%s : TEST_CHOICE_TEXT not enough choices.\n", *InkTestName);
 											return false;
 										}
 									}
 									else
 									{
-										INKPOT_ERROR("%s : TEST_CHOICE_TEXT could not parse choice string.", *InkTestName);
+										INKPOT_ERROR("%s : TEST_CHOICE_TEXT could not parse choice string.\n", *InkTestName);
 										return false;
 									}
 								}
 								else
 								{
-									INKPOT_ERROR("%s : TEST_CHOICE_TEXT could not parse choice index.", *InkTestName);
+									INKPOT_ERROR("%s : TEST_CHOICE_TEXT could not parse choice index.\n", *InkTestName);
 									return false;
 								}
 							}
 							else
 							{
-								INKPOT_ERROR("%s : TEST_CHOICE_TEXT could not parse choice array.", *InkTestName);
+								INKPOT_ERROR("%s : TEST_CHOICE_TEXT could not parse choice array.\n", *InkTestName);
 								return false;
 							}
 
 						}
-						else if (testInstruction->HasField(TEXT("EXECUTE_STORY_CHOICE")))
+						else if (testInstruction->HasField(EXECUTE_STORY_CHOICE))
 						{
-							if (testInstruction->TryGetNumberField(TEXT("EXECUTE_STORY_CHOICE"), jsonParsedInt))
+							if (testInstruction->TryGetNumberField(EXECUTE_STORY_CHOICE, jsonParsedInt))
 							{
 								int32 choiceIndex = jsonParsedInt;
 								story->ChooseChoiceIndex(choiceIndex);
 							}
 						}
-						else if (testInstruction->HasField(TEXT("EXECUTE_SAVE_JSON_STATE")))
+						else if (testInstruction->HasField(EXECUTE_SAVE_JSON_STATE))
 						{
-							INKPOT_ERROR("%s : EXECUTE_SAVE_JSON_STATE has not been implemented.", *InkTestName);
-							//TSharedPtr<Ink::FStoryState> state = story->State(); // TODO: json loading/saving
-							//jsonState = state->ToJson();
-							return false;
-						}
-						else if (testInstruction->HasField(TEXT("EXECUTE_LOAD_JSON_STATE")))
-						{
-							if (!jsonState.IsEmpty())
+							if (testInstruction->TryGetStringField(EXECUTE_SAVE_JSON_STATE, jsonParsedString))
 							{
-								INKPOT_ERROR( "%s : EXECUTE_LOAD_JSON_STATE has not been implemented.", *InkTestName );
-								//story->State()->LoadJSON(jsonState); // TODO: json loading/saving
-								return false;
-							}
-							else
-							{
-								INKPOT_ERROR("%s, Missing saved JSON, Call EXECUTE_SAVE_JSON_STATE before this", *InkTestName);
-								return false;
+								FString jsonState = story->ToJSON();
+								saveStates.Emplace(jsonParsedString, jsonState);
 							}
 						}
-						else if (testInstruction->HasField(TEXT("EXECUTE_CHOOSE_STRING_PATH")))
+						else if (testInstruction->HasField(EXECUTE_LOAD_JSON_STATE))
 						{
-							if (testInstruction->TryGetStringField(TEXT("EXECUTE_CHOOSE_STRING_PATH"), jsonParsedString))
+							if (testInstruction->TryGetStringField(EXECUTE_LOAD_JSON_STATE, jsonParsedString))
+							{
+								FString *savedJson = saveStates.Find(jsonParsedString);
+								if(savedJson)
+								{
+									story->LoadJSON(*savedJson);
+								}
+								else
+								{
+									INKPOT_ERROR("%s, Missing saved JSON, Call EXECUTE_SAVE_JSON_STATE before this\n", *InkTestName);
+									return false;
+								}
+							}
+						}
+						else if (testInstruction->HasField(EXECUTE_CHOOSE_STRING_PATH))
+						{
+							if (testInstruction->TryGetStringField(EXECUTE_CHOOSE_STRING_PATH, jsonParsedString))
 							{
 								FString pathString = jsonParsedString;
 								story->ChoosePath(pathString);
 							}
 						}
-						else if (testInstruction->HasField(TEXT("EXECUTE_INK_FUNCTION")))
+						else if (testInstruction->HasField(EXECUTE_INK_FUNCTION))
 						{
 							bool success = false;
 							const TSharedPtr<FJsonObject>* inkFunctionObject;
-							if (testInstruction->TryGetObjectField(TEXT("EXECUTE_INK_FUNCTION"), inkFunctionObject))
+							if (testInstruction->TryGetObjectField(EXECUTE_INK_FUNCTION, inkFunctionObject))
 							{
 								FString functionName;
-								if ((*inkFunctionObject)->TryGetStringField(TEXT("FUNCTION_NAME"), functionName))
+								if ((*inkFunctionObject)->TryGetStringField(FUNCTION_NAME, functionName))
 								{
 									FString expectedFunctionOutput;
-									if ((*inkFunctionObject)->TryGetStringField(TEXT("FUNCTION_OUTPUT"), expectedFunctionOutput))
+									if ((*inkFunctionObject)->TryGetStringField(FUNCTION_OUTPUT, expectedFunctionOutput))
 									{
 										TArray<TSharedPtr<Ink::FValueType>> vars;
 										const TArray< TSharedPtr<FJsonValue> >* jsonValues;
@@ -608,15 +669,15 @@ bool FInkTests::RunTest(const FString& InkTestName)
 							if (!success)
 								return false;
 						}
-						else if (testInstruction->HasField(TEXT("TEST_CURRENT_TAGS")))
+						else if (testInstruction->HasField(TEST_CURRENT_TAGS))
 						{
 							const TArray< TSharedPtr<FJsonValue> >* expectedTags;
-							if (testInstruction->TryGetArrayField(TEXT("TEST_CURRENT_TAGS"), expectedTags))
+							if (testInstruction->TryGetArrayField(TEST_CURRENT_TAGS, expectedTags))
 							{
 								const TArray<FString> &actualTags = story->GetCurrentTags();
 								if (expectedTags->Num() != actualTags.Num())
 								{
-									INKPOT_ERROR("%s : TEST_CURRENT_TAGS Tag count not equal: %s, \nExpected: %d\nActual__: %d", *InkTestName, expectedTags->Num(), actualTags.Num());
+									INKPOT_ERROR("%s : TEST_CURRENT_TAGS Tag count not equal: %s, \nExpected: %d\nActual__: %d\n", *InkTestName, expectedTags->Num(), actualTags.Num());
 									return false;
 								}
 
@@ -625,28 +686,28 @@ bool FInkTests::RunTest(const FString& InkTestName)
 									TSharedPtr<FJsonValue> value = (*expectedTags)[i];
 									if (value->Type != EJson::String)
 									{
-										INKPOT_ERROR("%s : TEST_CURRENT_TAGS Tag is not a string, check test script JSON", *InkTestName, expectedTags->Num(), actualTags.Num());
+										INKPOT_ERROR("%s : TEST_CURRENT_TAGS Tag is not a string, check test script JSON\n", *InkTestName, expectedTags->Num(), actualTags.Num());
 										return false;
 									}
 
 									const bool success = value->AsString().Equals(actualTags[i]);
 									if (!success)
 									{
-										INKPOT_ERROR("%s : TEST_CURRENT_TAGS tag string did not match. \nExpected: %s\nActual__: %s", *InkTestName, *value->AsString(), *actualTags[i]);
+										INKPOT_ERROR("%s : TEST_CURRENT_TAGS tag string did not match. \nExpected: %s\nActual__: %s\n", *InkTestName, *value->AsString(), *actualTags[i]);
 										return false;
 									}
 								}
 							}
 						}
-						else if (testInstruction->HasField(TEXT("TEST_STORY_GLOBAL_TAGS")))
+						else if (testInstruction->HasField(TEST_STORY_GLOBAL_TAGS))
 						{
 							const TArray< TSharedPtr<FJsonValue> >* expectedTags;
-							if (testInstruction->TryGetArrayField(TEXT("TEST_STORY_GLOBAL_TAGS"), expectedTags))
+							if (testInstruction->TryGetArrayField(TEST_STORY_GLOBAL_TAGS, expectedTags))
 							{
 								TArray<FString> actualTags = story->GlobalTags();
 								if (expectedTags->Num() != actualTags.Num())
 								{
-									INKPOT_ERROR("%s : TEST_STORY_GLOBAL_TAGS Tag count not equal: %s, \nExpected: %d\nActual__: %d", *InkTestName, expectedTags->Num(), actualTags.Num());
+									INKPOT_ERROR("%s : TEST_STORY_GLOBAL_TAGS Tag count not equal: %s, \nExpected: %d\nActual__: %d\n", *InkTestName, expectedTags->Num(), actualTags.Num());
 									return false;
 								}
 
@@ -655,23 +716,23 @@ bool FInkTests::RunTest(const FString& InkTestName)
 									TSharedPtr<FJsonValue> value = (*expectedTags)[i];
 									if (value->Type != EJson::String)
 									{
-										INKPOT_ERROR("%s : TEST_STORY_GLOBAL_TAGS Tag is not a string, check test script JSON", *InkTestName, expectedTags->Num(), actualTags.Num());
+										INKPOT_ERROR("%s : TEST_STORY_GLOBAL_TAGS Tag is not a string, check test script JSON\n", *InkTestName, expectedTags->Num(), actualTags.Num());
 										return false;
 									}
 
 									const bool success = value->AsString().Equals(actualTags[i]);
 									if (!success)
 									{
-										INKPOT_ERROR("%s : TEST_STORY_GLOBAL_TAGS tag string did not match. \nExpected: %s\nActual__: %s", *InkTestName, *value->AsString(), *actualTags[i]);
+										INKPOT_ERROR("%s : TEST_STORY_GLOBAL_TAGS tag string did not match. \nExpected: %s\nActual__: %s\n", *InkTestName, *value->AsString(), *actualTags[i]);
 										return false;
 									}
 								}
 							}
 						}
-						else if (testInstruction->HasField(TEXT("TEST_TAG_FOR_PATH")))
+						else if (testInstruction->HasField(TEST_TAG_FOR_PATH))
 						{
 							const TSharedPtr<FJsonObject>* tagForPathObject;
-							if (testInstruction->TryGetObjectField(TEXT("TEST_TAG_FOR_PATH"), tagForPathObject))
+							if (testInstruction->TryGetObjectField(TEST_TAG_FOR_PATH, tagForPathObject))
 							{
 								FString path;
 								if ((*tagForPathObject)->TryGetStringField(TEXT("PATH"), path))
@@ -682,7 +743,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 									{
 										if (expectedTags.Num() != actualTags.Num())
 										{
-											INKPOT_ERROR("%s : TEST_TAG_FOR_PATH Tag count not equal: %s, \nExpected: %d\nActual__: %d", *InkTestName, expectedTags.Num(), actualTags.Num());
+											INKPOT_ERROR("%s : TEST_TAG_FOR_PATH Tag count not equal: %s, \nExpected: %d\nActual__: %d\n", *InkTestName, expectedTags.Num(), actualTags.Num());
 											return false;
 										}
 
@@ -691,7 +752,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 											const bool success = expectedTags[i].Equals(expectedTags[i]);
 											if (!success)
 											{
-												INKPOT_ERROR("%s : TEST_TAG_FOR_PATH tag string did not match. \nExpected: %s\nActual__: %s", *InkTestName, *expectedTags[i], *actualTags[i]);
+												INKPOT_ERROR("%s : TEST_TAG_FOR_PATH tag string did not match. \nExpected: %s\nActual__: %s\n", *InkTestName, *expectedTags[i], *actualTags[i]);
 												return false;
 											}
 										}
@@ -699,46 +760,46 @@ bool FInkTests::RunTest(const FString& InkTestName)
 								}
 								else
 								{
-									INKPOT_ERROR("%s : TEST_TAG_FOR_PATH Could not find PATH in JSON object", *InkTestName);
+									INKPOT_ERROR("%s : TEST_TAG_FOR_PATH Could not find PATH in JSON object\n", *InkTestName);
 									return false;
 								}
 							}
 							else
 							{
-								INKPOT_ERROR("%s : TEST_TAG_FOR_PATH. Could not Deserialize to object ", *InkTestName);
+								INKPOT_ERROR("%s : TEST_TAG_FOR_PATH. Could not Deserialize to object \n", *InkTestName);
 								return false;
 							}
 						}
-						else if (testInstruction->HasField(TEXT("TEST_RANDOM_LIST_CONTINUE")))
+						else if (testInstruction->HasField(TEST_RANDOM_LIST_CONTINUE))
 						{
 							TArray<FString> expectedRandomOutputs;
-							if (testInstruction->TryGetStringArrayField(TEXT("TEST_RANDOM_LIST_CONTINUE"), expectedRandomOutputs))
+							if (testInstruction->TryGetStringArrayField(TEST_RANDOM_LIST_CONTINUE, expectedRandomOutputs))
 							{
 								if (!continueOutput.IsEmpty())
 								{
 									const bool success = expectedRandomOutputs.Contains(continueOutput);
 									if (!success)
 									{
-										INKPOT_ERROR("%s : TEST_RANDOM_LIST did not contain expected output", *InkTestName);
+										INKPOT_ERROR("%s : TEST_RANDOM_LIST did not contain expected output\n", *InkTestName);
 										return false;
 									}
 								}
 								else
 								{
-									INKPOT_ERROR("%s : TEST_RANDOM_LIST Call EXECUTE_STORY_CONTINUE before testing random", *InkTestName);
+									INKPOT_ERROR("%s : TEST_RANDOM_LIST Call EXECUTE_STORY_CONTINUE before testing random\n", *InkTestName);
 									return false;
 								}
 							}
 							else
 							{
-								INKPOT_ERROR("%s : TEST_RANDOM_LIST Expected a string array", *InkTestName);
+								INKPOT_ERROR("%s : TEST_RANDOM_LIST Expected a string array\n", *InkTestName);
 								return false;
 							}
 						}
-						else if (testInstruction->HasField(TEXT("TEST_PATH_VISIT_COUNT")))
+						else if (testInstruction->HasField(TEST_PATH_VISIT_COUNT))
 						{
 							const TSharedPtr<FJsonObject>* visitPathObject;
-							if (testInstruction->TryGetObjectField(TEXT("TEST_PATH_VISIT_COUNT"), visitPathObject))
+							if (testInstruction->TryGetObjectField(TEST_PATH_VISIT_COUNT, visitPathObject))
 							{
 								FString path;
 								if ((*visitPathObject)->TryGetStringField(TEXT("PATH"), path))
@@ -750,26 +811,26 @@ bool FInkTests::RunTest(const FString& InkTestName)
 										const bool success = actualVisitCount == expectedVisitCount;
 										if (!success)
 										{
-											INKPOT_ERROR("%s : TEST_PATH_VISIT_COUNT \nExpected: %d\nActual__: %d", *InkTestName, expectedVisitCount, actualVisitCount);
+											INKPOT_ERROR("%s : TEST_PATH_VISIT_COUNT \nExpected: %d\nActual__: %d\n", *InkTestName, expectedVisitCount, actualVisitCount);
 											return false;
 										}
 									}
 								}
 								else
 								{
-									INKPOT_ERROR("%s : TEST_PATH_VISIT_COUNT Could not find PATH in JSON object", *InkTestName);
+									INKPOT_ERROR("%s : TEST_PATH_VISIT_COUNT Could not find PATH in JSON object\n", *InkTestName);
 									return false;
 								}
 							}
 							else
 							{
-								INKPOT_ERROR("%s : TEST_PATH_VISIT_COUNT. Could not Deserialize to object ", *InkTestName);
+								INKPOT_ERROR("%s : TEST_PATH_VISIT_COUNT. Could not Deserialize to object \n", *InkTestName);
 								return false;
 							}
 						}
-						else if (testInstruction->HasField(TEXT("TEST_CONTINUE_CONTAINS")))
+						else if (testInstruction->HasField(TEST_CONTINUE_CONTAINS))
 						{
-							if (testInstruction->TryGetStringField(TEXT("TEST_CONTINUE_CONTAINS"), jsonParsedString))
+							if (testInstruction->TryGetStringField(TEST_CONTINUE_CONTAINS, jsonParsedString))
 							{
 								FString expected = jsonParsedString;
 								if (!continueOutput.IsEmpty())
@@ -777,32 +838,32 @@ bool FInkTests::RunTest(const FString& InkTestName)
 									const bool success = continueOutput.Contains(expected);
 									if (!success)
 									{
-										INKPOT_ERROR("%s : TEST_CONTINUE_CONTAINS did not contain expected output", *InkTestName);
+										INKPOT_ERROR("%s : TEST_CONTINUE_CONTAINS did not contain expected output\n", *InkTestName);
 										return false;
 									}
 								}
 								else
 								{
-									INKPOT_ERROR("%s : TEST_CONTINUE_CONTAINS Call EXECUTE_STORY_CONTINUE/EXECUTE_CONTINUE_MAXIMALLY before testing random", *InkTestName);
+									INKPOT_ERROR("%s : TEST_CONTINUE_CONTAINS Call EXECUTE_STORY_CONTINUE/EXECUTE_CONTINUE_MAXIMALLY before testing random\n", *InkTestName);
 									return false;
 								}
 							}
 						}
-						else if (testInstruction->HasField(TEXT("SET_VARIABLE")))
+						else if (testInstruction->HasField(SET_VARIABLE))
 						{
 							const TSharedPtr<FJsonObject>* setVariableObject;
-							if (testInstruction->TryGetObjectField(TEXT("SET_VARIABLE"), setVariableObject))
+							if (testInstruction->TryGetObjectField(SET_VARIABLE, setVariableObject))
 							{
 								FString variableName;
-								if ((*setVariableObject)->TryGetStringField(TEXT("VARIABLE_NAME"), variableName))
+								if ((*setVariableObject)->TryGetStringField(VARIABLE_NAME, variableName))
 								{
 									FString variableType;
-									if ((*setVariableObject)->TryGetStringField(TEXT("VARIABLE_TYPE"), variableType))
+									if ((*setVariableObject)->TryGetStringField(VARIABLE_TYPE, variableType))
 									{
 										if (variableType.Equals("Int"))
 										{
 											int32 intValue;
-											if ((*setVariableObject)->TryGetNumberField(TEXT("VARIABLE_VALUE"), intValue))
+											if ((*setVariableObject)->TryGetNumberField(VARIABLE_VALUE, intValue))
 											{
 												story->SetInt(variableName, intValue);
 											}
@@ -810,7 +871,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 										else if (variableType.Equals("Float"))
 										{
 											double floatValue;
-											if ((*setVariableObject)->TryGetNumberField(TEXT("VARIABLE_VALUE"), floatValue))
+											if ((*setVariableObject)->TryGetNumberField(VARIABLE_VALUE, floatValue))
 											{
 												story->SetFloat( variableName, static_cast<float>(floatValue));
 											}
@@ -818,7 +879,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 										else if (variableType.Equals("String"))
 										{
 											FString stringValue;
-											if ((*setVariableObject)->TryGetStringField(TEXT("VARIABLE_VALUE"), stringValue))
+											if ((*setVariableObject)->TryGetStringField(VARIABLE_VALUE, stringValue))
 											{
 												story->SetString(variableName, stringValue);
 											}
@@ -826,7 +887,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 										else if (variableType.Equals("null"))
 										{
 											FString stringValue;
-											if ((*setVariableObject)->TryGetStringField(TEXT("VARIABLE_VALUE"), stringValue))
+											if ((*setVariableObject)->TryGetStringField(VARIABLE_VALUE, stringValue))
 											{
 												story->SetEmpty(variableName);
 											}
@@ -835,37 +896,37 @@ bool FInkTests::RunTest(const FString& InkTestName)
 								}
 							}
 						}
-						else if (testInstruction->HasField(TEXT("TEST_VARIABLE")))
+						else if (testInstruction->HasField(TEST_VARIABLE))
 						{
 							TArray<FString> variables;
 							story->GetVariableKeys(variables);
 
 							const TSharedPtr<FJsonObject>* testVariableObject;
-							if (testInstruction->TryGetObjectField(TEXT("TEST_VARIABLE"), testVariableObject))
+							if (testInstruction->TryGetObjectField(TEST_VARIABLE, testVariableObject))
 							{
 								FString variableName;
-								if ((*testVariableObject)->TryGetStringField(TEXT("VARIABLE_NAME"), variableName))
+								if ((*testVariableObject)->TryGetStringField(VARIABLE_NAME, variableName))
 								{
 									FString variableType;
-									if ((*testVariableObject)->TryGetStringField(TEXT("VARIABLE_TYPE"), variableType))
+									if ((*testVariableObject)->TryGetStringField(VARIABLE_TYPE, variableType))
 									{
 										if (variableType.Equals("Int"))
 										{
 											int32 intValue;
-											if ((*testVariableObject)->TryGetNumberField(TEXT("VARIABLE_VALUE"), intValue))
+											if ((*testVariableObject)->TryGetNumberField(VARIABLE_VALUE, intValue))
 											{
 												int32 storysIntValue;
 												bool success = story->GetVariable<int32, Ink::FValueInt>(variableName, Ink::EValueType::Int, storysIntValue );
 												success &= ( intValue == storysIntValue );
 												if (!success)
 												{
-													INKPOT_ERROR("%s : TEST_VARIABLE not as expected. \nExpected: %d\nActual__: %d", *InkTestName, storysIntValue, intValue);
+													INKPOT_ERROR("%s : TEST_VARIABLE not as expected. \nExpected: %d\nActual__: %d\n", *InkTestName, storysIntValue, intValue);
 													return false;
 												}
 											}
 											else
 											{
-												INKPOT_ERROR("%s : TEST_VARIABLE Could not parse VARIABLE_VALUE as Int", *InkTestName);
+												INKPOT_ERROR("%s : TEST_VARIABLE Could not parse VARIABLE_VALUE as Int\n", *InkTestName);
 											}
 										}
 										else if (variableType.Equals("Float"))
@@ -878,43 +939,43 @@ bool FInkTests::RunTest(const FString& InkTestName)
 												success &= ((float)doubleValue == storysFloatValue);
 												if (!success)
 												{
-													INKPOT_ERROR("%s : TEST_VARIABLE not as expected. \nExpected: %f\nActual__: %f", *InkTestName, storysFloatValue, (float)doubleValue);
+													INKPOT_ERROR("%s : TEST_VARIABLE not as expected. \nExpected: %f\nActual__: %f\n", *InkTestName, storysFloatValue, (float)doubleValue);
 													return false;
 												}
 											}
 											else
 											{
-												INKPOT_ERROR("%s : TEST_VARIABLE Could not parse VARIABLE_VALUE as Float", *InkTestName);
+												INKPOT_ERROR("%s : TEST_VARIABLE Could not parse VARIABLE_VALUE as Float\n", *InkTestName);
 											}
 										}
 										else if (variableType.Equals("String"))
 										{
 											FString stringValue;
-											if ((*testVariableObject)->TryGetStringField(TEXT("VARIABLE_VALUE"), stringValue))
+											if ((*testVariableObject)->TryGetStringField(VARIABLE_VALUE, stringValue))
 											{
 												FString storysStringValue;
 												bool success = story->GetVariable<FString, Ink::FValueString>( variableName, Ink::EValueType::String, storysStringValue );
 												success &= (stringValue == storysStringValue);
 												if (!success)
 												{
-													INKPOT_ERROR("%s : TEST_VARIABLE not as expected. \nExpected: %s\nActual__: %s", *InkTestName, *storysStringValue, *stringValue);
+													INKPOT_ERROR("%s : TEST_VARIABLE not as expected. \nExpected: %s\nActual__: %s\n", *InkTestName, *storysStringValue, *stringValue);
 													return false;
 												}
 											}
 											else
 											{
-												INKPOT_ERROR("%s : TEST_VARIABLE Could not parse VARIABLE_VALUE as String", *InkTestName);
+												INKPOT_ERROR("%s : TEST_VARIABLE Could not parse VARIABLE_VALUE as String\n", *InkTestName);
 											}
 										}
 										else if (variableType.Equals("null"))
 										{
-											TSharedPtr<FJsonValue> variableValue = (*testVariableObject)->TryGetField(TEXT("VARIABLE_VALUE"));
+											TSharedPtr<FJsonValue> variableValue = (*testVariableObject)->TryGetField(VARIABLE_VALUE);
 											if (!variables.Contains(variableName))
 											{
 												const bool success = variableValue->IsNull();
 												if (!success)
 												{
-													INKPOT_ERROR("%s : TEST_VARIABLE not as expected, Expected null.", *InkTestName);
+													INKPOT_ERROR("%s : TEST_VARIABLE not as expected, Expected null.\n", *InkTestName);
 													return false;
 												}
 											}
@@ -923,18 +984,18 @@ bool FInkTests::RunTest(const FString& InkTestName)
 								}
 							}
 						}
-						else if (testInstruction->HasField(TEXT("EXPECTED_EXCEPTION")))
+						else if (testInstruction->HasField(EXPECTED_EXCEPTION))
 						{
 							FString exceptionText;
-							if (testInstruction->TryGetStringField(TEXT("EXPECTED_EXCEPTION"), exceptionText))
+							if (testInstruction->TryGetStringField(EXPECTED_EXCEPTION, exceptionText))
 							{
 								AddExpectedError(exceptionText, EAutomationExpectedErrorFlags::Contains, 1);
 							}
 						}
-						else if (testInstruction->HasField(TEXT("OBSERVE_VARIABLE")))
+						else if (testInstruction->HasField(OBSERVE_VARIABLE))
 						{
 							FString variableName;
-							if (testInstruction->TryGetStringField(TEXT("OBSERVE_VARIABLE"), variableName))
+							if (testInstruction->TryGetStringField(OBSERVE_VARIABLE, variableName))
 							{
 								TSharedPtr<Ink::FObject> variableObj = story->GetVariable(variableName);
 								TSharedPtr<Ink::FValue> variable = StaticCastSharedPtr<Ink::FValue>(variableObj);
@@ -950,36 +1011,36 @@ bool FInkTests::RunTest(const FString& InkTestName)
 								story->ObserveVariable(variableName, observer);
 							}
 						}
-						else if (testInstruction->HasField(TEXT("TEST_OBSERVED_VARIABLE")))
+						else if (testInstruction->HasField(TEST_OBSERVED_VARIABLE))
 						{
-							if (testInstruction->TryGetNumberField(TEXT("TEST_OBSERVED_VARIABLE"), jsonParsedInt))
+							if (testInstruction->TryGetNumberField(TEST_OBSERVED_VARIABLE, jsonParsedInt))
 							{
 								const int32 expectedVariableValue = jsonParsedInt;
 								const int32 actualVariableValue = ObserverVariable.GetSubtype<int32>();
 								const bool success = expectedVariableValue == actualVariableValue;
 								if (!success)
 								{
-									INKPOT_ERROR("%s : TEST_OBSERVED_VARIABLE not as expected. \nExpected: %d\nActual__: %d", *InkTestName, expectedVariableValue, actualVariableValue);
+									INKPOT_ERROR("%s : TEST_OBSERVED_VARIABLE not as expected. \nExpected: %d\nActual__: %d\n", *InkTestName, expectedVariableValue, actualVariableValue);
 									return false;
 								}
 							}
 						}
-						else if (testInstruction->HasField(TEXT("TEST_OBSERVER_CALL_COUNT")))
+						else if (testInstruction->HasField(TEST_OBSERVER_CALL_COUNT))
 						{
-							if (testInstruction->TryGetNumberField(TEXT("TEST_OBSERVER_CALL_COUNT"), jsonParsedInt))
+							if (testInstruction->TryGetNumberField(TEST_OBSERVER_CALL_COUNT, jsonParsedInt))
 							{
 								const int32 expectedObserverCallCount = jsonParsedInt;
 								const bool success = expectedObserverCallCount == ObserverCallCount;
 								if (!success)
 								{
-									INKPOT_ERROR("%s : TEST_OBSERVER_CALL_COUNT not as expected. \nExpected: %d\nActual__: %d", *InkTestName, expectedObserverCallCount, ObserverCallCount);
+									INKPOT_ERROR("%s : TEST_OBSERVER_CALL_COUNT not as expected. \nExpected: %d\nActual__: %d\n", *InkTestName, expectedObserverCallCount, ObserverCallCount);
 									return false;
 								}
 							}
 						}
-						else if ( testInstruction->HasField( TEXT( "BIND_EXTERNAL_FUNCTION" ) ) )
+						else if ( testInstruction->HasField(BIND_EXTERNAL_FUNCTION ) )
 						{
-							if ( testInstruction->TryGetStringField(TEXT("BIND_EXTERNAL_FUNCTION"), jsonParsedString)) 
+							if ( testInstruction->TryGetStringField(BIND_EXTERNAL_FUNCTION, jsonParsedString)) 
 							{
 								FString functionName = jsonParsedString;
 								if(!testFunctions)
@@ -1003,22 +1064,33 @@ bool FInkTests::RunTest(const FString& InkTestName)
 								}
 								else
 								{
-									INKPOT_ERROR( "Invalid test function binding : %s", *functionName );
+									INKPOT_ERROR( "Invalid test function binding : %s\n", *functionName );
 									return false;
 								}
 								boundExternalFunctionDelegates.Add( function  );
 								story->BindExternalFunction(functionName, *function );
 							}
 						}
+						else if ( testInstruction->HasField(EXECUTE_RESET ) )
+						{
+							story->ResetState();
+						}
+						else if ( testInstruction->HasField(EXECUTE_REMOVE_FLOW) )
+						{
+							if ( testInstruction->TryGetStringField(EXECUTE_REMOVE_FLOW, jsonParsedString)) 
+							{
+								story->RemoveFlow( jsonParsedString );
+							}
+						}
 						else
 						{
-							INKPOT_ERROR("UNKNOWN TEST COMMAND '%s' IN TEST %s", *instruction, *InkTestName);
+							INKPOT_ERROR("UNKNOWN TEST COMMAND '%s' IN TEST %s\n", *instruction, *InkTestName);
 							return false;
 						}
 					}
 					else
 					{
-						INKPOT_ERROR("Invalid test script, expected only one field per instruction: %s", *InkTestName);
+						INKPOT_ERROR("Invalid test script, expected only one field per instruction: %s\n", *InkTestName);
 						return false;
 					}
 				}

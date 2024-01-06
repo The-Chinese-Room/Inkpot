@@ -61,7 +61,7 @@ TArray<TSharedPtr<Ink::FObject>> Ink::FJsonSerialisation::JsonArrayToRuntimeObje
 		TSharedPtr<Ink::FObject> runtimeObject = JsonTokenToRuntimeObject(*jsonToken);
 		if (runtimeObject == nullptr)
 		{
-			UE_LOG(InkPlusPlus, Error, TEXT("JsonSerialisation : failed to get Run Time Object from the passed in JSON Token!"))
+			UE_LOG(InkPlusPlus, Error, TEXT("JsonSerialisation : failed to get Run Time Object from the passed in JSON Token!"));
 			continue;
 		}
 		
@@ -86,8 +86,8 @@ TSharedPtr<TArray<TSharedPtr<Ink::FChoice>>> Ink::FJsonSerialisation::JsonArrayT
 		TSharedPtr<Ink::FObject> runtimeObject(JsonTokenToRuntimeObject(*jsonToken));
 		if (!runtimeObject.IsValid())
 		{
-			UE_LOG(InkPlusPlus, Error, TEXT("JsonSerialisation : failed to get Run Time Object from the passed in JSON Token!"))
-				continue;
+			UE_LOG(InkPlusPlus, Error, TEXT("JsonSerialisation : failed to get Run Time Object from the passed in JSON Token!"));
+			continue;
 		}
 
 		TSharedPtr<Ink::FChoice> convertedRuntimeObject = FObject::DynamicCastTo<Ink::FChoice>(runtimeObject);
@@ -346,7 +346,7 @@ void Ink::FJsonSerialisation::WriteRuntimeObject(TJsonWriter<>* InJSONWriter, TS
 	{
 		if (stringValue->IsNewLine())
 		{
-			InJSONWriter->WriteValue(TEXT("\\n"));
+			InJSONWriter->WriteValue(TEXT("\n"));
 		}
 		else
 		{
@@ -546,18 +546,13 @@ void Ink::FJsonSerialisation::WriteInkList(TJsonWriter<>* InJSONWriter, const In
 	for (const TPair<Ink::FInkListItem, int32>& pair : rawList)
 	{
 		const Ink::FInkListItem item = pair.Key;
-		const int32 itemValue = pair.Value;
+		const int32 value = pair.Value;
 
-		InJSONWriter->WriteIdentifierPrefix(FString());
-
-		FString value = !item.OriginName.IsEmpty() ? item.OriginName : TEXT("");
-		value += TEXT(".");
-		value += item.ItemName;
-		InJSONWriter->WriteValue(value);
-		
-		InJSONWriter->WriteValue(itemValue);
+		FString name = !item.OriginName.IsEmpty() ? item.OriginName : TEXT("");
+		name += TEXT(".");
+		name += item.ItemName;
+		InJSONWriter->WriteValue( name, value );
 	}
-
 	InJSONWriter->WriteObjectEnd();
 	
 	if (rawList.Num() == 0 && rawList.GetOriginNames().IsValid() && rawList.GetOriginNames()->Num() > 0)

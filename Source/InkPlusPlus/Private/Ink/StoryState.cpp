@@ -49,6 +49,7 @@ FString Ink::FStoryState::ToJson() const
 	FString jsonString;
 	TSharedPtr<TJsonWriter<>> writer = TJsonWriterFactory<>::Create(&jsonString);
 	WriteJson(writer.Get());
+	writer->Close();
 	return jsonString;
 }
 
@@ -56,6 +57,7 @@ void Ink::FStoryState::ToJson(FArchive* const Stream) const
 {
 	TSharedPtr<TJsonWriter<>> writer = TJsonWriter<>::Create(Stream);
 	WriteJson(writer.Get());
+	writer->Close();
 }
 
 void Ink::FStoryState::LoadJSON(const FString& InJSON)
@@ -66,6 +68,7 @@ void Ink::FStoryState::LoadJSON(const FString& InJSON)
 	if (!FJsonSerializer::Deserialize(reader, jsonObject))
 	{
 		UE_LOG(InkPlusPlus, Error, TEXT("Deserialisation of the JSON failed"));
+		return;
 	}
 
 	LoadJSONObj(*jsonObject);
@@ -78,7 +81,7 @@ void Ink::FStoryState::LoadJSONObj(const FJsonObject& InJSONObj)
 	checkf(jSaveVersion.IsValid(), TEXT("ink save format incorrect, can't load!"));
 
 	const int32 saveVersion = static_cast<int32>(jSaveVersion->AsNumber());
-	checkf(saveVersion < MinCompatibleLoadVersion, TEXT("Ink save format isn't compatible with the current version (saw '%d', but minimum is '%d'), so can't load."), saveVersion, MinCompatibleLoadVersion);
+	checkf(saveVersion > MinCompatibleLoadVersion, TEXT("Ink save format isn't compatible with the current version (saw '%d', but minimum is '%d'), so can't load."), saveVersion, MinCompatibleLoadVersion);
 
 	/*	Flows: Always exists in latest format (even if there's just one default)
 		but this map doesn't exist in previous format */
@@ -651,18 +654,21 @@ void Ink::FStoryState::WriteJson(TJsonWriter<>* Writer) const
 		// Multi-flow
 		for (const TTuple<FString, TSharedPtr<FFlow>>& namedFlow : *NamedFlows)
 		{
+			Writer->WriteIdentifierPrefix( namedFlow.Key );
 			namedFlow.Value->WriteJSON(Writer);
 		}
 	}
 	else {
 		// Single flow
+		Writer->WriteIdentifierPrefix( CurrentFlow->GetName() );
 		CurrentFlow->WriteJSON(Writer);
 	}
 
-	Writer->WriteObjectEnd();
 	Writer->WriteObjectEnd(); // end of flows
 
-	WriteProperty(Writer, "currentFlowName", CurrentFlow->GetName());
+	Writer->WriteValue(TEXT("currentFlowName"), CurrentFlow->GetName());
+
+	Writer->WriteIdentifierPrefix("variablesState");
 	VariableState->WriteJson(Writer);
 
 	Writer->WriteIdentifierPrefix("evalStack");
@@ -674,45 +680,31 @@ void Ink::FStoryState::WriteJson(TJsonWriter<>* Writer) const
 	Writer->WriteArrayEnd();
 
 	if (!DivertedPointer.IsNull())
-		WriteProperty(Writer, "currentDivertTarget", DivertedPointer.GetPath()->GetComponentsString());
-
+		Writer->WriteValue( TEXT("currentDivertTarget"), DivertedPointer.GetPath()->GetComponentsString());
 
 	Writer->WriteIdentifierPrefix("visitCounts");
 	Writer->WriteObjectStart();
 	for (const TTuple<FString, int>& pair: VisitCounts)
 	{
-		WriteProperty(Writer, pair.Key, pair.Value);
+		Writer->WriteValue( pair.Key, pair.Value );
 	}
 	Writer->WriteObjectEnd();
-
 
 	Writer->WriteIdentifierPrefix("turnIndices");
 	Writer->WriteObjectStart();
 	for (const TTuple<FString, int>& pair : TurnIndices)
 	{
-		WriteProperty(Writer, pair.Key, pair.Value);
+		Writer->WriteValue( pair.Key, pair.Value );
 	}
 	Writer->WriteObjectEnd();
 
-
-	WriteProperty(Writer, "turnIdx", CurrentTurnIndex);
-	WriteProperty(Writer, "storySeed", StorySeed);
-	WriteProperty(Writer, "previousRandom", PreviousRandom);
-
-	WriteProperty(Writer, "inkSaveVersion", InkSaveStateVersion);
+	Writer->WriteValue(TEXT("turnIdx"), CurrentTurnIndex);
+	Writer->WriteValue(TEXT("storySeed"), StorySeed);
+	Writer->WriteValue(TEXT("previousRandom"), PreviousRandom);
+	Writer->WriteValue(TEXT("inkSaveVersion"), InkSaveStateVersion);
 
 	// Not using this right now, but could do in future.
-	WriteProperty(Writer, "inkFormatVersion", Story->inkVersionCurrent);
-
-	Writer->WriteObjectEnd();
-}
-
-template<typename T>
-void Ink::FStoryState::WriteProperty(TJsonWriter<>* Writer, const FString& PropertyName, T PropertyValue) const
-{
-	Writer->WriteIdentifierPrefix(PropertyName);
-	Writer->WriteObjectStart();
-	Writer->WriteValue(PropertyValue);
+	Writer->WriteValue(TEXT("inkFormatVersion"), Story->inkVersionCurrent );
 	Writer->WriteObjectEnd();
 }
 
