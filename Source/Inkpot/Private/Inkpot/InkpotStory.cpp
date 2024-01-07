@@ -628,3 +628,12 @@ void UInkpotStory::LoadJSON(const FString &InJSON)
 		EventOnStoryLoadJSON.Broadcast( this );
 }
 
+int UInkpotStory::GetStorySeed() const
+{
+	return StoryInternal->GetStoryState()->GetStorySeed();
+}
+
+void UInkpotStory::SetStorySeed( int Seed )
+{
+	StoryInternal->GetStoryState()->SetStorySeed( Seed );
+}

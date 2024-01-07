@@ -2,24 +2,10 @@
 
 #include "CoreMinimal.h"
 #include "Inkpot/InkpotStory.h"
+#include "Inkpot/InkpotStoryHistory.h"
 #include "InkpotStories.generated.h"
 
 class UInkpotStoryAsset;
-
-USTRUCT()
-struct FInkpotStoryHistory
-{
-	GENERATED_BODY()
-
-	UPROPERTY()
-	int RandSeed; 
-
-	UPROPERTY()
-	TArray<int32> Choices; 
-
-	UPROPERTY(Transient)
-	bool bInReplay; 
-};
 
 UCLASS()
 class INKPOT_API UInkpotStories : public UObject
@@ -44,9 +30,6 @@ private:
 
 	TSharedPtr<FInkpotStoryInternal> CreateStoryInternal(UInkpotStoryAsset* InInkpotStoryAsset, int32 InHandle );
 
-	UFUNCTION()
-	void OnStoryChoice( UInkpotStory* InStory, UInkpotChoice* InChoice );
-
 private:
 	int32 NextStoryHandle{0};
 
@@ -60,5 +43,5 @@ private:
 	TMap<int32, UInkpotStoryAsset*> StoryAssets;
 
 	UPROPERTY(Transient)
-	TMap<int32, FInkpotStoryHistory> StoryHistories;
+	TMap<int32, UInkpotStoryHistory*> StoryHistories;
 };

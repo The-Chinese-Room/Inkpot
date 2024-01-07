@@ -57,10 +57,12 @@ UInkpotStory* UInkpotStories::BeginStory( UInkpotStoryAsset* InInkpotStoryAsset 
 	UInkpotStory *storyNew = NewObject<UInkpotStory>(this);
 	storyNew->Initialise( storyInternal );
 	Stories.Emplace( handle, storyNew );
-	StoryAssets.Emplace( handle, InInkpotStoryAsset );
-	StoryHistories.Emplace( handle, FInkpotStoryHistory() );
 
-	storyNew->OnMakeChoice().AddDynamic( this, &UInkpotStories::OnStoryChoice );
+	StoryAssets.Emplace( handle, InInkpotStoryAsset );
+
+	UInkpotStoryHistory *history = NewObject<UInkpotStoryHistory>( storyNew );
+	history->Initialise( storyNew );
+	StoryHistories.Emplace( handle, history );
 
 	return storyNew;
 }
@@ -117,33 +119,9 @@ void UInkpotStories::Replay( UInkpotStory* InStory, bool bInResetState )
 		return;
 
 	int index = InStory->GetID();
-	FInkpotStoryHistory *history = StoryHistories.Find( index );
+	UInkpotStoryHistory **history = StoryHistories.Find( index );
 	if(!history)
 		return;
 
-	history->bInReplay = true;
-
-	if(bInResetState)
-		InStory->ResetState();
-	InStory->ContinueMaximally();
-	for( int32 choice : history->Choices )
-	{
-		InStory->ChooseChoiceIndex( choice );
-		InStory->ContinueMaximally();
-	}
-
-	history->bInReplay = false;
+	(*history)->Replay( bInResetState );
 }
-
-void UInkpotStories::OnStoryChoice( UInkpotStory* InStory, UInkpotChoice* InChoice )
-{
-	int index = InStory->GetID();
-	FInkpotStoryHistory *history = StoryHistories.Find( index );
-	if(!history)
-		return;
-	if(history->bInReplay)
-		return;
-	int choice = InChoice->GetIndex();
-	history->Choices.Push( choice );
-}
-

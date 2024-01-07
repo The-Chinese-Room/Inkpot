@@ -149,6 +149,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
 	void LoadJSON(const FString &InJSON);
 
+	int GetStorySeed() const;
+	void SetStorySeed( int Seed );
+
 	int32 GetVariableKeys( TArray<FString> &OutKeys );
 
 	TSharedPtr<Ink::FObject> GetVariable( const FString& InVariable );
