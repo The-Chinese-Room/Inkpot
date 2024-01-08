@@ -10,7 +10,7 @@
 static const int32 dbgIndent{12};
 #define INKPOT_DBG( section, msg, ... )   INKPOT_LOG( "%- *s: " msg, dbgIndent, TEXT(section), ##__VA_ARGS__ )
 
-void UInkpotStory::Initialise( TSharedRef<FInkpotStoryInternal>  InInkpotStory )
+void UInkpotStory::Initialise( TSharedPtr<FInkpotStoryInternal>  InInkpotStory )
 {
 	StoryInternal = InInkpotStory;
 	StoryInternal->OnDidContinue().AddUObject(this, &UInkpotStory::OnContinueInternal );
@@ -578,7 +578,6 @@ void UInkpotStory::UnbindExternalFunction( const FString &InFunctionName )
 	StoryInternal->UnbindExternalFunction( InFunctionName );
 }
 
-
 FOnStoryContinue& UInkpotStory::OnContinue()
 {
 	return EventOnContinue;
@@ -606,6 +605,16 @@ UInkpotLine *UInkpotStory::GetCurrentLine()
 	return line;
 }
 
+void UInkpotStory::ResetContent( TSharedPtr<FInkpotStoryInternal> InNewStoryContent )
+{
+	StoryInternal->ResetContent( InNewStoryContent );
+}
+
+void UInkpotStory::ResetState()
+{
+	StoryInternal->ResetState();
+}
+
 FString UInkpotStory::ToJSON()
 {
 	return StoryInternal->GetStoryState()->ToJson();
@@ -619,10 +628,12 @@ void UInkpotStory::LoadJSON(const FString &InJSON)
 		EventOnStoryLoadJSON.Broadcast( this );
 }
 
-void UInkpotStory::ResetState()
+int UInkpotStory::GetStorySeed() const
 {
-	StoryInternal->ResetState();
+	return StoryInternal->GetStoryState()->GetStorySeed();
 }
 
-
-
+void UInkpotStory::SetStorySeed( int Seed )
+{
+	StoryInternal->GetStoryState()->SetStorySeed( Seed );
+}

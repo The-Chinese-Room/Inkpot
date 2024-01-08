@@ -21,7 +21,7 @@ class INKPOT_API UInkpotStory : public UObject
 	GENERATED_BODY()
 
 public:
-	void Initialise( TSharedRef<FInkpotStoryInternal>  InInkpotStory );
+	void Initialise( TSharedPtr<FInkpotStoryInternal>  InInkpotStory );
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
 	FString Continue();
@@ -149,6 +149,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
 	void LoadJSON(const FString &InJSON);
 
+	int GetStorySeed() const;
+	void SetStorySeed( int Seed );
+
 	int32 GetVariableKeys( TArray<FString> &OutKeys );
 
 	TSharedPtr<Ink::FObject> GetVariable( const FString& InVariable );
@@ -164,6 +167,7 @@ public:
 	FOnSwitchFlow& OnSwitchFlow(); 
 	FOnStoryLoadJSON OnStoryLoadJSON(); 
 
+	void ResetContent( TSharedPtr<FInkpotStoryInternal> InNewStoryContent ); 
 	void ResetState();
 
 	int32 GetID() const;

@@ -26,6 +26,8 @@ public class Inkpot : ModuleRules
                 "Engine",
 
                 "InkPlusPlus",
+
+                "DeveloperSettings",
             }
         );
 		

@@ -19,6 +19,7 @@ public:
 	UInkpot();
 
 	virtual void Initialize(FSubsystemCollectionBase&) override;
+	void Register();
 
 	UFUNCTION(BlueprintCallable, Category=Inkpot )
 	UInkpotStory* BeginStory( UInkpotStoryAsset* InkpotStoryAsset );
@@ -33,7 +34,13 @@ public:
 	FOnStoryBegin EventOnStoryEnd; 
 
 private:
+	void BindPostImport();
+#if WITH_EDITOR
+	void OnAssetPostImport(UFactory* InFactory, UObject* ActorAdded);
+#endif 
+	void OnStartGameInstance( UGameInstance *InInstance );
+
+private:
 	UPROPERTY()
 	UInkpotStories *Stories;
 };
-
