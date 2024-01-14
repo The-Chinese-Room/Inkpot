@@ -161,7 +161,7 @@ FString UInkpotStory::GetCurrentFlowName()
 	return StoryInternal->GetCurrentFlowName();
 }
 
-void UInkpotStory::SwitchToDefautFlow()
+void UInkpotStory::SwitchToDefaultFlow()
 {
 	StoryInternal->SwitchToDefaultFlow();
 	UpdateChoices();

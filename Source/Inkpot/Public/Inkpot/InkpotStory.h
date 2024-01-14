@@ -63,7 +63,7 @@ public:
 	FString GetCurrentFlowName();
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
-	void SwitchToDefautFlow();
+	void SwitchToDefaultFlow();
 
 	UFUNCTION(BlueprintPure, Category="Inkpot|Story")
 	bool IsFlowAlive( const FString &FlowName );
