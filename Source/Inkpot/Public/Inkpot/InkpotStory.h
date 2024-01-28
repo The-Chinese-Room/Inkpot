@@ -63,7 +63,7 @@ public:
 	FString GetCurrentFlowName();
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
-	void SwitchToDefautFlow();
+	void SwitchToDefaultFlow();
 
 	UFUNCTION(BlueprintPure, Category="Inkpot|Story")
 	bool IsFlowAlive( const FString &FlowName );
@@ -125,8 +125,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
 	void SetOnVariableChange( UPARAM(DisplayName="Event") FOnInkpotVariableChange Delegate, const FString &Variable );
 
-	UFUNCTION(BlueprintCallable, Meta = (DefaultToSelf = "Owner", HidePin = "Owner"), Category="Inkpot|Story")
-	void ClearVariableChange( const UObject* Owner, const FString &Variable );
+	// @param Owner Object that initially called SetOnVariableChange
+	UFUNCTION(BlueprintCallable, Meta = (DefaultToSelf = "Owner", ExpandBoolAsExecs = "ReturnValue"), Category="Inkpot|Story")
+	bool ClearVariableChange( const UObject* Owner, const FString &Variable );
+	
+	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
+	void ClearAllVariableObservers( const FString &Variable );
 
 	UFUNCTION(BlueprintPure, Category = "Inkpot|Story")
 	TArray<FString> GetNamedContent();
