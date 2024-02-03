@@ -161,7 +161,7 @@ FString UInkpotStory::GetCurrentFlowName()
 	return StoryInternal->GetCurrentFlowName();
 }
 
-void UInkpotStory::SwitchToDefautFlow()
+void UInkpotStory::SwitchToDefaultFlow()
 {
 	StoryInternal->SwitchToDefaultFlow();
 	UpdateChoices();
@@ -308,19 +308,37 @@ void UInkpotStory::SetOnVariableChange( FOnInkpotVariableChange InDelegate, cons
 	StoryInternal->ObserveVariable( InVariable, observer );
 }
 
-void UInkpotStory::ClearVariableChange( const UObject* Owner, const FString &InVariable )
+bool UInkpotStory::ClearVariableChange( const UObject* Owner, const FString &Variable )
 {
-	if (!Owner || !VariableObservers.Contains(InVariable))
-		return;
+	if (!Owner || !VariableObservers.Contains(Variable))
+		return false;
+
+	bool bRemovedAtLeastOneEntry = false;
 	
-	for (auto Iterator = VariableObservers.CreateConstKeyIterator(InVariable); Iterator; ++Iterator)
+	for (auto Iterator = VariableObservers.CreateConstKeyIterator(Variable); Iterator; ++Iterator)
 	{
-		if (Owner == Iterator->Value->GetUObject())
+		if (Iterator->Value.IsValid() && Owner == Iterator->Value->GetUObject())
 		{
-			StoryInternal->RemoveVariableObserver( Iterator->Value, InVariable );
-			VariableObservers.RemoveSingle( InVariable, Iterator->Value );
+			StoryInternal->RemoveVariableObserver( Iterator->Value, Variable );
+			VariableObservers.RemoveSingle( Variable, Iterator->Value );
+			bRemovedAtLeastOneEntry = true;
 		}
 	}
+
+	return bRemovedAtLeastOneEntry;
+}
+
+void UInkpotStory::ClearAllVariableObservers( const FString& Variable )
+{
+	if (!VariableObservers.Contains(Variable))
+		return;
+	
+	for (auto Iterator = VariableObservers.CreateConstKeyIterator(Variable); Iterator; ++Iterator)
+	{
+		StoryInternal->RemoveVariableObserver( Iterator->Value, Variable );
+	}
+
+	VariableObservers.Remove(Variable);
 }
 
 void UInkpotStory::OnContinueInternal()

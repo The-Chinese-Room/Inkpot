@@ -57,10 +57,12 @@ void UAsyncAction_WaitVariableChange::OnEndStory(UInkpotStory* InStory)
 
 void UAsyncAction_WaitVariableChange::EndTask()
 {
-	check(Inkpot);
-	Inkpot->EventOnStoryBegin.RemoveAll(this);
-	Inkpot->EventOnStoryEnd.RemoveAll(this);
-	
+	if (IsValid(Inkpot))
+	{
+		Inkpot->EventOnStoryBegin.RemoveAll(this);
+		Inkpot->EventOnStoryEnd.RemoveAll(this);
+	}
+
 	if (CurrentStory && World)
 	{
 		// Story still in progress but the user wants to force End this Task
