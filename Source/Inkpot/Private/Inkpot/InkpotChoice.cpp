@@ -8,24 +8,13 @@ UInkpotChoice::UInkpotChoice()
 
 void UInkpotChoice::Initialise( int32 InIndex, const FString &InString)
 {
+	UInkpotLine::Initialise(InString);
 	Index = InIndex;
-	String = InString;
 }
 
 int32 UInkpotChoice::GetIndex() const
 {
 	return Index;
-}
-
-const FString& UInkpotChoice::GetString() const
-{
-	return String;
-}
-
-UInkpotStory* UInkpotChoice::GetStory() const
-{
-	UObject *outer = GetOuter();
-	return Cast<UInkpotStory>( outer );
 }
 
 bool UInkpotChoice::operator == ( int32 InIndex )

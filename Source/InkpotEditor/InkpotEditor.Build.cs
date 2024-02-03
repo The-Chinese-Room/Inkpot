@@ -1,4 +1,5 @@
 using UnrealBuildTool;
+using UnrealBuildTool.Rules;
 
 public class InkpotEditor : ModuleRules
 {
@@ -24,6 +25,8 @@ public class InkpotEditor : ModuleRules
                 "Core",
                 "CoreUObject",
                 "Engine",
+
+                "Projects"
             }
 		);
 		

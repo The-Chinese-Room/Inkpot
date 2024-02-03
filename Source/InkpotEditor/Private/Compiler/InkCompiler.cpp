@@ -4,18 +4,35 @@
 #include "Misc/FileHelper.h"
 #include "Utility/InkpotLog.h"
 #include "Serialization/JsonSerializer.h"
+#include "Interfaces/IPluginManager.h"
 
-const FString InkIncludeFolderName = "SharedInk";
-const FString InkpotPath = FPaths::ProjectPluginsDir() + TEXT("Inkpot/");
-const FString InkleCatePath = InkpotPath + TEXT("ThirdParty/InkCommandLine/inklecate.exe");
-const FString InkScratchDirectory = InkpotPath + TEXT("Intermediate/InkCommandLine/");
 
 namespace InkCompiler
 {
+	FString GetPluginPath()
+	{
+		FString path = FPaths::ProjectPluginsDir() + TEXT( "Inkpot/" );
+		IPluginManager &pluginManager =  IPluginManager::Get();
+		TSharedPtr<IPlugin> inkpotPlugin = pluginManager.FindPlugin("Inkpot");
+		if(inkpotPlugin)
+			path = inkpotPlugin->GetBaseDir();
+		return path;
+	}
+
+	FString GetInkleCatePath()
+	{
+		return GetPluginPath() + TEXT( "/ThirdParty/InkCommandLine/inklecate.exe" );
+	}
+
+	FString GetScratchDirectory()
+	{
+		return GetPluginPath() + TEXT( "/Intermediate/InkCommandLine/" );
+	}
+
 	bool CompileInkFile_Internal(const FString& InkFilePath, const FString& InScratchFilePath, FString& OutCompiledJSON, TArray<FString>& Errors, TArray<FString>& Warnings, bool shouldCountVisits, bool bIsCompilationFailExpected )
 	{
 		// Check if inklecate exists
-		const FString inkExePath = InkleCatePath;
+		const FString inkExePath = GetInkleCatePath();
 		FString InkFilePathStripped = InkFilePath;
 		FPaths::CollapseRelativeDirectories(InkFilePathStripped);
 		if (!FPaths::FileExists(inkExePath))
@@ -79,14 +96,9 @@ namespace InkCompiler
 		return false;
 	}
 
-	FString GetScratchDirectory()
-	{
-		return InkScratchDirectory;
-	}
-
 	void FlushScratchDirectory()
 	{
-		IPlatformFile::GetPlatformPhysical().DeleteDirectoryRecursively(*InkScratchDirectory);
+		IPlatformFile::GetPlatformPhysical().DeleteDirectoryRecursively( *GetScratchDirectory() );
 	}
 
 	void CopyFilesMatchingFilter(const FString& SourceFolder, const FString& DestinationFolder, const FString& FileFilter)
