@@ -1,18 +1,17 @@
 #include "Utility/InkPlusPlusUtility.h"
 #include "Utility/InkPlusPlusLog.h"
 
-#include "Ink/SearchResult.h"
-#include "Ink/Path.h"
+#include "Ink/ChoicePoint.h"
+#include "Ink/Container.h"
 #include "Ink/ControlCommand.h"
 #include "Ink/Divert.h"
 #include "Ink/Glue.h"
 #include "Ink/NativeFunctionCall.h"
 #include "Ink/Tag.h"
+#include "Ink/Value.h"
+#include "Ink/VariableAssignment.h"
 #include "Ink/VariableReference.h"
 #include "Ink/Void.h"
-#include "Ink/ChoicePoint.h"
-
-
 
 namespace Ink
 {
@@ -37,7 +36,6 @@ namespace Ink
 		else if(InObj->CanCastTo(Ink::EInkObjectClass::FGlue				)) newObj = CopyInkObjectAs<Ink::FGlue                >( InObj );
 		else if(InObj->CanCastTo(Ink::EInkObjectClass::FNativeFunctionCall	)) newObj = CopyInkObjectAs<Ink::FNativeFunctionCall  >( InObj );
 		else if(InObj->CanCastTo(Ink::EInkObjectClass::FTag					)) newObj = CopyInkObjectAs<Ink::FTag                 >( InObj );
-		else if(InObj->CanCastTo(Ink::EInkObjectClass::FValue				)) newObj = CopyInkObjectAs<Ink::FValue               >( InObj );
 		else if(InObj->CanCastTo(Ink::EInkObjectClass::FValueBool			)) newObj = CopyInkObjectAs<Ink::FValueBool           >( InObj );
 		else if(InObj->CanCastTo(Ink::EInkObjectClass::FValueDivertTarget	)) newObj = CopyInkObjectAs<Ink::FValueDivertTarget   >( InObj );
 		else if(InObj->CanCastTo(Ink::EInkObjectClass::FValueFloat			)) newObj = CopyInkObjectAs<Ink::FValueFloat          >( InObj );
@@ -45,6 +43,7 @@ namespace Ink
 		else if(InObj->CanCastTo(Ink::EInkObjectClass::FValueList			)) newObj = CopyInkObjectAs<Ink::FValueList           >( InObj );
 		else if(InObj->CanCastTo(Ink::EInkObjectClass::FValueString			)) newObj = CopyInkObjectAs<Ink::FValueString         >( InObj );
 		else if(InObj->CanCastTo(Ink::EInkObjectClass::FValueVariablePointer)) newObj = CopyInkObjectAs<Ink::FValueVariablePointer>( InObj );
+		else if(InObj->CanCastTo(Ink::EInkObjectClass::FValue				)) newObj = CopyInkObjectAs<Ink::FValue               >( InObj );
 		else if(InObj->CanCastTo(Ink::EInkObjectClass::FVariableAssignment	)) newObj = CopyInkObjectAs<Ink::FVariableAssignment  >( InObj );
 		else if(InObj->CanCastTo(Ink::EInkObjectClass::FVariableReference	)) newObj = CopyInkObjectAs<Ink::FVariableReference   >( InObj );
 		else if(InObj->CanCastTo(Ink::EInkObjectClass::FVoid				)) newObj = CopyInkObjectAs<Ink::FVoid                >( InObj );

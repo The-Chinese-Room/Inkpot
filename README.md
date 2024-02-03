@@ -31,13 +31,39 @@ You will need to install Visual Studio 2022.<br>
 https://visualstudio.microsoft.com/vs/<br>
 
 ## Installing the plugin
-Copy to the plugins folder of your project.<br>
+
+Make sure you have **.Net framework 3.1** and **Visual Studio 2022** installed.<br>
+
+In your **project folder**, create a folder named **Plugins** and copy the Inkpot plugin there.<br>
+Make sure the inkpot folder is called simply '**Inkpot**'.
+
+LIke this:<br>
 
     [Project Root Directory]/Plugins/Inkpot/
 
-or add via git as a submodule.<br><br>
 For an example of how this plugin should sit in your project see the InkpotDemo.<br>
 https://github.com/The-Chinese-Room/InkpotDemo
+
+## FAQ
+
+### My Ink files will not import.
+
+* Inkpot has only been tested as an application plugin and not an engine plugin.<br>
+It needs to be located in the project's plugins folder and not the engine plugin folder.<br>
+
+* The plugin folder name should be simply 'inkpot',<br>
+If you unzipped it directly to your project, it will likely be called 'inkpot-release'.<br>
+eg <your project root>\plugins\inkpot<br>
+
+* See the inkpotdemo for how it should look in your project.<br>
+https://github.com/The-Chinese-Room/InkpotDemo<br>
+
+
+### My Ink file changes will not update on reimport.
+* Inky, the Ink script editor, will silently fail when saving to read only files.<br>
+Some version control systems will make the file read only when you check them out, eg perforce.<br>
+This can lead to some conusion when running Inky alongside Unreal & Inkpot.<br>
+
 
 ## Module Structure
 Inkpot is made from three modules. <br>
