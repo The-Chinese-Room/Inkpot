@@ -49,7 +49,7 @@ https://github.com/The-Chinese-Room/InkpotDemo
 ### My Ink files will not import.
 
 * Make sure you have **.Net framework 3.1** installed.<br>
-Inkpot uses Inklecate to compile the Ink files and it needs .net 3.1/.<br>
+Inkpot uses Inklecate to compile the Ink files and it needs .net 3.1.<br>
 Without this the Ink files will not import.<br>
 
 * Inkpot has only been tested as an application plugin and not an engine plugin.<br>
