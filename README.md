@@ -48,6 +48,10 @@ https://github.com/The-Chinese-Room/InkpotDemo
 
 ### My Ink files will not import.
 
+* Make sure you have **.Net framework 3.1** installed.<br>
+Inkpot uses Inklecate to compile the Ink files and it needs .net 3.1/.<br>
+Without this the Ink files will not import.<br>
+
 * Inkpot has only been tested as an application plugin and not an engine plugin.<br>
 It needs to be located in the project's plugins folder and not the engine plugin folder.<br>
 
@@ -62,7 +66,7 @@ https://github.com/The-Chinese-Room/InkpotDemo<br>
 ### My Ink file changes will not update on reimport.
 * Inky, the Ink script editor, will silently fail when saving to read only files.<br>
 Some version control systems will make the file read only when you check them out, eg perforce.<br>
-This can lead to some conusion when running Inky alongside Unreal & Inkpot.<br>
+This can lead to some confusion when running Inky alongside Unreal & Inkpot.<br>
 
 
 ## Module Structure
