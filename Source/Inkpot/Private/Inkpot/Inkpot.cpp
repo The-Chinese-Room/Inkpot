@@ -2,6 +2,7 @@
 #include "Inkpot/InkpotStories.h"
 #include "Utility/InkpotLog.h"
 #include "Settings/InkpotCVars.h"
+#include "Asset/InkpotStoryAsset.h"
 
 static FDelayedAutoRegisterHelper DelayedAutoRegister(
 EDelayedRegisterRunPhase::EndOfEngineInit, 
@@ -47,10 +48,13 @@ void UInkpot::Register()
 void UInkpot::BindPostImport()
 {
 #if WITH_EDITOR
-	UImportSubsystem *imports = GEditor->GetEditorSubsystem<UImportSubsystem>();
-	if(!imports)
-		return;
-	imports->OnAssetPostImport.AddUObject( this, &UInkpot::OnAssetPostImport );
+	if (IsValid(GEditor))
+	{
+		UImportSubsystem* imports = GEditor->GetEditorSubsystem<UImportSubsystem>();
+		if (!imports)
+			return;
+		imports->OnAssetPostImport.AddUObject(this, &UInkpot::OnAssetPostImport);
+	}
 #endif 
 }
 
