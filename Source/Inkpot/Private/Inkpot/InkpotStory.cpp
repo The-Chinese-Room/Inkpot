@@ -533,6 +533,60 @@ void UInkpotStory::DumpContentAtKnot( const FString& InName )
 	DumpContainer(InName, knotContainer  );
 }
 
+void UInkpotStory::GatherAllStrings( TMap<FString, FString> &OutStrings )
+{
+	TSharedPtr<Ink::FContainer> main = StoryInternal->GetMainContentContainer();
+	GatherAllStrings( "", main, OutStrings);
+}
+
+void UInkpotStory::GatherAllStrings( const FString &InRootName, TSharedPtr<Ink::FContainer> InContainer, TMap<FString, FString> &OutStrings )
+{
+	if(!InContainer)
+		return;
+
+	FString rootName = InRootName;
+	FString containerName = InContainer->GetName();
+	if (rootName.IsEmpty())
+		rootName = containerName;
+	else if (containerName.Len() > 0)
+		rootName += TEXT(".") + containerName;
+
+	TArray<TSharedPtr<Ink::FObject>> *contents = InContainer->GetContent().Get();
+	int contentIndex = 1;
+	for( TSharedPtr<Ink::FObject> obj : *contents)
+	{
+		TSharedPtr<Ink::FContainer> container = Ink::FObject::DynamicCastTo<Ink::FContainer>(obj);
+		if( container )
+		{
+			GatherAllStrings( rootName, container, OutStrings  );
+		}
+		else
+		{
+			if(obj->CanCastTo(Ink::EInkObjectClass::FValueString))
+			{
+				FString entry = obj->ToString();
+				entry.TrimEndInline();
+				if ( entry.Len() )
+				{
+					FString key = FString::Printf(TEXT("%s.%02d"), *rootName, contentIndex);
+					OutStrings.Add( key, entry );
+					INKPOT_LOG( "%s : %s", *key, *entry );
+					contentIndex++;
+				}
+			}
+		}
+	}
+
+	TSharedPtr<TMap<FString, TSharedPtr<Ink::FObject>>> namedContentPtr = InContainer->GetNamedContent();
+	for( auto pair : *namedContentPtr )
+	{
+		TSharedPtr<Ink::FContainer> container = Ink::FObject::DynamicCastTo<Ink::FContainer>( pair.Value );
+		if(!container)
+			continue;
+		GatherAllStrings( rootName, container, OutStrings );
+	}
+}
+
 TArray<FString> UInkpotStory::GetNamedContent()
 {
 	TSharedPtr<Ink::FContainer> container = StoryInternal->GetMainContentContainer();
@@ -614,6 +668,11 @@ FOnChoosePath& UInkpotStory::OnChoosePath()
 FOnSwitchFlow& UInkpotStory::OnSwitchFlow()
 {
 	return EventOnSwitchFlow;
+}
+
+FOnStoryLoadJSON& UInkpotStory::OnStoryLoadJSON()
+{
+	return EventOnStoryLoadJSON;
 }
 
 UInkpotLine *UInkpotStory::GetCurrentLine()

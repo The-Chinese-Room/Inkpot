@@ -4,6 +4,8 @@
 #include "Compiler/InkCompiler.h"
 #include "Logging/MessageLog.h"
 #include "EditorFramework/AssetImportData.h"
+#include "Inkpot/Inkpot.h"
+#include "Inkpot/InkpotStory.h"
 
 #define LOCTEXT_NAMESPACE "InkpotStoryAssetFactory"
 
@@ -21,20 +23,22 @@ bool UInkpotStoryAssetFactory::FactoryCanImport( const FString& Filename )
 	return Filename.EndsWith("ink");
 }
 
-UObject* UInkpotStoryAssetFactory::FactoryCreateFile( UClass* InClass, UObject* InParent, FName InName, EObjectFlags InFlags, const FString& InFilename, const TCHAR* InParms, FFeedbackContext* InWarn, bool& bOutOperationCanceled )
+UObject* UInkpotStoryAssetFactory::FactoryCreateFile( UClass* InClass, UObject* InParent, FName InName, EObjectFlags InFlags, const FString& InFullFilePath, const TCHAR* InParms, FFeedbackContext* InWarn, bool& bOutOperationCanceled )
 {
-	const FString fileExtension = FPaths::GetExtension(InFilename);
+	const FString fileExtension = FPaths::GetExtension(InFullFilePath);
 	GEditor->GetEditorSubsystem<UImportSubsystem>()->BroadcastAssetPreImport(this, InClass, InParent, InName, *fileExtension);
 
 	UInkpotStoryAsset *newObject = nullptr;
 	FString inkStory;
 	FString inkJSON;
-	if( LoadAndCompileStory( InFilename, inkStory, inkJSON ) )
+	if( LoadAndCompileStory(InFullFilePath, inkStory, inkJSON ) )
 	{
 		newObject = NewObject<UInkpotStoryAsset>( InParent, InClass, InName, InFlags );
 		newObject->SetSource( inkStory );
 		newObject->SetCompiledJSON( inkJSON );
-		newObject->UpdateAssetInfo( InFilename );
+		newObject->UpdateAssetInfo(InFullFilePath);
+
+		//DumpStrings(newObject);
 	}
 
 	if(!newObject)
@@ -43,6 +47,32 @@ UObject* UInkpotStoryAssetFactory::FactoryCreateFile( UClass* InClass, UObject* 
 	GEditor->GetEditorSubsystem<UImportSubsystem>()->BroadcastAssetPostImport( this, newObject );
 
 	return newObject;
+}
+
+void UInkpotStoryAssetFactory::DumpStrings(UInkpotStoryAsset* InStoryAsset) const
+{
+	UInkpot* inkpot = GEngine->GetEngineSubsystem<UInkpot>();
+	UInkpotStory *story = inkpot->BeginStory(InStoryAsset);
+	TMap<FString, FString> strings;
+	story->GatherAllStrings(strings);
+
+	FString filecontent = FString::Printf(TEXT("\"Name\",\"InkText\",\"LocText\"\n"));
+
+	for (auto entry : strings)
+	{
+		const FString& key = entry.Key;
+		const FString& val = entry.Value;
+		FString line = FString::Printf(TEXT("%s,\"%s\",\"%s\"\n"), *key, *val, *val );
+		filecontent += line;
+	}
+
+	FString fullPathAndName = InStoryAsset->GetAssetImportData()->GetFirstFilename();
+	FString path = FPaths::GetPath(fullPathAndName);
+	FString inkname = FPaths::GetBaseFilename(fullPathAndName);
+	inkname += TEXT("_");
+	FString newPathAndName = FPaths::CreateTempFilename(*path, *inkname, TEXT(".csv"));
+
+	FFileHelper::SaveStringToFile( filecontent, *newPathAndName);
 }
 
 bool UInkpotStoryAssetFactory::LoadAndCompileStory( const FString& InFilename, FString &OutStory, FString &OutCompiledStory) const

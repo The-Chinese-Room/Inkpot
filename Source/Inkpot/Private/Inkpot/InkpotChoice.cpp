@@ -8,7 +8,7 @@ UInkpotChoice::UInkpotChoice()
 
 void UInkpotChoice::Initialise( int32 InIndex, const FString &InString)
 {
-	UInkpotLine::Initialise(InString);
+	UInkpotLine::Initialise( InString );
 	Index = InIndex;
 }
 
