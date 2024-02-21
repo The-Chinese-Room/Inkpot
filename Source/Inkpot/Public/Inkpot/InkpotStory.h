@@ -169,7 +169,7 @@ public:
 	FOnMakeChoice& OnMakeChoice(); 
 	FOnChoosePath& OnChoosePath(); 
 	FOnSwitchFlow& OnSwitchFlow(); 
-	FOnStoryLoadJSON OnStoryLoadJSON(); 
+	FOnStoryLoadJSON& OnStoryLoadJSON(); 
 
 	void ResetContent( TSharedPtr<FInkpotStoryInternal> InNewStoryContent ); 
 	void ResetState();
@@ -182,8 +182,11 @@ public:
 	void DumpMainContent();
 	void DumpContentAtPath( const FString& InName );
 	void DumpContentAtKnot( const FString& InName );
+	void DumpContainer(const FString& InName, TSharedPtr<Ink::FContainer> InContainer, int Indent = 0);
 
-private:
+	void GatherAllStrings( TMap<FString, FString> &OutStrings );
+
+protected:
 	void OnContinueInternal();
 	void OnMakeChoiceInternal(TSharedPtr<Ink::FChoice> InChoice);
 	void OnEvaluateFunctionInternal(const FString& InFunctionName, const TArray<TSharedPtr<Ink::FValueType>>& InFunctionParms);
@@ -195,10 +198,10 @@ private:
 
 	void DumpDebug();
 	void DumpDebug(UInkpotChoice *Choice);
-
-	void DumpContainer( const FString& InName, TSharedPtr<Ink::FContainer> InContainer, int Indent = 0 );
 	
 	TArray<FString> GetNamedContent( TSharedPtr<Ink::FContainer> Container );
+
+	void GatherAllStrings(const FString &InRootName, TSharedPtr<Ink::FContainer> InContainer, TMap<FString, FString>& OutStrings);
 
 protected:
 	TSharedPtr<FInkpotStoryInternal> StoryInternal;
