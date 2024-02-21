@@ -7,8 +7,6 @@
 #include "Ink/Path.h"
 #include "Utility/InkpotLog.h"
 
-static const int32 dbgIndent{12};
-#define INKPOT_DBG( section, msg, ... )   INKPOT_LOG( "%- *s: " msg, dbgIndent, TEXT(section), ##__VA_ARGS__ )
 
 void UInkpotStory::Initialise( TSharedPtr<FInkpotStoryInternal>  InInkpotStory )
 {
@@ -383,7 +381,7 @@ void UInkpotStory::OnChoosePathStringInternal(const FString& InPath, const TArra
 void UInkpotStory::DumpDebug()
 {
 	FString currentFlow = GetCurrentFlowName();
-	INKPOT_DBG("Flow", "%s", *currentFlow);
+	INKPOT_LOG("Flow         : %s", *currentFlow);
 
 	if( GetAliveFlowCount() > 0 )
 	{
@@ -396,12 +394,12 @@ void UInkpotStory::DumpDebug()
 				flowsAlive.Append( flow );
 				flowsAlive.Append( ", " );
 			}
-			INKPOT_DBG( "Flows alive", "%s", *flowsAlive );
+			INKPOT_LOG("Flows alive  : %s", *flowsAlive );
 		}
 	}
 
 	FString currentText = GetCurrentText();
-	INKPOT_DBG("Text", "%s", *currentText);
+	INKPOT_LOG("Text         : %s", *currentText);
 
 	const TArray<FString>& tags = GetCurrentTags();
 	if( tags.Num() > 0 )
@@ -413,7 +411,7 @@ void UInkpotStory::DumpDebug()
 			tagsSet.Append( tag );
 			tagsSet.Append( "' " );
 		}
-		INKPOT_DBG( "CTags", "%s", *tagsSet );
+		INKPOT_LOG("CTags        : %s", *tagsSet);
 	}
 
 	TArray<FString> gtags = GlobalTags();
@@ -426,7 +424,7 @@ void UInkpotStory::DumpDebug()
 			tagsSet.Append( tag );
 			tagsSet.Append( "' " );
 		}
-		INKPOT_DBG( "GTags", "%s", *tagsSet );
+		INKPOT_LOG("GTags        : %s", *tagsSet);
 	}
 
 	TArray<FString> keys;
@@ -439,21 +437,21 @@ void UInkpotStory::DumpDebug()
 			const FString& value = obj->ToString();
 			if(i==0)
 			{
-				INKPOT_DBG( "Variables", "%s = %s", *key, *value );
+				INKPOT_LOG("Variables    : %s = %s", *key, *value);
 			}
 			else
 			{
-				INKPOT_DBG( " ", "%s = %s", *key, *value );
+				INKPOT_LOG("             : %s = %s", *key, *value);
 			}
 		}
 	}
 
 	if(Choices.Num() > 0)
 	{
-		INKPOT_DBG( "Choice", "%d - %s", Choices[0]->GetIndex(), *Choices[0]->GetString() );
+		INKPOT_LOG("Choice       : %d - %s", Choices[0]->GetIndex(), *Choices[0]->GetString());
 		for( int32 i=1; i<Choices.Num(); ++i )
 		{
-			INKPOT_DBG( " ", "%d - %s", Choices[i]->GetIndex(), *Choices[i]->GetString() );
+			INKPOT_LOG("             : %d - %s", Choices[i]->GetIndex(), *Choices[i]->GetString());
 		}
 	}
 }
@@ -462,7 +460,7 @@ void UInkpotStory::DumpDebug(UInkpotChoice *InChoice)
 {
 	if(!InChoice)
 		return;
-	INKPOT_DBG( "Chose", "%d - %s", InChoice->GetIndex(), *InChoice->GetString() );
+	INKPOT_LOG("Chose        : %d - %s", InChoice->GetIndex(), *InChoice->GetString());
 }
 
 
