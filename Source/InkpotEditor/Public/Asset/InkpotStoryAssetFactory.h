@@ -26,5 +26,6 @@ class INKPOTEDITOR_API UInkpotStoryAssetFactory : public UFactory, public FReimp
 	//~ End FReimportHandler Interface
 
 private:
-	bool LoadAndCompileStory( const FString& InFilename, FString &OutStory, FString &OutCompiledStory) const;
+	bool LoadAndCompileStory(const FString& InFilename, FString& OutStory, FString& OutCompiledStory) const;
+	void DumpStrings(UInkpotStoryAsset *InStoryAsset) const;
 };
