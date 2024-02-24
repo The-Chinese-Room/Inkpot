@@ -77,3 +77,5 @@ void UInkpot::OnStartGameInstance( UGameInstance *InInstance )
 	Stories->Reset();
 }
 
+
+

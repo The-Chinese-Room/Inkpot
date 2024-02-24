@@ -18,6 +18,13 @@ void UInkpotStory::Initialise( TSharedPtr<FInkpotStoryInternal>  InInkpotStory )
 	StoryInternal->OnEvaluateFunction().AddUObject(this, &UInkpotStory::OnEvaluateFunctionInternal );
 	StoryInternal->OnCompleteEvaluateFunction().AddUObject(this, &UInkpotStory::OnCompleteEvaluateFunctionInternal );
 	StoryInternal->OnChoosePathString().AddUObject(this, &UInkpotStory::OnChoosePathStringInternal );
+
+	DumpMainContent();
+	TArray<FString> strings;
+	GatherAllStrings( strings );
+
+
+
 }
 
 TSharedPtr<FInkpotStoryInternal> UInkpotStory::GetStoryInternal()
@@ -63,10 +70,20 @@ TArray<FString> UInkpotStory::TagsForContentAtPath( const FString &InPath)
 
 void UInkpotStory::ChoosePath( const FString &InPath )
 {
+	ChoosePathInternal(InPath);
+}
+
+void UInkpotStory::ChoosePathInternal( const FString &InPath )
+{
 	StoryInternal->ChoosePathString( InPath, true, TArray<TSharedPtr<Ink::FValueType>>() );
 }
 
 void UInkpotStory::ChoosePathString( const FString &InPath, const TArray<FInkpotValue> &InValues )
+{
+	ChoosePathStringInternal( InPath, InValues );
+}
+
+void UInkpotStory::ChoosePathStringInternal( const FString& InPath, const TArray<FInkpotValue>& InValues )
 {
 	TArray<TSharedPtr<Ink::FValueType>> values;
 	values.Reserve( InValues.Num() );
@@ -533,6 +550,50 @@ void UInkpotStory::DumpContentAtKnot( const FString& InName )
 	DumpContainer(InName, knotContainer  );
 }
 
+void UInkpotStory::GatherAllStrings( TArray<FString> &OutStrings )
+{
+	TSharedPtr<Ink::FContainer> main = StoryInternal->GetMainContentContainer();
+	GatherAllStrings( main, OutStrings );
+}
+
+void UInkpotStory::GatherAllStrings( TSharedPtr<Ink::FContainer> InContainer, TArray<FString> &OutStrings )
+{
+	if(!InContainer)
+		return;
+
+	TArray<TSharedPtr<Ink::FObject>> *contents = InContainer->GetContent().Get();
+	for( TSharedPtr<Ink::FObject> obj : *contents)
+	{
+		TSharedPtr<Ink::FContainer> container = Ink::FObject::DynamicCastTo<Ink::FContainer>(obj);
+		if( container )
+		{
+			GatherAllStrings( container, OutStrings  );
+		}
+		else
+		{
+			if(obj->CanCastTo(Ink::EInkObjectClass::FValueString))
+			{
+				FString entry = obj->ToString();
+				entry.TrimEndInline();
+				if ( entry.Len() )
+				{
+					OutStrings.Push( entry );
+					INKPOT_LOG( "%s", *entry );
+				}
+			}
+		}
+	}
+
+	TSharedPtr<TMap<FString, TSharedPtr<Ink::FObject>>> namedContentPtr = InContainer->GetNamedContent();
+	for( auto pair : *namedContentPtr )
+	{
+		TSharedPtr<Ink::FContainer> container = Ink::FObject::DynamicCastTo<Ink::FContainer>( pair.Value );
+		if(!container)
+			continue;
+		GatherAllStrings( container, OutStrings  );
+	}
+}
+
 TArray<FString> UInkpotStory::GetNamedContent()
 {
 	TSharedPtr<Ink::FContainer> container = StoryInternal->GetMainContentContainer();
@@ -614,6 +675,11 @@ FOnChoosePath& UInkpotStory::OnChoosePath()
 FOnSwitchFlow& UInkpotStory::OnSwitchFlow()
 {
 	return EventOnSwitchFlow;
+}
+
+FOnStoryLoadJSON& UInkpotStory::OnStoryLoadJSON()
+{
+	return EventOnStoryLoadJSON;
 }
 
 UInkpotLine *UInkpotStory::GetCurrentLine()

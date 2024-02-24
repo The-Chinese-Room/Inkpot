@@ -1,8 +1,10 @@
 #include "Inkpot/InkpotStories.h"
 #include "Inkpot/InkpotStoryInternal.h"
+#include "Inkpotlet/InkpotStoryletDeckSet.h"
 #include "Asset/InkpotStoryAsset.h"
 #include "Ink/Choice.h"
 #include "Utility/InkpotLog.h"
+#include "Utility/InkpotUtility.h"
 
 static FString BadInkJSON { TEXT("{\"inkVersion\":20,\"root\":[[\"^This is BAD Ink. If you see this your Ink did not import correctly.\",\"\n\",\"end\",[\"done\",{\"#n\":\"g-0\"}],null],\"done\",null],\"listDefs\":{}}") };
 
@@ -54,8 +56,15 @@ UInkpotStory* UInkpotStories::BeginStory( UInkpotStoryAsset* InInkpotStoryAsset 
 		return BadStory;
 	}
 
-	UInkpotStory *storyNew = NewObject<UInkpotStory>(this);
+	UInkpotStory* storyNew = nullptr;
+	TArray<FString> tags = storyInternal->GlobalTags();
+	if (InkpotUtil::GetTag(tags, "InkpotletSet"))
+		storyNew = NewObject<UInkpotletSet>(this);
+	else
+		storyNew = NewObject<UInkpotStory>(this);
+
 	storyNew->Initialise( storyInternal );
+
 	Stories.Emplace( handle, storyNew );
 
 	StoryAssets.Emplace( handle, InInkpotStoryAsset );

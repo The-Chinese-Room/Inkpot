@@ -21,7 +21,7 @@ class INKPOT_API UInkpotStory : public UObject
 	GENERATED_BODY()
 
 public:
-	void Initialise( TSharedPtr<FInkpotStoryInternal>  InInkpotStory );
+	virtual void Initialise( TSharedPtr<FInkpotStoryInternal>  InInkpotStory );
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
 	FString Continue();
@@ -169,7 +169,7 @@ public:
 	FOnMakeChoice& OnMakeChoice(); 
 	FOnChoosePath& OnChoosePath(); 
 	FOnSwitchFlow& OnSwitchFlow(); 
-	FOnStoryLoadJSON OnStoryLoadJSON(); 
+	FOnStoryLoadJSON& OnStoryLoadJSON(); 
 
 	void ResetContent( TSharedPtr<FInkpotStoryInternal> InNewStoryContent ); 
 	void ResetState();
@@ -182,8 +182,12 @@ public:
 	void DumpMainContent();
 	void DumpContentAtPath( const FString& InName );
 	void DumpContentAtKnot( const FString& InName );
+	void DumpContainer(const FString& InName, TSharedPtr<Ink::FContainer> InContainer, int Indent = 0);
 
-private:
+	void GatherAllStrings( TArray<FString> &OutStrings );
+	void GatherAllStrings( TSharedPtr<Ink::FContainer> InContainer, TArray<FString> &OutStrings );
+
+protected:
 	void OnContinueInternal();
 	void OnMakeChoiceInternal(TSharedPtr<Ink::FChoice> InChoice);
 	void OnEvaluateFunctionInternal(const FString& InFunctionName, const TArray<TSharedPtr<Ink::FValueType>>& InFunctionParms);
@@ -195,10 +199,11 @@ private:
 
 	void DumpDebug();
 	void DumpDebug(UInkpotChoice *Choice);
-
-	void DumpContainer( const FString& InName, TSharedPtr<Ink::FContainer> InContainer, int Indent = 0 );
 	
 	TArray<FString> GetNamedContent( TSharedPtr<Ink::FContainer> Container );
+
+	virtual void ChoosePathInternal(const FString &InPath);
+	virtual void ChoosePathStringInternal( const FString& InPath, const TArray<FInkpotValue>& InValues );
 
 protected:
 	TSharedPtr<FInkpotStoryInternal> StoryInternal;
