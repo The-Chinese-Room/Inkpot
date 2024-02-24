@@ -7,8 +7,6 @@
 #include "Ink/Path.h"
 #include "Utility/InkpotLog.h"
 
-static const int32 dbgIndent{12};
-#define INKPOT_DBG( section, msg, ... )   INKPOT_LOG( "%- *s: " msg, dbgIndent, TEXT(section), ##__VA_ARGS__ )
 
 void UInkpotStory::Initialise( TSharedPtr<FInkpotStoryInternal>  InInkpotStory )
 {
@@ -18,13 +16,6 @@ void UInkpotStory::Initialise( TSharedPtr<FInkpotStoryInternal>  InInkpotStory )
 	StoryInternal->OnEvaluateFunction().AddUObject(this, &UInkpotStory::OnEvaluateFunctionInternal );
 	StoryInternal->OnCompleteEvaluateFunction().AddUObject(this, &UInkpotStory::OnCompleteEvaluateFunctionInternal );
 	StoryInternal->OnChoosePathString().AddUObject(this, &UInkpotStory::OnChoosePathStringInternal );
-
-	DumpMainContent();
-	TArray<FString> strings;
-	GatherAllStrings( strings );
-
-
-
 }
 
 TSharedPtr<FInkpotStoryInternal> UInkpotStory::GetStoryInternal()
@@ -400,7 +391,7 @@ void UInkpotStory::OnChoosePathStringInternal(const FString& InPath, const TArra
 void UInkpotStory::DumpDebug()
 {
 	FString currentFlow = GetCurrentFlowName();
-	INKPOT_DBG("Flow", "%s", *currentFlow);
+	INKPOT_LOG("Flow         : %s", *currentFlow);
 
 	if( GetAliveFlowCount() > 0 )
 	{
@@ -413,12 +404,12 @@ void UInkpotStory::DumpDebug()
 				flowsAlive.Append( flow );
 				flowsAlive.Append( ", " );
 			}
-			INKPOT_DBG( "Flows alive", "%s", *flowsAlive );
+			INKPOT_LOG("Flows alive  : %s", *flowsAlive );
 		}
 	}
 
 	FString currentText = GetCurrentText();
-	INKPOT_DBG("Text", "%s", *currentText);
+	INKPOT_LOG("Text         : %s", *currentText);
 
 	const TArray<FString>& tags = GetCurrentTags();
 	if( tags.Num() > 0 )
@@ -430,7 +421,7 @@ void UInkpotStory::DumpDebug()
 			tagsSet.Append( tag );
 			tagsSet.Append( "' " );
 		}
-		INKPOT_DBG( "CTags", "%s", *tagsSet );
+		INKPOT_LOG("CTags        : %s", *tagsSet);
 	}
 
 	TArray<FString> gtags = GlobalTags();
@@ -443,7 +434,7 @@ void UInkpotStory::DumpDebug()
 			tagsSet.Append( tag );
 			tagsSet.Append( "' " );
 		}
-		INKPOT_DBG( "GTags", "%s", *tagsSet );
+		INKPOT_LOG("GTags        : %s", *tagsSet);
 	}
 
 	TArray<FString> keys;
@@ -456,21 +447,21 @@ void UInkpotStory::DumpDebug()
 			const FString& value = obj->ToString();
 			if(i==0)
 			{
-				INKPOT_DBG( "Variables", "%s = %s", *key, *value );
+				INKPOT_LOG("Variables    : %s = %s", *key, *value);
 			}
 			else
 			{
-				INKPOT_DBG( " ", "%s = %s", *key, *value );
+				INKPOT_LOG("             : %s = %s", *key, *value);
 			}
 		}
 	}
 
 	if(Choices.Num() > 0)
 	{
-		INKPOT_DBG( "Choice", "%d - %s", Choices[0]->GetIndex(), *Choices[0]->GetString() );
+		INKPOT_LOG("Choice       : %d - %s", Choices[0]->GetIndex(), *Choices[0]->GetString());
 		for( int32 i=1; i<Choices.Num(); ++i )
 		{
-			INKPOT_DBG( " ", "%d - %s", Choices[i]->GetIndex(), *Choices[i]->GetString() );
+			INKPOT_LOG("             : %d - %s", Choices[i]->GetIndex(), *Choices[i]->GetString());
 		}
 	}
 }
@@ -479,7 +470,7 @@ void UInkpotStory::DumpDebug(UInkpotChoice *InChoice)
 {
 	if(!InChoice)
 		return;
-	INKPOT_DBG( "Chose", "%d - %s", InChoice->GetIndex(), *InChoice->GetString() );
+	INKPOT_LOG("Chose        : %d - %s", InChoice->GetIndex(), *InChoice->GetString());
 }
 
 
@@ -550,24 +541,32 @@ void UInkpotStory::DumpContentAtKnot( const FString& InName )
 	DumpContainer(InName, knotContainer  );
 }
 
-void UInkpotStory::GatherAllStrings( TArray<FString> &OutStrings )
+void UInkpotStory::GatherAllStrings( TMap<FString, FString> &OutStrings )
 {
 	TSharedPtr<Ink::FContainer> main = StoryInternal->GetMainContentContainer();
-	GatherAllStrings( main, OutStrings );
+	GatherAllStrings( "", main, OutStrings);
 }
 
-void UInkpotStory::GatherAllStrings( TSharedPtr<Ink::FContainer> InContainer, TArray<FString> &OutStrings )
+void UInkpotStory::GatherAllStrings( const FString &InRootName, TSharedPtr<Ink::FContainer> InContainer, TMap<FString, FString> &OutStrings )
 {
 	if(!InContainer)
 		return;
 
+	FString rootName = InRootName;
+	FString containerName = InContainer->GetName();
+	if (rootName.IsEmpty())
+		rootName = containerName;
+	else if (containerName.Len() > 0)
+		rootName += TEXT(".") + containerName;
+
 	TArray<TSharedPtr<Ink::FObject>> *contents = InContainer->GetContent().Get();
+	int contentIndex = 1;
 	for( TSharedPtr<Ink::FObject> obj : *contents)
 	{
 		TSharedPtr<Ink::FContainer> container = Ink::FObject::DynamicCastTo<Ink::FContainer>(obj);
 		if( container )
 		{
-			GatherAllStrings( container, OutStrings  );
+			GatherAllStrings( rootName, container, OutStrings  );
 		}
 		else
 		{
@@ -577,8 +576,10 @@ void UInkpotStory::GatherAllStrings( TSharedPtr<Ink::FContainer> InContainer, TA
 				entry.TrimEndInline();
 				if ( entry.Len() )
 				{
-					OutStrings.Push( entry );
-					INKPOT_LOG( "%s", *entry );
+					FString key = FString::Printf(TEXT("%s.%02d"), *rootName, contentIndex);
+					OutStrings.Add( key, entry );
+					INKPOT_LOG( "%s : %s", *key, *entry );
+					contentIndex++;
 				}
 			}
 		}
@@ -590,7 +591,7 @@ void UInkpotStory::GatherAllStrings( TSharedPtr<Ink::FContainer> InContainer, TA
 		TSharedPtr<Ink::FContainer> container = Ink::FObject::DynamicCastTo<Ink::FContainer>( pair.Value );
 		if(!container)
 			continue;
-		GatherAllStrings( container, OutStrings  );
+		GatherAllStrings( rootName, container, OutStrings );
 	}
 }
 

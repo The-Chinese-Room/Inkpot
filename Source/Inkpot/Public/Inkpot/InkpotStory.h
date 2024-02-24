@@ -184,9 +184,8 @@ public:
 	void DumpContentAtKnot( const FString& InName );
 	void DumpContainer(const FString& InName, TSharedPtr<Ink::FContainer> InContainer, int Indent = 0);
 
-	void GatherAllStrings( TArray<FString> &OutStrings );
-	void GatherAllStrings( TSharedPtr<Ink::FContainer> InContainer, TArray<FString> &OutStrings );
-
+	void GatherAllStrings( TMap<FString, FString> &OutStrings );
+	
 protected:
 	void OnContinueInternal();
 	void OnMakeChoiceInternal(TSharedPtr<Ink::FChoice> InChoice);
@@ -204,6 +203,8 @@ protected:
 
 	virtual void ChoosePathInternal(const FString &InPath);
 	virtual void ChoosePathStringInternal( const FString& InPath, const TArray<FInkpotValue>& InValues );
+
+	void GatherAllStrings(const FString &InRootName, TSharedPtr<Ink::FContainer> InContainer, TMap<FString, FString>& OutStrings);
 
 protected:
 	TSharedPtr<FInkpotStoryInternal> StoryInternal;
