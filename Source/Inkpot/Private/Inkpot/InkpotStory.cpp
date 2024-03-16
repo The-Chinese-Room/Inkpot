@@ -492,7 +492,10 @@ void UInkpotStory::DumpContainer(const FString &InName, TSharedPtr<Ink::FContain
 		TSharedPtr<Ink::FContainer> container = Ink::FObject::DynamicCastTo<Ink::FContainer>(obj);
 		if( container )
 		{
-			DumpContainer( "inline", container, Indent + 1 );
+			FString name = container->GetName();
+			if(name.IsEmpty())
+				name = "inline";
+			DumpContainer( name, container, Indent + 1 );
 		}
 		else
 		{
