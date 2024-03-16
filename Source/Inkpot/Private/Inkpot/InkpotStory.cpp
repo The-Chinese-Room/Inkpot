@@ -183,15 +183,10 @@ bool UInkpotStory::IsFlowAlive( const FString &InFlowName )
 	return false;
 }
 
-TArray<FString> UInkpotStory::GetAliveFlowNames()
+const TArray<FString> &UInkpotStory::GetAliveFlowNames()
 {
 	TSharedPtr<Ink::FStoryState> state = StoryInternal->GetStoryState();
-	TSharedPtr<TMap<FString, TSharedPtr<Ink::FFlow>>> namedFlows = state->GetNamedFlows();
-
-	TArray<FString> flowNames;
-	if( namedFlows.IsValid() )
-		namedFlows->GetKeys( flowNames );
-	return flowNames;
+	return state->GetAliveFlowNames();
 }
 
 int32 UInkpotStory::GetAliveFlowCount()

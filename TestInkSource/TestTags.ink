@@ -16,9 +16,6 @@ Stitch content
 # this tag is below some content so isn't included in the static tags for the stitch
 -> END
 
-
-* [Hi] Hello -> END #hey
-
 /*
 INK_TEST_STORY_START
 [

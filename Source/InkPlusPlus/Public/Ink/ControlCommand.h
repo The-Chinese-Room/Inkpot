@@ -31,6 +31,8 @@ namespace Ink
 		ListFromInt,
 		ListRange,
 		ListRandom,
+		BeginTag,
+		EndTag,
 		// ----
 		TOTAL_VALUES
 	};

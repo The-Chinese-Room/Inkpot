@@ -37,22 +37,25 @@ namespace InkCompiler
 		FPaths::CollapseRelativeDirectories(InkFilePathStripped);
 		if (!FPaths::FileExists(inkExePath))
 		{
-			INKPOT_WARN("CompileInkString - %s could not locate inklecate.exe.", *InkFilePathStripped);
+			INKPOT_ERROR("CompileInkString - %s could not locate inklecate.exe.", *InkFilePathStripped);
 			return false;
 		}
 
 		FString compiledJsonPath = InScratchFilePath + TEXT(".json");;
 		FPaths::CollapseRelativeDirectories(compiledJsonPath);
 
-		FString args = FString::Printf(TEXT("%s -j -o \"%s\" \"%s\""), shouldCountVisits?TEXT(" -c"):TEXT(""), *compiledJsonPath, *InkFilePathStripped );
+		FString args = FString::Printf(TEXT("%s -j -o \"%s\" \"%s\""), shouldCountVisits?TEXT(" -c"):TEXT(" "), *compiledJsonPath, *InkFilePathStripped );
+
 		// Execute compile using inklecate and output compiled JSON to Intermediate/InkCommandline.
 		FString stdOut;
 		FString stdErr;
 		int32 returnCode;
-		bool bSuccess = FPlatformProcess::ExecProcess(*inkExePath, *args, &returnCode, &stdOut, &stdErr);
+		FString wkDir = GetScratchDirectory();
+
+		bool bSuccess = FPlatformProcess::ExecProcess(*inkExePath, *args, &returnCode, &stdOut, &stdErr, *wkDir, true );
 		if (!bSuccess)
 		{
-			INKPOT_WARN("CompileInkString - %s failed ExecProcess. Error %s: ", *InkFilePathStripped, *(stdOut + stdErr));
+			INKPOT_ERROR("CompileInkString - %s failed ExecProcess. Error %s: ", *InkFilePathStripped, *(stdOut + stdErr));
 			return false;
 		}
 
@@ -64,13 +67,13 @@ namespace InkCompiler
 			// supress warnings for tests that we expect to fail compilation
 			if(!bIsCompilationFailExpected)
 			{
-				INKPOT_WARN( "CompileInkString - %s failed to compile ink string. Error %s: ", *InkFilePathStripped, *(stdOut + stdErr) );
+				INKPOT_ERROR( "CompileInkString - %s failed to compile ink. Error %s: ", *InkFilePathStripped, *(stdOut + stdErr) );
 			}
 			return false;
 		}
 		if (!bExported)
 		{
-			INKPOT_WARN("CompileInkFile - %s failed to export ink.json string. Error : %s", *InkFilePathStripped, *(stdOut + stdErr));
+			INKPOT_ERROR("CompileInkFile - %s failed to export ink.json . Error : %s", *InkFilePathStripped, *(stdOut + stdErr));
 			return false;
 		}
 

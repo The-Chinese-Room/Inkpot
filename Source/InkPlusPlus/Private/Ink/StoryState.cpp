@@ -20,10 +20,7 @@
 
 
 Ink::FStoryState::FStoryState(Ink::FStory* InStory)
-	: InkSaveStateVersion(9)
-	, MinCompatibleLoadVersion(8)
-	, DefaultFlowName("DEFAULT_FLOW")
-	, DivertedPointer(Ink::FPointer())
+	: DivertedPointer(Ink::FPointer())
 	, CurrentTurnIndex(-1)
 	, StorySeed(FMath::RandRange(0, 100))
 	, PreviousRandom(0)
@@ -33,6 +30,7 @@ Ink::FStoryState::FStoryState(Ink::FStory* InStory)
 	, OutputStreamTagsDirty(true)
 	, CurrentFlow(MakeShared<FFlow>(DefaultFlowName, InStory))
 	, VariableState(MakeShared<FVariableState>(CallStack(), Story->GetListDefinitions()))
+	, bAliveFlowNamesDirty(true)
 {
 	SetOutputStreamDirty();
 	GoToStart();
@@ -139,6 +137,7 @@ void Ink::FStoryState::LoadJSONObj(const FJsonObject& InJSONObj)
 	*/
 
 	SetOutputStreamDirty();
+	bAliveFlowNamesDirty = true;
 
 	const TSharedPtr<FJsonObject>* variableStateObjectField = nullptr;
 	if (InJSONObj.TryGetObjectField(TEXT("variablesState"), variableStateObjectField))
@@ -406,16 +405,25 @@ FString Ink::FStoryState::GetCurrentText()
 	if (OutputStreamTextDirty)
 	{
 		FString newCurrentText;
+		bool inTag = false;
 		for (TSharedPtr<Ink::FObject> outputObj : OutputStream())
 		{
 			if (!outputObj.IsValid())
 				continue;
 
 			TSharedPtr<Ink::FValueString> textObject = FObject::DynamicCastTo<Ink::FValueString>(outputObj);
-			if (textObject.IsValid())
-			{
+			if (!inTag && textObject.IsValid())	{
 				newCurrentText.Append(textObject->GetValue());
-			}
+			} else	{
+				TSharedPtr<Ink::FControlCommand> controlCommand = FObject::DynamicCastTo<Ink::FControlCommand>(outputObj);
+                if( controlCommand != nullptr ) {
+                    if( controlCommand->GetCommandType() == Ink::ECommandType::BeginTag ) {
+                        inTag = true;
+                    } else if( controlCommand->GetCommandType() == Ink::ECommandType::EndTag ) {
+                        inTag = false;
+                    }
+                }
+            }
 		}
 
 		CurrentText = CleanOutputWhitespace(newCurrentText);
@@ -465,14 +473,57 @@ TArray<FString>& Ink::FStoryState::GetCurrentTags()
 	if (OutputStreamTagsDirty)
 	{
 		CurrentTags.Empty();
-		for (TSharedPtr< Ink::FObject> outputObj : OutputStream())
-		{
-			TSharedPtr<Ink::FTag> tag = FObject::DynamicCastTo<Ink::FTag>(outputObj);
-			if (tag.IsValid())
-			{
-				CurrentTags.Add(tag->GetText());
-			}
+
+        bool inTag = false;
+        FString sb;
+
+		for (TSharedPtr< Ink::FObject> outputObj : OutputStream()) {
+			TSharedPtr<Ink::FControlCommand> controlCommand = Ink::FObject::DynamicCastTo<Ink::FControlCommand>(outputObj);
+
+            if( controlCommand != nullptr ) {
+                if( controlCommand->GetCommandType() == Ink::ECommandType::BeginTag ) {
+                    if( inTag && sb.Len() > 0 ) {
+                        FString txt = CleanOutputWhitespace(sb);
+                        CurrentTags.Add(txt);
+                        sb.Empty();
+                    }
+                    inTag = true;
+                }
+
+                else if( controlCommand->GetCommandType() == Ink::ECommandType::EndTag ) {
+                    if( sb.Len() > 0 ) {
+                        FString txt = CleanOutputWhitespace(sb);
+                        CurrentTags.Add(txt);
+                        sb.Empty();
+                    }
+                    inTag = false;
+                }
+            }
+
+            else if( inTag ) {
+				TSharedPtr<Ink::FValueString> strVal = Ink::FObject::DynamicCastTo<Ink::FValueString>( outputObj );
+                if( strVal != nullptr ) {
+                    sb.Append(strVal->GetValue());
+                }
+            }
+
+            else {
+				TSharedPtr<Ink::FTag> tag = FObject::DynamicCastTo<Ink::FTag>( outputObj );
+				if ( tag != nullptr )
+				{
+					FString tagStr = tag->GetText();
+					if(tagStr.Len() > 0) 
+						CurrentTags.Add( tag->GetText() ); // tag.text has whitespae already cleaned
+				}
+            }
 		}
+
+        if( sb.Len() > 0 ) {
+            FString txt = CleanOutputWhitespace(sb);
+            CurrentTags.Add(txt);
+            sb.Empty();
+        }
+
 		OutputStreamTagsDirty = false;
 	}
 
@@ -484,9 +535,36 @@ FString Ink::FStoryState::GetCurrentFlowName() const
 	return CurrentFlow->GetName();
 }
 
+bool Ink::FStoryState::CurrentFlowIsDefaultFlow() const
+{
+	return CurrentFlow->GetName().Equals( DefaultFlowName );
+}
+
 TSharedPtr<TMap<FString, TSharedPtr<Ink::FFlow>>> Ink::FStoryState::GetNamedFlows()
 {
 	return NamedFlows;
+}
+
+const TArray<FString> &Ink::FStoryState::GetAliveFlowNames()
+{
+    if( bAliveFlowNamesDirty ) {
+		AliveFlowNames.Empty();
+
+        if (NamedFlows != nullptr)
+        {
+			TArray<FString> keys;
+			NamedFlows->GetKeys(keys);
+			for( const FString &flowName : keys ){
+                if (!flowName.Equals(DefaultFlowName)) {
+                    AliveFlowNames.Add(flowName);
+                }
+            }
+        }
+
+		bAliveFlowNamesDirty = false;
+	}
+
+	return AliveFlowNames;
 }
 
 bool Ink::FStoryState::GetInExpressionEvaluation() const
@@ -516,6 +594,7 @@ void Ink::FStoryState::SwitchFlow_Internal(const FString& FlowName)
 	{
 		flow = MakeShared<FFlow>(FlowName, Story);
 		NamedFlows->Add(FlowName, flow);
+		bAliveFlowNamesDirty = true;
 	}
 	else
 	{
@@ -546,6 +625,7 @@ void Ink::FStoryState::RemoveFlow_Internal(const FString& FlowName)
 	}
 
 	NamedFlows->Remove(FlowName);
+	bAliveFlowNamesDirty = true;
 }
 
 TSharedPtr<Ink::FStoryState> Ink::FStoryState::CopyAndStartPatching()
@@ -574,6 +654,7 @@ TSharedPtr<Ink::FStoryState> Ink::FStoryState::CopyAndStartPatching()
 			copy->NamedFlows->Add(flow.Key, flow.Value);
 		}
 		copy->NamedFlows->Add(CurrentFlow->GetName(), copy->CurrentFlow);
+		bAliveFlowNamesDirty = true;
 	}
 
 	if (HasError()) {
