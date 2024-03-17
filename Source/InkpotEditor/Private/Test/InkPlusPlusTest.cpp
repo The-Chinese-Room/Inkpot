@@ -216,10 +216,7 @@ void FInkTests::GetTests(TArray<FString>& OutBeautifiedNames, TArray <FString>& 
 
 bool FInkTests::RunTest(const FString& InkTestName)
 {
-	const FString includeSourceFolder = FPaths::ProjectPluginsDir() + TEXT("Inkpot/TestInkSource/Includes/");
-	const FString includeDestinationFolder = InkCompiler::GetScratchDirectory() + "Includes/";
 	InkCompiler::FlushScratchDirectory();
-	InkCompiler::CopyFilesMatchingFilter(includeSourceFolder, includeDestinationFolder, "*.ink");
 
 	const FString testScriptStartPhrase = TEXT("INK_TEST_START");
 	const FString testStoryScriptStartPhrase = TEXT("INK_TEST_STORY_START");
@@ -260,7 +257,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 
 		TArray<FString> compileErrors, compileWarnings;
 		FString compiledJSON;
-		bool bCompileSuccess = InkCompiler::CompileInkString(fileContents, InkScratchFilePath, compiledJSON, compileErrors, compileWarnings, shouldCountVisits, expectedErrors>0 );
+		bool bCompileSuccess = InkCompiler::CompileInkFile(testFilePath, InkScratchFilePath, compiledJSON, compileErrors, compileWarnings, shouldCountVisits, expectedErrors>0 );
 
 		if (bCompileAsStory && bCompileSuccess)
 		{

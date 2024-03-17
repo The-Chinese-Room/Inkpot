@@ -37,7 +37,7 @@ namespace InkCompiler
 		FPaths::CollapseRelativeDirectories(InkFilePathStripped);
 		if (!FPaths::FileExists(inkExePath))
 		{
-			INKPOT_ERROR("CompileInkString - %s could not locate inklecate.exe.", *InkFilePathStripped);
+			INKPOT_ERROR("CompileInkFile_Internal - %s could not locate inklecate.exe.", *InkFilePathStripped);
 			return false;
 		}
 
@@ -55,7 +55,7 @@ namespace InkCompiler
 		bool bSuccess = FPlatformProcess::ExecProcess(*inkExePath, *args, &returnCode, &stdOut, &stdErr, *wkDir, true );
 		if (!bSuccess)
 		{
-			INKPOT_ERROR("CompileInkString - %s failed ExecProcess. Error %s: ", *InkFilePathStripped, *(stdOut + stdErr));
+			INKPOT_ERROR("CompileInkFile_Internal - %s failed ExecProcess. Error %s: ", *InkFilePathStripped, *(stdOut + stdErr));
 			return false;
 		}
 
@@ -67,17 +67,17 @@ namespace InkCompiler
 			// supress warnings for tests that we expect to fail compilation
 			if(!bIsCompilationFailExpected)
 			{
-				INKPOT_ERROR( "CompileInkString - %s failed to compile ink. Error %s: ", *InkFilePathStripped, *(stdOut + stdErr) );
+				INKPOT_ERROR( "CompileInkFile_Internal - %s failed to compile ink. Error %s: ", *InkFilePathStripped, *(stdOut + stdErr) );
 			}
 			return false;
 		}
 		if (!bExported)
 		{
-			INKPOT_ERROR("CompileInkFile - %s failed to export ink.json . Error : %s", *InkFilePathStripped, *(stdOut + stdErr));
+			INKPOT_ERROR("CompileInkFile_Internal - %s failed to export ink.json . Error : %s", *InkFilePathStripped, *(stdOut + stdErr));
 			return false;
 		}
 
-		INKPOT_LOG("CompileInkString - Output: %s", *(stdOut + stdErr));
+		INKPOT_LOG("CompileInkFile_Internal - Output: %s", *(stdOut + stdErr));
 
 		return FFileHelper::LoadFileToString(OutCompiledJSON, *compiledJsonPath);
 	}
@@ -102,32 +102,18 @@ namespace InkCompiler
 	void FlushScratchDirectory()
 	{
 		IPlatformFile::GetPlatformPhysical().DeleteDirectoryRecursively( *GetScratchDirectory() );
-	}
-
-	void CopyFilesMatchingFilter(const FString& SourceFolder, const FString& DestinationFolder, const FString& FileFilter)
-	{
-		const FString fileFilter = SourceFolder + FileFilter;
-
-		TArray<FString> IncludeFiles;
-		FFileManagerGeneric::Get().FindFiles(IncludeFiles, *fileFilter, true, false);
-		for (const FString& file : IncludeFiles)
-		{
-			const FString sourcePath = SourceFolder + file;
-			const FString destinationPath = DestinationFolder + file;
-			IFileManager::Get().Copy(*destinationPath, *sourcePath, true, false, false, nullptr);
-		}
+		IPlatformFile::GetPlatformPhysical().CreateDirectory( *GetScratchDirectory() );
 	}
 
 	bool CompileInkFile(const FString& InSourceFilePath, const FString& ScratchFilePath, FString& OutCompiledJSON, TArray<FString>& Errors, TArray<FString>& Warnings, bool shouldCountVisits, bool bIsCompilationFailExpected )
 	{
-		// Copy the ink source file to the scratch directory for compiling 
-		IFileManager::Get().Copy(*ScratchFilePath, *InSourceFilePath, true, false, false, nullptr);
 		return CompileInkFile_Internal(InSourceFilePath, ScratchFilePath, OutCompiledJSON, Errors, Warnings, shouldCountVisits, bIsCompilationFailExpected);
 	}
 
 	bool CompileInkString(const FString& SourceString, const FString& ScratchFilePath, FString& OutCompiledJSON, TArray<FString>& Errors, TArray<FString>& Warnings, bool shouldCountVisits, bool bIsCompilationFailExpected )
 	{
 		// Save the ink source string to an ink file in the scratch directory for compiling 
+		FlushScratchDirectory();
 		FFileHelper::SaveStringToFile(SourceString, *ScratchFilePath);
 		return CompileInkFile_Internal(ScratchFilePath, ScratchFilePath, OutCompiledJSON, Errors, Warnings, shouldCountVisits, bIsCompilationFailExpected );
 	}
