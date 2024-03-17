@@ -43,6 +43,8 @@ FString Ink::FControlCommand::ToString()
 	else if (CommandType == ECommandType::ListFromInt)			outputString = TEXT("ListFromInt");
 	else if (CommandType == ECommandType::ListRange)			outputString = TEXT("ListRange");
 	else if (CommandType == ECommandType::ListRandom)			outputString = TEXT("ListRandom");
+	else if (CommandType == ECommandType::BeginTag)				outputString = TEXT("BeginTag");
+	else if (CommandType == ECommandType::EndTag)				outputString = TEXT("EndTag");
     else if (CommandType == ECommandType::TOTAL_VALUES)			outputString = TEXT("TOTAL_VALUES");
 	else														outputString = TEXT("UNKNOWN_TYPE");
 

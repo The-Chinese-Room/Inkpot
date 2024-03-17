@@ -43,7 +43,10 @@ TArray<FString> Ink::FJsonSerialisation::ControlCommandNames = {		TEXT("ev"),
 																		TEXT("end"),
 																		TEXT("listInt"),
 																		TEXT("range"),
-																		TEXT("lrnd")		};
+																		TEXT("lrnd"),
+																		TEXT("#"),
+																		TEXT("/#")
+};
 
 
 TArray<TSharedPtr<Ink::FObject>> Ink::FJsonSerialisation::JsonArrayToRuntimeObjectList(const TArray<TSharedPtr<FJsonValue>>& InJSONArray, bool InSkipLast)
@@ -455,7 +458,7 @@ void Ink::FJsonSerialisation::WriteRuntimeObject(TJsonWriter<>* InJSONWriter, TS
 		return;
 	}
 
-	// Tag
+	// Legacy Tag
 	TSharedPtr<Ink::FTag> tag = FObject::DynamicCastTo<Ink::FTag>(InObject);
 	if (tag.IsValid())
 	{
@@ -762,7 +765,7 @@ TSharedPtr<Ink::FObject> Ink::FJsonSerialisation::JsonTokenToRuntimeObject(const
 			return variableAssignment;
 		}
 
-		// Tag
+		// Legacy Tag with text
 		if (Ink::FJsonExtension::TryGetField(TEXT("#"), *objectValue, propertyValue))
 			return MakeShared<Ink::FTag>(propertyValue->AsString());
 

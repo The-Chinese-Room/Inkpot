@@ -44,6 +44,7 @@
 #define TEST_CURRENT_TAGS                        TEXT("TEST_CURRENT_TAGS") 
 #define TEST_CURRENT_TAG_COUNT                   TEXT("TEST_CURRENT_TAG_COUNT") 
 #define TEST_STORY_GLOBAL_TAGS                   TEXT("TEST_STORY_GLOBAL_TAGS")
+#define TEST_CHOICE_TAGS                         TEXT("TEST_CHOICE_TAGS")
 #define TEST_TAG_FOR_PATH                        TEXT("TEST_TAG_FOR_PATH")
 
 #define TEST_STORY_EVALUATION_STACK_COUNT        TEXT("TEST_STORY_EVALUATION_STACK_COUNT")
@@ -178,6 +179,7 @@ static bool IsStoryInstruction(const FString& Instructions)
 		TEST_CURRENT_TAGS,
 		TEST_CURRENT_TAG_COUNT,
 		TEST_STORY_GLOBAL_TAGS,
+        TEST_CHOICE_TAGS,
 		TEST_TAG_FOR_PATH,
 
 		TEST_STORY_EVALUATION_STACK_COUNT,
@@ -793,6 +795,50 @@ bool FInkTests::RunTest(const FString& InkTestName)
 							else
 							{
 								INKPOT_ERROR("%s : TEST_TAG_FOR_PATH. Could not Deserialize to object \n", *InkTestName);
+								return false;
+							}
+						}
+						else if (testInstruction->HasField(TEST_CHOICE_TAGS))
+						{
+							const TSharedPtr<FJsonObject>* tagForChoiceObject;
+							if (testInstruction->TryGetObjectField(TEST_CHOICE_TAGS, tagForChoiceObject))
+							{
+								if ( (*tagForChoiceObject)->TryGetNumberField( TEXT("CHOICE"), jsonParsedInt ) )
+								{
+									int32 choiceIndex = jsonParsedInt;
+									const TArray<FString> &actualTags = story->GetStoryInternal()->GetCurrentChoices()[choiceIndex]->GetTags();
+									TArray<FString> expectedTags;
+									if(!(*tagForChoiceObject)->TryGetStringArrayField(TEXT("TAGS"), expectedTags) )
+									{
+										INKPOT_ERROR( "%s : TEST_CHOICE_TAGS. Could not find TAGS in JSON object.\n", *InkTestName );
+										return false;
+									}
+
+									if (expectedTags.Num() != actualTags.Num())
+									{
+										INKPOT_ERROR("%s : TEST_CHOICE_TAGS Tag count not equal: \nExpected: %d\nActual__: %d\n", *InkTestName, expectedTags.Num(), actualTags.Num());
+										return false;
+									}
+
+									for (int32 i = 0; i < expectedTags.Num(); i++)
+									{
+										const bool success = actualTags[i].Equals(expectedTags[i]);
+										if (!success)
+										{
+											INKPOT_ERROR("%s : TEST_CHOICE_TAGS tag string did not match. \nExpected: %s\nActual__: %s\n", *InkTestName, *expectedTags[i], *actualTags[i]);
+											return false;
+										}
+									}
+								}
+								else
+								{
+									INKPOT_ERROR( "%s : TEST_CHOICE_TAGS. Could not find CHOICE in JSON object.\n", *InkTestName );
+									return false;
+								}
+							}
+							else
+							{
+								INKPOT_ERROR("%s : TEST_CHOICE_TAGS. Could not Deserialize to object \n", *InkTestName);
 								return false;
 							}
 						}

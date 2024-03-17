@@ -30,6 +30,9 @@ namespace Ink
 		bool IsInvisibleDefault() const;
 		void SetIsInvisibleDefault(bool InIsInvisibleDefault);
 
+		const TArray<FString> GetTags() const;
+		void SetTags(const TArray<FString> &InTags);
+
 		FString GetPathStringOnChoice() const;
 		void SetPathStringOnChoice(const FString& InPathStringOnChoice);
 
@@ -47,5 +50,7 @@ namespace Ink
 		int32 OriginalThreadIndex;
 		
 		bool bIsInvisibleDefault;
+
+		TArray<FString> Tags;
 	};
 }

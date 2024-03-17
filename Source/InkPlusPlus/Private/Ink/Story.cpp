@@ -22,6 +22,8 @@
 
 Ink::FStory::FStory(const FString& jsonString)
 {
+	UE_LOG(InkPlusPlus, Log, TEXT("FStory::FStory %p"), this);
+
 	const TSharedRef<TJsonReader<>> reader = TJsonReaderFactory<>::Create(jsonString);
 	TSharedPtr<FJsonObject> rootObject = MakeShared<FJsonObject>();
 
@@ -75,6 +77,11 @@ Ink::FStory::FStory(const FString& jsonString)
 	}
 
 	ResetState();
+}
+
+Ink::FStory::~FStory()
+{
+	UE_LOG(InkPlusPlus, Log, TEXT("FStory::~FStory %p"), this);
 }
 
 FString Ink::FStory::ToJson() const
@@ -497,7 +504,7 @@ Ink::FStory::EOutputStateChange Ink::FStory::CalculateNewlineOutputStateChange(c
 {
 	// Simple case: nothing's changed, and we still have a newline
 	// at the end of the current content
-	const bool newlineStillExists = currText.Len() >= prevText.Len() && currText[prevText.Len() - 1] == '\n';
+	const bool newlineStillExists = currText.Len() >= prevText.Len() && prevText.Len() > 0 && currText[prevText.Len() - 1] == '\n';
 	if (prevTagCount == currTagCount && prevText.Len() == currText.Len()
 		&& newlineStillExists)
 		return EOutputStateChange::NoChange;
@@ -652,15 +659,14 @@ TSharedPtr<Ink::FChoice> Ink::FStory::ProcessChoice(FChoicePoint* choicePoint)
 
 	FString startText = "";
 	FString choiceOnlyText = "";
+	TArray<FString> tags;
 
 	if (choicePoint->HasChoiceOnlyContent()) {
-		auto choiceOnlyStrVal = DynamicCastTo<FValueString>(State->PopEvaluationStack());
-		choiceOnlyText = choiceOnlyStrVal->GetValue();
+		choiceOnlyText = PopChoiceStringAndTags(tags);
 	}
 
 	if (choicePoint->HasStartContent()) {
-		auto startStrVal = DynamicCastTo<FValueString>(State->PopEvaluationStack());
-		startText = startStrVal->GetValue();
+		startText = PopChoiceStringAndTags(tags);
 	}
 
 	// Don't create choice if player has already read this content
@@ -682,6 +688,7 @@ TSharedPtr<Ink::FChoice> Ink::FStory::ProcessChoice(FChoicePoint* choicePoint)
 	choice->SetTargetPath(choicePoint->GetPathOnChoice());
 	choice->SetSourcePath(choicePoint->GetPath()->ToString());
 	choice->SetIsInvisibleDefault(choicePoint->IsInvisibleDefault());
+	choice->SetTags(tags);
 
 	// We need to capture the state of the callstack at the point where
 	// the choice was generated, since after the generation of this choice
@@ -1001,13 +1008,102 @@ bool Ink::FStory::PerformLogicAndFlowControl(TSharedPtr<Ink::FObject> contentObj
 			break;
 		}
 
+		// Leave it to story.currentText and story.currentTags to sort out the text from the tags
+		// This is mostly because we can't always rely on the existence of EndTag, and we don't want
+		// to try and flatten dynamic tags to strings every time \n is pushed to output
+		case Ink::ECommandType::BeginTag:
+			State->PushToOutputStream( evalCommand );
+			break;
+
+		case Ink::ECommandType::EndTag: 
+		{
+			// EndTag has 2 modes:
+			//  - When in string evaluation (for choices)
+			//  - Normal
+			//
+			// The only way you could have an EndTag in the middle of
+			// string evaluation is if we're currently generating text for a
+			// choice, such as:
+			//
+			//   + choice # tag
+			//
+			// In the above case, the ink will be run twice:
+			//  - First, to generate the choice text. String evaluation
+			//    will be on, and the final string will be pushed to the
+			//    evaluation stack, ready to be popped to make a Choice
+			//    object.
+			//  - Second, when ink generates text after choosing the choice.
+			//    On this ocassion, it's not in string evaluation mode.
+			//
+			// On the writing side, we disallow manually putting tags within
+			// strings like this:
+			// 
+			//   {"hello # world"}
+			//
+			// So we know that the tag must be being generated as part of
+			// choice content. Therefore, when the tag has been generated,
+			// we push it onto the evaluation stack in the exact same way
+			// as the string for the choice content.
+			if (State->InStringEvaluation())
+			{
+				TArray<TSharedPtr<Ink::FObject>> contentStackForTag;
+				int outputCountConsumed = 0;
+
+				for (int i = State->OutputStream().Num() - 1; i >= 0; --i) {
+					TSharedPtr<Ink::FObject> obj = State->OutputStream()[i];
+
+					outputCountConsumed++;
+
+					TSharedPtr<Ink::FControlCommand> command = DynamicCastTo<Ink::FControlCommand>( obj );
+					if (command != nullptr) {
+						if (command->GetCommandType() == Ink::ECommandType::BeginTag) {
+							break;
+						}
+						else {
+							Error("Unexpected ControlCommand while extracting tag from choice");
+							break;
+						}
+
+					}
+
+					if ( obj->CanCastTo( Ink::EInkObjectClass::FValueString) )
+						contentStackForTag.Push(obj);
+				}
+
+				// Consume the content that was produced for this string
+				State->PopFromOutputStream(outputCountConsumed);
+
+				FString sb;
+				for( TSharedPtr<Ink::FObject> &obj : contentStackForTag ) {
+					TSharedPtr<Ink::FValueString> strVal = DynamicCastTo<Ink::FValueString>( obj );
+					if(strVal)
+						sb.Append( strVal->GetValue() );
+				}
+
+				TSharedPtr<Ink::FTag> choiceTag = MakeShared<Ink::FTag>( State->CleanOutputWhitespace( sb ) );
+
+				// Pushing to the evaluation stack means it gets picked up
+				// when a Choice is generated from the next Choice Point.
+				State->PushEvaluationStack( choiceTag );
+			}
+
+			// Otherwise! Simply push EndTag, so that in the output stream we
+			// have a structure of: [BeginTag, "the tag content", EndTag]
+			else {
+				State->PushToOutputStream( evalCommand );
+			}
+			break;
+		}
+
+	    // Dynamic strings and tags are built in the same way
 		case Ink::ECommandType::EndString:
 		{
 			// Since we're iterating backward through the content,
 			// build a stack so that when we build the string,
 			// it's in the right order
 
-			TArray<TSharedPtr<FValueString>> contentStackForString;
+			TArray<TSharedPtr<Ink::FObject>> contentStackForString;
+			TArray<TSharedPtr<Ink::FObject>> contentToRetain;
 
 			int outputCountConsumed = 0;
 			for (int i = State->OutputStream().Num() - 1; i >= 0; --i) {
@@ -1020,13 +1116,22 @@ bool Ink::FStory::PerformLogicAndFlowControl(TSharedPtr<Ink::FObject> contentObj
 					break;
 				}
 
-				TSharedPtr<FValueString> stringValue = DynamicCastTo<FValueString>(obj);
-				if (stringValue.IsValid())
-					contentStackForString.Push(stringValue);
+				if(obj->CanCastTo(EInkObjectClass::FTag))
+					contentToRetain.Push(obj);
+
+				if(obj->CanCastTo(Ink::EInkObjectClass::FValueString))
+					contentStackForString.Push(obj);
 			}
 
 			// Consume the content that was produced for this string
 			State->PopFromOutputStream(outputCountConsumed);
+
+            // Rescue the tags that we want actually to keep on the output stack
+            // rather than consume as part of the string we're building.
+            // At the time of writing, this only applies to Tag objects generated
+            // by choices, which are pushed to the stack during string generation.
+            for(TSharedPtr<Ink::FObject> &rescuedTag : contentToRetain)
+				State->PushToOutputStream( rescuedTag );
 
 			// Build string out of the content we collected
 			FString contentString;
@@ -1427,6 +1532,16 @@ const TArray<FString>& Ink::FStory::GetCurrentWarnings() const
 FString Ink::FStory::GetCurrentFlowName() const
 {
 	return State->GetCurrentFlowName();
+}
+
+bool Ink::FStory::CurrentFlowIsDefaultFlow() const
+{
+	return State->CurrentFlowIsDefaultFlow();
+}
+
+TArray<FString> Ink::FStory::AliveFlowNames() const
+{
+	return State->GetAliveFlowNames();
 }
 
 bool Ink::FStory::HasError() const
@@ -1985,16 +2100,34 @@ TArray<FString> Ink::FStory::TagsAtStartOfFlowContainerWithPathString(const FStr
 		flowContainer = firstContent;
 	}
 
-	// Any initial tag objects count as the "main tags" associated with that story/knot/stitch
+    bool inTag = false;
 	TArray<FString> tags;
 	for(const TSharedPtr<FObject>& c : (*flowContainer->GetContent())) {
-		TSharedPtr<FTag> tag = DynamicCastTo<FTag>(c);
-		if (tag.IsValid()) {
-			tags.Add(tag->GetText());
-		}
-		else break;
-	}
 
+		auto command = DynamicCastTo<Ink::FControlCommand>( c );
+        if( command != nullptr ) {
+            if( command->GetCommandType() == Ink::ECommandType::BeginTag ) {
+                inTag = true;
+            } else if( command->GetCommandType() == Ink::ECommandType::EndTag ) {
+                inTag = false;
+            }
+        }
+
+        else if( inTag ) {
+			auto str = DynamicCastTo<Ink::FValueString>( c );
+            if( str != nullptr ) {
+                tags.Add(str->GetValue());
+            } else {
+                Error("Tag contained non-text content. Only plain text is allowed when using globalTags or TagsAtContentPath. If you want to evaluate dynamic content, you need to use story.Continue().");
+            }
+        }
+
+        // Any other content - we're done
+        // We only recognise initial text-only tags
+        else {
+            break;
+        }
+	}
 	return tags;
 }
 
@@ -2084,6 +2217,17 @@ void Ink::FStory::VisitChangedContainersDueToDivert()
 		currentChildOfContainer = currentContainerAncestor;
 		currentContainerAncestor = DynamicCastTo<FContainer>(currentContainerAncestor->GetParent());
 	}
+}
+
+FString Ink::FStory::PopChoiceStringAndTags(TArray<FString> &OutTags)
+{
+	auto choiceOnlyStrVal = DynamicCastTo<FValueString>(State->PopEvaluationStack());
+	while ( (State->GetEvaluationStack().Num() > 0) && (State->PeekEvaluationStack()->CanCastTo(EInkObjectClass::FTag) ) )
+	{
+		auto tag = DynamicCastTo<Ink::FTag>( State->PopEvaluationStack() );
+		OutTags.EmplaceAt( 0, tag->GetText() ); // popped in reverse order
+	}
+	return choiceOnlyStrVal->GetValue();
 }
 
 void Ink::FStory::OnVariableStateDidChangeEvent(const FString& VariableName, TSharedPtr<Ink::FObject> NewValueObj)

@@ -69,7 +69,7 @@ public:
 	bool IsFlowAlive( const FString &FlowName );
 
 	UFUNCTION(BlueprintPure, Category="Inkpot|Story")
-	TArray<FString> GetAliveFlowNames();
+	const TArray<FString> &GetAliveFlowNames();
 
 	UFUNCTION(BlueprintPure, Category="Inkpot|Story")
 	int32 GetAliveFlowCount();
