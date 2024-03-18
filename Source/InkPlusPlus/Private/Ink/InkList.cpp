@@ -13,7 +13,10 @@ Ink::FInkList::FInkList()
 Ink::FInkList::FInkList(const Ink::FInkList& InOtherInkList)
 	: TMap<Ink::FInkListItem, int32>(InOtherInkList)
 {
-	_originNames = InOtherInkList.GetOriginNames();
+	TSharedPtr<TArray<FString>> otherOriginNames = InOtherInkList.GetOriginNames();
+	if(otherOriginNames.IsValid())
+		_originNames = MakeShared<TArray<FString>>(*otherOriginNames);
+
 	if (InOtherInkList.Origins.IsValid())
 		Origins = MakeShared<TArray<TSharedPtr<Ink::FListDefinition>>>(*InOtherInkList.Origins);
 }
@@ -249,6 +252,16 @@ Ink::FInkList Ink::FInkList::Intersect(const Ink::FInkList& InOtherList) const
 	return list;
 }
 
+bool Ink::FInkList::HasIntersection(const Ink::FInkList& InOtherList) const
+{
+	for (const TPair<FInkListItem, int32>& itemPair : *this)
+	{
+		if (InOtherList.Contains(itemPair.Key))
+			return true;
+	}
+	return false;
+}
+
 Ink::FInkList Ink::FInkList::Without(const Ink::FInkList& InListToRemove) const
 {
 	FInkList list = *this;
@@ -261,12 +274,25 @@ Ink::FInkList Ink::FInkList::Without(const Ink::FInkList& InListToRemove) const
 
 bool Ink::FInkList::ContainsList(const Ink::FInkList& InOtherList) const
 {
+	if( (InOtherList.Num() == 0 ) || Num() == 0 ) 
+		return false;
+
 	for (const TPair<FInkListItem, int32>& itemPair : InOtherList)
 	{
 		if (!Contains(itemPair.Key))
 			return false;
 	}
 	return true;
+}
+
+bool Ink::FInkList::ContainsItem(const FString& InListItemName) const
+{
+	for (const TPair<FInkListItem, int32>& itemPair : *this)
+	{
+		if (itemPair.Key.ItemName.Equals(InListItemName))
+			return true;
+	}
+	return false;
 }
 
 bool Ink::FInkList::GreaterThan(const Ink::FInkList& InOtherList) const

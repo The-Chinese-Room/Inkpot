@@ -81,3 +81,13 @@ void Ink::FChoice::SetThreadAtGeneration(TSharedPtr<Ink::FThread> InThreadAtGene
 {
 	ThreadAtGeneration = InThreadAtGeneration;
 }
+
+const TArray<FString> &Ink::FChoice::GetTags() const
+{
+	return Tags;
+}
+
+void Ink::FChoice::SetTags(const TArray<FString>& InTags)
+{
+	Tags = InTags;
+}

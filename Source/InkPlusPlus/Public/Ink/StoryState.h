@@ -72,7 +72,10 @@ namespace Ink
 
 		TArray<FString>& GetCurrentTags();
 		FString GetCurrentFlowName() const;
+		bool CurrentFlowIsDefaultFlow() const;
+
 		TSharedPtr<TMap<FString, TSharedPtr<FFlow>>> GetNamedFlows();
+		const TArray<FString>& GetAliveFlowNames();
 
 		bool GetInExpressionEvaluation() const;
 		void SetInExpressionEvaluation(bool InExpressionEvaluation);
@@ -129,9 +132,13 @@ namespace Ink
 		void SetOutputStreamDirty();
 	
 	private:
-		const int32 InkSaveStateVersion;
-		const int32 MinCompatibleLoadVersion;
-		const FString DefaultFlowName;
+        // Backward compatible changes since v8:
+        // v10: dynamic tags
+        // v9:  multi-flows
+		const int32 InkSaveStateVersion{10};
+		const int32 MinCompatibleLoadVersion{8};
+		const FString DefaultFlowName{TEXT("DEFAULT_FLOW")};
+
 		FString CurrentText;
 
 		// Callback for when a state is loaded
@@ -161,5 +168,8 @@ namespace Ink
 		TSharedPtr<FFlow> CurrentFlow;
 		TSharedPtr<Ink::FVariableState> VariableState;
 		TSharedPtr<TMap<FString, TSharedPtr<FFlow>>> NamedFlows;
+
+		TArray<FString> AliveFlowNames;
+		bool bAliveFlowNamesDirty;
 	};
 }

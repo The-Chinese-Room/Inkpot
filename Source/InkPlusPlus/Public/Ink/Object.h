@@ -76,7 +76,7 @@ namespace Ink
 		// StoryException being static is causing problems during the tests as it isn't always resetting between runs. Currently using simple logging instead of this
 
 	protected:
-		TSharedPtr<Ink::FObject> Parent;
+		TWeakPtr<Ink::FObject> Parent;
 		TSharedPtr<Ink::FPath> _Path;
 		TSharedPtr<Ink::FDebugMetadata> DebugMetadata;
 		Ink::FContainer* RootContentContainer;

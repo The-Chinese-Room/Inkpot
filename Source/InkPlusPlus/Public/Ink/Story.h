@@ -60,6 +60,8 @@ namespace Ink
 		FChoosePathStringEvent& OnChoosePathString() { return OnChoosePathStringEvent; }
 
 		FStory(const FString& jsonString);
+		virtual ~FStory();
+
 		FString ToJson() const;
 		void ToJson(FArchive* const Stream) const;
 		void ToJson(TJsonWriter<>* InJSONWriter) const;
@@ -149,6 +151,10 @@ namespace Ink
 
 		FString GetCurrentFlowName() const;
 
+		bool CurrentFlowIsDefaultFlow() const;
+
+		TArray<FString> AliveFlowNames() const;
+
 		/* Whether the currentErrors list contains any errors.
 		/// THIS MAY BE REMOVED - you should be setting an error handler directly
 			using Story.onError. */
@@ -165,7 +171,7 @@ namespace Ink
 	
 	public:
 		// The current version of the ink story file format.
-		const int32 inkVersionCurrent = 20;
+		const int32 inkVersionCurrent = 21;
 
 		/*	Version numbers are for engine itself and story file, rather
 			than the story state save format
@@ -192,6 +198,7 @@ namespace Ink
 		void IfAsyncWeCant(const FString& ActivityStr) const;
 		void VisitContainer(TSharedPtr<FContainer> Container, bool AtStart);
 		void VisitChangedContainersDueToDivert();
+		FString PopChoiceStringAndTags(TArray<FString>& OutTags);
 		TSharedPtr<Ink::FDebugMetadata> GetCurrentDebugMetadata() const;
 		void AddError(const FString& InMessage, bool InIsWarning = false, bool InUseEndLineNumber = false) const;
 		void OnVariableStateDidChangeEvent(const FString& VariableName, TSharedPtr<Ink::FObject> NewValueObj);

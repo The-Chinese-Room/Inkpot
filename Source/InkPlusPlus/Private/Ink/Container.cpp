@@ -227,7 +227,7 @@ TSharedPtr<Ink::FObject> Ink::FContainer::GetContentWithPathComponent(const Ink:
 
 	else if (InComponent.IsParent())
 	{
-		return Parent;
+		return Parent.Pin();
 	}
 
 	else

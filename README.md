@@ -1,28 +1,31 @@
 # Inkpot
 **Inkpot** - An container for **Ink** within the Unreal Engine developed by [The Chinese Room](https://www.thechineseroom.co.uk/).<br><br>
 This is a plugin for Unreal Engine 5.3 or later.<br>
-This is version 0.4.20 of the plugin.</br>
+This is version 1.01.21 of the plugin.</br>
 
 Inkpot is a wrapper for the wonderful narrative scripting language **Ink** developed by [Inkle Studios](https://www.inklestudios.com/ink/).<br>
 
+### Changes from 0.4.20
+Inkplusplus port now matches version 21 of the Ink runtime engine, Ink version 1.1.1.<br>
+.net version updated to 5.0<br>
+
 ### Changes from 0.3.20
-Settings backed by CVars added.
-First pass on auto reload and replay of ink source.
+Settings backed by CVars added.<br>
+First pass on auto reload and replay of ink source.<br>
 
 ### Changes from 0.2.20
-JSON serialisation now functional.
+JSON serialisation now functional.<br>
 
 ### Changes from 0.1.20
-External functions are now implemented, along with functional tests.
+External functions are now implemented, along with functional tests.<br>
 
 ## Requirements 
 Inkpot works with version 5.3 of Unreal.<br>
-Inkpot includes a C++ port of Ink-engine-runtime version 20, which can be found in the InkPlusPlus module.<br>
-As Inkpot compiles the Ink source directly on import, it should be compatible with any Ink editor version as long as you only use features from Ink version 20.<br>
+Inkpot includes a C++ port of Ink-engine-runtime version 21, which can be found in the InkPlusPlus module.<br>
 
-### .Net framework 3.1
-InkleCate requires the .net framework 3.1 which you can download from here.<br>
-https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-3.1.32-windows-x64-installer <br>
+### .Net framework 5.0
+InkleCate requires the .net framework 5.0 which you can download from here.<br>
+https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-5.0.17-windows-x64-installer<br>
 (Without this you will not be able to import Ink source)<br>
 
 ### Visual Studio 2022
@@ -32,10 +35,10 @@ https://visualstudio.microsoft.com/vs/<br>
 
 ## Installing the plugin
 
-Make sure you have **.Net framework 3.1** and **Visual Studio 2022** installed.<br>
+Make sure you have **.Net framework 5.0** and **Visual Studio 2022** installed.<br>
 
 In your **project folder**, create a folder named **Plugins** and copy the Inkpot plugin there.<br>
-Make sure the inkpot folder is called simply '**Inkpot**'.
+Make sure the inkpot folder is called simply '**Inkpot**'.<br>
 
 LIke this:<br>
 
@@ -48,8 +51,8 @@ https://github.com/The-Chinese-Room/InkpotDemo
 
 ### My Ink files will not import.
 
-* Make sure you have **.Net framework 3.1** installed.<br>
-Inkpot uses Inklecate to compile the Ink files and it needs .net 3.1.<br>
+* Make sure you have **.Net framework 5.0** installed.<br>
+Inkpot uses Inklecate to compile the Ink files and it needs .net 5.0.<br>
 Without this the Ink files will not import.<br>
 
 * Inkpot has only been tested as an application plugin and not an engine plugin.<br>
@@ -77,8 +80,7 @@ InkPlusPlus is the name of the module that contains the C++ port of the Ink Engi
 https://github.com/inkle/ink/tree/master/ink-engine-runtime
 
 When porting the code from C# to C++ we came to the conclusion that we should keep the source as close to the original C# as possible to make updates easier. </br>
-That said we took the code in the summer of 2021 and have not had a need to update as it works for our purposes. </br>
-The Ink version we are running is therefore behind that of the offical Ink release being at Inkversion 20.</br>
+This has now been updated to Inkversion 21, Ink v1.1.1. </br>
 
 ### Inkpot 
 A set of wrapper classes for InkPlusPlus to simplify Blueprint coding.<br>
@@ -94,7 +96,7 @@ There area couple of supporting folders that make up the Inkpot distribution.<br
 
 ### TestInkSource
 All the Unit tests for Ink.</br> 
-Currently 175 tests.
+Currently 180 tests.
 
 ### Third Party 
 This contains a copy of InkleCate and is used by the script importer to compile the scripts.<br>

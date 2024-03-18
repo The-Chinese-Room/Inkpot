@@ -76,6 +76,9 @@ namespace Ink
 		// list that's passed in - i.e. a list of the items that are shared between the
 		// two other lists. Equivalent to calling (list1 ^ list2) in ink.
 		FInkList Intersect(const Ink::FInkList& InOtherList) const;
+
+		/// Fast test for the existence of any intersection between the current list and another
+		bool HasIntersection(const Ink::FInkList& InOtherList) const;
 		
 		// Returns a new list that's the same as the current one, except with the given items
 		// removed that are in the passed in list. Equivalent to calling (list1 - list2) in ink.
@@ -84,6 +87,9 @@ namespace Ink
 		// Returns true if the current list contains all the items that are in the list that
 		// is passed in. Equivalent to calling (list1 ? list2) in ink.
 		bool ContainsList(const Ink::FInkList& InOtherList) const;
+
+		/// Returns true if the current list contains an item matching the given name.
+		bool ContainsItem(const FString &InListItemName) const;
 
 		// Returns true if all the item values in the current list are greater than all the
 		// item values in the passed in list. Equivalent to calling (list1 > list2) in ink.

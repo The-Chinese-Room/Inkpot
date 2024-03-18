@@ -30,7 +30,7 @@ int32 Ink::FObject::GetHashCode()
 
 TSharedPtr<Ink::FObject> Ink::FObject::GetParent() const
 {
-	return Parent;
+	return Parent.Pin();
 }
 
 void Ink::FObject::SetParent(TSharedPtr<Ink::FObject> InParent)
@@ -68,7 +68,7 @@ TSharedPtr<Ink::FPath> Ink::FObject::GetPath()
 				}
 
 				child = container;
-				container = DynamicCastTo<FContainer>(container->Parent);
+				container = DynamicCastTo<FContainer>(container->Parent.Pin());
 			}
 			Algo::Reverse(componentsStack); // explicitly reverse the array, instead of copying the c# code's implicit technique of handing over a stack to an array
 
@@ -87,7 +87,7 @@ Ink::FSearchResult Ink::FObject::ResolvePath(TSharedPtr<Ink::FPath> InPath)
 		if (!nearestContainer.IsValid())
 		{
 			ensureAlwaysMsgf(Parent != nullptr, TEXT("Can't resolve relative path because we don't have a parent"));
-			nearestContainer = DynamicCastTo<Ink::FContainer>(Parent);
+			nearestContainer = DynamicCastTo<Ink::FContainer>(Parent.Pin());
 			ensureAlwaysMsgf(nearestContainer != nullptr, TEXT("Expected parent to be a container"));
 			ensureAlways(InPath->GetComponent(0)->IsParent());
 			InPath = InPath->GetTail();
@@ -106,7 +106,7 @@ TSharedPtr<Ink::FContainer> Ink::FObject::GetRootContentContainer()
 	TSharedPtr<Ink::FObject> ancestor = this->AsShared();
 	while (ancestor->Parent.IsValid())
 	{
-		ancestor = ancestor->Parent;
+		ancestor = ancestor->Parent.Pin();
 	}
 
 	return FObject::DynamicCastTo<FContainer>(ancestor);
@@ -204,7 +204,7 @@ TSharedPtr<Ink::FDebugMetadata> Ink::FObject::GetDebugMetadata() const
 	{
 		if (Parent.IsValid())
 		{
-			return Parent->DebugMetadata;
+			return Parent.Pin()->DebugMetadata;
 		}
 	}
 
