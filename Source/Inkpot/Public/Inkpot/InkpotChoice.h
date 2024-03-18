@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "InkpotLine.h"
+#include "Ink/Choice.h"
 #include "InkpotChoice.generated.h"
 
 class UInkpotStory;
@@ -13,7 +14,7 @@ class INKPOT_API UInkpotChoice : public UInkpotLine
 
 public:
 	UInkpotChoice();
-	void Initialise( int32 Index, const FString &String);
+	void Initialise( TSharedPtr<Ink::FChoice>  InInkChoice );
 
 	UFUNCTION(BlueprintPure, Category="Inkpot|Choice")
 	int32 GetIndex() const;
@@ -22,8 +23,9 @@ public:
 	static const int32 BadChoice {-1};
 
 private:
+	virtual const TArray<FString>& GetTagsInternal() const override;
 
-	UPROPERTY(VisibleAnywhere, Category="Inkpot|Choice")
-	int32 Index;
+private:
+	TSharedPtr<Ink::FChoice>  InkChoice;
 };
 

@@ -2,22 +2,37 @@
 #include "Inkpot/InkpotStory.h"
 
 UInkpotChoice::UInkpotChoice()
-: Index( BadChoice ) 
 {
 }
 
-void UInkpotChoice::Initialise( int32 InIndex, const FString &InString)
+void UInkpotChoice::Initialise( TSharedPtr<Ink::FChoice> InInkChoice )
 {
-	UInkpotLine::Initialise( InString );
-	Index = InIndex;
+	InkChoice = InInkChoice;
+	UInkpotLine::Initialise( InkChoice->GetText() );
 }
 
 int32 UInkpotChoice::GetIndex() const
 {
-	return Index;
+	if(InkChoice.IsValid())
+		return InkChoice->GetIndex();
+	else
+		return BadChoice;
 }
 
 bool UInkpotChoice::operator == ( int32 InIndex )
 {
-	return Index == InIndex;
+	return GetIndex() == InIndex;
+}
+
+const TArray<FString> &UInkpotChoice::GetTagsInternal() const
+{
+	if(InkChoice.IsValid())
+	{
+		return InkChoice->GetTags();
+	}
+	else
+	{
+		static TArray<FString> BadTags;
+		return BadTags;
+	}
 }

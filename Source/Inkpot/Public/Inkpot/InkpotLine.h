@@ -21,7 +21,13 @@ public:
 	const FText& GetText() const;
 
 	UFUNCTION(BlueprintPure, Category="Inkpot|Line")
+	const TArray<FString> &GetTags() const;
+
+	UFUNCTION(BlueprintPure, Category="Inkpot|Line")
 	UInkpotStory* GetStory() const;
+
+private:
+	virtual const TArray<FString> &GetTagsInternal() const;
 
 private:
 	UPROPERTY(VisibleAnywhere, Category="Inkpot|Line")

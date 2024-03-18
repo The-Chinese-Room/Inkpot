@@ -27,3 +27,14 @@ const FText& UInkpotLine::GetText() const
 {
 	return Text;
 }
+
+const TArray<FString> &UInkpotLine::GetTags() const
+{
+	return GetTagsInternal();
+}
+
+const TArray<FString> &UInkpotLine::GetTagsInternal() const
+{
+	UInkpotStory* story = GetStory();
+	return story->GetCurrentTags();
+}

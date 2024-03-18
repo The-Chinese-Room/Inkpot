@@ -30,7 +30,7 @@ namespace Ink
 		bool IsInvisibleDefault() const;
 		void SetIsInvisibleDefault(bool InIsInvisibleDefault);
 
-		const TArray<FString> GetTags() const;
+		const TArray<FString> &GetTags() const;
 		void SetTags(const TArray<FString> &InTags);
 
 		FString GetPathStringOnChoice() const;
