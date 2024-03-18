@@ -83,22 +83,6 @@ namespace InkCompiler
 	}
 
 
-	bool GetContainingFolder(FString InputPath, FString& OutContainingFolder)
-	{
-		// strip the end of the path until we reach the next folder
-		while (!InputPath.IsEmpty())
-		{
-			InputPath.RemoveAt(InputPath.Len() - 1, 1);
-			if (InputPath.EndsWith("/"))
-			{
-				OutContainingFolder = InputPath;
-				return true;
-			}
-		}
-		OutContainingFolder = "";
-		return false;
-	}
-
 	void FlushScratchDirectory()
 	{
 		IPlatformFile::GetPlatformPhysical().DeleteDirectoryRecursively( *GetScratchDirectory() );
