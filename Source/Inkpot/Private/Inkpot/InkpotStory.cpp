@@ -118,7 +118,7 @@ void UInkpotStory::UpdateChoices()
 	for( auto inkChoice : inkChoices  )
 	{
 		UInkpotChoice* choice = NewObject<UInkpotChoice>( this );
-		choice->Initialise( inkChoice->GetIndex(), inkChoice->GetText() );
+		choice->Initialise( inkChoice );
 		Choices.Emplace( choice );
 	}
 }
@@ -443,10 +443,23 @@ void UInkpotStory::DumpDebug()
 
 	if(Choices.Num() > 0)
 	{
-		INKPOT_LOG("Choice       : %d - %s", Choices[0]->GetIndex(), *Choices[0]->GetString());
-		for( int32 i=1; i<Choices.Num(); ++i )
+		for( int32 i=0; i<Choices.Num(); ++i )
 		{
-			INKPOT_LOG("             : %d - %s", Choices[i]->GetIndex(), *Choices[i]->GetString());
+			FString tagsSet;
+			for( auto tag : Choices[i]->GetTags() )
+			{
+				tagsSet.Append( "'#" );
+				tagsSet.Append( tag );
+				tagsSet.Append( "' " );
+			}
+			if( i == 0 ) 
+			{
+				INKPOT_LOG( "Choice       : %d - %s  %s", Choices[ i ]->GetIndex(), *Choices[ i ]->GetString(), *tagsSet );
+			}
+			else
+			{
+				INKPOT_LOG( "             : %d - %s  %s", Choices[ i ]->GetIndex(), *Choices[ i ]->GetString(), *tagsSet );
+			}
 		}
 	}
 }
