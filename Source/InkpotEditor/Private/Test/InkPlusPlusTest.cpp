@@ -69,9 +69,6 @@
 #define VARIABLE_VALUE                           TEXT("VARIABLE_VALUE")
 
 
-static const FString TestFolderPath = FPaths::ProjectPluginsDir() + TEXT("Inkpot/TestInkSource/");
-static const FString InkScratchFilePath = InkCompiler::GetScratchDirectory() + "TempInkFile.ink";
-
 IMPLEMENT_COMPLEX_AUTOMATION_TEST(FInkTests, "Inkpot",
 	EAutomationTestFlags::EditorContext |
 	EAutomationTestFlags::ClientContext |
@@ -202,11 +199,16 @@ static bool IsStoryInstruction(const FString& Instructions)
 }
 
 
+FString GetTestFolderPath()
+{
+	FString testFolderPath = FPaths::ProjectPluginsDir() + TEXT( "Inkpot/TestInkSource/" );
+	return testFolderPath;
+}
 
 void FInkTests::GetTests(TArray<FString>& OutBeautifiedNames, TArray <FString>& OutTestCommands) const
 {
 	TArray<FString> fileNames;
-	GetFilesInFolder(TestFolderPath, fileNames);
+	GetFilesInFolder( GetTestFolderPath(), fileNames);
 	for (const FString& fileName : fileNames)
 	{		
 		OutBeautifiedNames.Add(FPaths::GetBaseFilename(fileName));
@@ -216,8 +218,6 @@ void FInkTests::GetTests(TArray<FString>& OutBeautifiedNames, TArray <FString>& 
 
 bool FInkTests::RunTest(const FString& InkTestName)
 {
-	InkCompiler::FlushScratchDirectory();
-
 	const FString testScriptStartPhrase = TEXT("INK_TEST_START");
 	const FString testStoryScriptStartPhrase = TEXT("INK_TEST_STORY_START");
 	const FString testEndPhrase = TEXT("INK_TEST_END");
@@ -231,7 +231,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 	TArray<TSharedPtr<FInkpotExternalFunction>> boundExternalFunctionDelegates;
 	UInkFunctionTests *testFunctions = nullptr;
 
-	FString testFilePath = TestFolderPath + InkTestName + ".ink";
+	FString testFilePath = GetTestFolderPath() + InkTestName + ".ink";
 	FString fileContents;
 	if (FFileHelper::LoadFileToString(fileContents, *testFilePath))
 	{
@@ -257,7 +257,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 
 		TArray<FString> compileErrors, compileWarnings;
 		FString compiledJSON;
-		bool bCompileSuccess = InkCompiler::CompileInkFile(testFilePath, InkScratchFilePath, compiledJSON, compileErrors, compileWarnings, shouldCountVisits, expectedErrors>0 );
+		bool bCompileSuccess = InkCompiler::CompileInkFile(testFilePath, compiledJSON, compileErrors, compileWarnings, shouldCountVisits, expectedErrors>0 );
 
 		if (bCompileAsStory && bCompileSuccess)
 		{
@@ -370,7 +370,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 							compileErrors.Empty();
 							compileWarnings.Empty();
 
-							InkCompiler::CompileInkString(jsonParsedString, InkScratchFilePath, compiledStringJSON, compileErrors, compileWarnings);
+							InkCompiler::CompileInkString(jsonParsedString, compiledStringJSON, compileErrors, compileWarnings);
 							
 							storyAsset = NewObject<UInkpotStoryAsset>();
 							storyAsset->SetCompiledJSON( compiledStringJSON );
@@ -393,14 +393,14 @@ bool FInkTests::RunTest(const FString& InkTestName)
 							// for the moment we have one test that we expect to fail compilation here.
 							// tmp workaround, as parsing ahead to results value will be a fair refactor TODO!
 							bool bExpectFail = InkTestName.Equals("TestEndOfContent");
-							InkCompiler::CompileInkString(jsonParsedString, InkScratchFilePath, compiledJSON, compileErrors, compileWarnings, false, bExpectFail);
+							InkCompiler::CompileInkString(jsonParsedString, compiledJSON, compileErrors, compileWarnings, false, bExpectFail);
 						}
 					}
 					else if (testInstruction->HasField(EXECUTE_RECOMPILE_STORY))
 					{
 						compileErrors.Empty();
 						compileWarnings.Empty();
-						InkCompiler::CompileInkFile(testFilePath, InkScratchFilePath, compiledJSON, compileErrors, compileWarnings);
+						InkCompiler::CompileInkFile(testFilePath, compiledJSON, compileErrors, compileWarnings);
 
 						storyAsset = NewObject<UInkpotStoryAsset>();
 						storyAsset->SetCompiledJSON(compiledJSON);
