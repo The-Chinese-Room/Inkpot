@@ -1,23 +1,34 @@
 # Inkpot
 **Inkpot** - An container for **Ink** within the Unreal Engine developed by [The Chinese Room](https://www.thechineseroom.co.uk/).<br><br>
 This is a plugin for Unreal Engine 5.3 or later.<br>
-This is version 1.01.21 of the plugin.</br>
+This is version **1.02.21** of the plugin.</br>
 
 Inkpot is a wrapper for the wonderful narrative scripting language **Ink** developed by [Inkle Studios](https://www.inklestudios.com/ink/).<br>
 
-### Changes from 0.4.20
+### Changes in 1.02.21
+Fixed assertion when accessing variables that do not exist in the ink script.<br>
+Fixed relative path resolution bug that caused Ink source files to not import.<br>
+Improved compilation logging.<br>
+
+### Changes in 1.01.21
+Added tag accessor methods to InkpotLine & InkpotChoice.<br>
+
+### Changes in 1.00.21
 Inkplusplus port now matches version 21 of the Ink runtime engine, Ink version 1.1.1.<br>
 .net version updated to 5.0<br>
 
-### Changes from 0.3.20
+### Changes in 0.4.20
 Settings backed by CVars added.<br>
 First pass on auto reload and replay of ink source.<br>
 
-### Changes from 0.2.20
+### Changes in 0.3.20
 JSON serialisation now functional.<br>
 
-### Changes from 0.1.20
+### Changes in 0.2.20
 External functions are now implemented, along with functional tests.<br>
+
+### Changes in 0.1.20
+Initial release.<br>
 
 ## Requirements 
 Inkpot works with version 5.3 of Unreal.<br>
