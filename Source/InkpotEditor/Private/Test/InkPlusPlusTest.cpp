@@ -735,7 +735,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 								TArray<FString> actualTags = story->GlobalTags();
 								if (expectedTags->Num() != actualTags.Num())
 								{
-									INKPOT_ERROR("%s : TEST_STORY_GLOBAL_TAGS Tag count not equal: %s, \nExpected: %d\nActual__: %d\n", *InkTestName, expectedTags->Num(), actualTags.Num());
+									INKPOT_ERROR("%s : TEST_STORY_GLOBAL_TAGS Tag count not equal:, \nExpected: %d\nActual__: %d\n", *InkTestName, expectedTags->Num(), actualTags.Num());
 									return false;
 								}
 
