@@ -33,7 +33,7 @@ Ink::FStory::FStory(const FString& jsonString)
 		return;
 	}
 
-	auto versionObj = rootObject->TryGetField("inkVersion");
+	auto versionObj = rootObject->TryGetField(TEXT("inkVersion"));
 	if (!versionObj.IsValid())
 	{
 		Error("ink version number not found. Are you sure it's a valid .ink.json file?");
@@ -53,14 +53,14 @@ Ink::FStory::FStory(const FString& jsonString)
 		UE_LOG(InkPlusPlus, Warning, TEXT("WARNING: Version of ink used to build story doesn't match current version of engine. Non-critical, but recommend synchronising."));
 	}
 
-	TSharedPtr<FJsonValue> rootToken = rootObject->TryGetField("root");
+	TSharedPtr<FJsonValue> rootToken = rootObject->TryGetField(TEXT("root"));
 	if (!rootToken.IsValid())
 	{
 		Error("Root node for ink not found. Are you sure it's a valid .ink.json file?");
 		return;
 	}
 
-	if (TSharedPtr<FJsonValue> listDefsObject = rootObject->TryGetField("listDefs"))
+	if (TSharedPtr<FJsonValue> listDefsObject = rootObject->TryGetField(TEXT("listDefs")))
 	{
 		ListDefinitions = Ink::FJsonSerialisation::JsonTokenToListDefinitions(*listDefsObject);
 	}

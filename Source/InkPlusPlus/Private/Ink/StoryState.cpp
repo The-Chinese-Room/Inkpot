@@ -147,11 +147,11 @@ void Ink::FStoryState::LoadJSONObj(const FJsonObject& InJSONObj)
 		VariableState->SetCallStack(CurrentFlow->GetCallStack());
 	}
 
-	const TArray<TSharedPtr<FJsonValue>> evalStackArrayField = InJSONObj.GetArrayField("evalStack");
+	const TArray<TSharedPtr<FJsonValue>> evalStackArrayField = InJSONObj.GetArrayField(TEXT("evalStack"));
 	EvaluationStack = Ink::FJsonExtension::JSONValueToInkObject(evalStackArrayField);
 
 	
-	TSharedPtr<FJsonValue> currentDivertTargetPath = InJSONObj.TryGetField("currentDivertTarget");
+	TSharedPtr<FJsonValue> currentDivertTargetPath = InJSONObj.TryGetField(TEXT("currentDivertTarget"));
 	if (currentDivertTargetPath.IsValid())
 	{
 		const FString currentDivertTargetPathString = currentDivertTargetPath->AsString();
@@ -159,17 +159,17 @@ void Ink::FStoryState::LoadJSONObj(const FJsonObject& InJSONObj)
 		DivertedPointer = Story->PointerAtPath(divertPath);
 	}
 
-	TMap<FString, TSharedPtr<FJsonValue>> visitCountsDictionary = InJSONObj.GetObjectField("visitCounts").Get()->Values;
+	TMap<FString, TSharedPtr<FJsonValue>> visitCountsDictionary = InJSONObj.GetObjectField(TEXT("visitCounts")).Get()->Values;
 	VisitCounts = Ink::FJsonExtension::JSONObjectToIntDictionary(visitCountsDictionary);
 
-	TMap<FString, TSharedPtr<FJsonValue>> turnIndicesDictionary = InJSONObj.GetObjectField("turnIndices").Get()->Values;
+	TMap<FString, TSharedPtr<FJsonValue>> turnIndicesDictionary = InJSONObj.GetObjectField(TEXT("turnIndices")).Get()->Values;
 	TurnIndices = Ink::FJsonExtension::JSONObjectToIntDictionary(turnIndicesDictionary);
 
-	CurrentTurnIndex = InJSONObj.GetIntegerField("turnIdx");
-	StorySeed = InJSONObj.GetIntegerField("storySeed");
+	CurrentTurnIndex = InJSONObj.GetIntegerField(TEXT("turnIdx"));
+	StorySeed = InJSONObj.GetIntegerField(TEXT("storySeed"));
 
 	PreviousRandom = 0;
-	InJSONObj.TryGetNumberField("previousRandom", PreviousRandom);
+	InJSONObj.TryGetNumberField(TEXT("previousRandom"), PreviousRandom);
 }
 
 int Ink::FStoryState::VisitCountAtPathString(const FString& PathString)
