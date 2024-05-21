@@ -5,6 +5,7 @@
 #include "Inkpot/InkpotChoice.h"
 #include "Inkpot/InkpotLine.h"
 #include "Inkpot/InkpotValue.h"
+#include "Utility/InkpotLog.h"
 #include "InkpotStory.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStoryContinue, UInkpotStory*, Story );
@@ -243,8 +244,16 @@ template<typename T, typename InkType>
 bool UInkpotStory::GetVariable( const FString& InVariable, Ink::EValueType InType, T& OutValue )
 {
 	TSharedPtr<InkType> variable = StaticCastSharedPtr<InkType>( GetVariable( InVariable ) );
-	bool success = (variable->GetType() == InType);
-	OutValue = variable->GetValue();
+	bool success = false;
+	if(variable.IsValid())
+	{
+		success = (variable->GetType() == InType);
+		OutValue = variable->GetValue();
+	}
+
+	if(!success)
+		INKPOT_ERROR("Could not get value of variable '%s'", *InVariable );
+
 	return success;
 }
 

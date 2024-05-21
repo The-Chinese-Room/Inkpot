@@ -80,13 +80,10 @@ bool UInkpotStoryAssetFactory::LoadAndCompileStory( const FString& InFilename, F
 	if ( !FFileHelper::LoadFileToString( OutStory, *InFilename ) )
 		return false;
 
-	const FString InkScratchFilePath = InkCompiler::GetScratchDirectory() + TEXT("TempInkFile.ink");
-		
 	TArray<FString> errors;
 	TArray<FString> warnings;
-	InkCompiler::FlushScratchDirectory();
 
-	if (InkCompiler::CompileInkFile(InFilename, InkScratchFilePath, OutCompiledStory, errors, warnings))
+	if (InkCompiler::CompileInkFile(InFilename, OutCompiledStory, errors, warnings))
 	{
 		FMessageLog InkCompilerLog("InkCompiler");
 

@@ -221,7 +221,11 @@ FInkpotValue UInkpotStory::GetValue(const FString &InVariable)
 	TSharedPtr<Ink::FVariableState> variableState = StoryInternal->GetVariablesState();
 	TSharedPtr<Ink::FObject> variableObj = variableState->GetVariable( InVariable );
 	TSharedPtr<Ink::FValue> variable = StaticCastSharedPtr<Ink::FValue>( variableObj );
-	Ink::FValueType value = variable->GetValueObject();
+	Ink::FValueType value;
+	if(variable.IsValid())
+		value = variable->GetValueObject();
+	else
+		INKPOT_ERROR("Could not get value of variable '%s'", *InVariable );
 	return FInkpotValue(value);
 }
 
