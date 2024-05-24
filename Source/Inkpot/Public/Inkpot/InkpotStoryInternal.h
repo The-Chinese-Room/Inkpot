@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Coreminimal.h"
+#include "CoreMinimal.h"
 #include "Ink/Story.h"
 
 class INKPOT_API FInkpotStoryInternal : public Ink::FStory
