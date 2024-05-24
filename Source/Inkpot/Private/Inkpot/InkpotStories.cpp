@@ -1,22 +1,31 @@
 #include "Inkpot/InkpotStories.h"
 #include "Inkpot/InkpotStoryInternal.h"
+#include "Settings/InkpotSettings.h"
 #include "Asset/InkpotStoryAsset.h"
 #include "Ink/Choice.h"
 #include "Utility/InkpotLog.h"
 
-static FString BadInkJSON { TEXT("{\"inkVersion\":20,\"root\":[[\"^This is BAD Ink. If you see this your Ink did not import correctly.\",\"\n\",\"end\",[\"done\",{\"#n\":\"g-0\"}],null],\"done\",null],\"listDefs\":{}}") };
-
 UInkpotStories::UInkpotStories()
 : Super()
 {
-	BadStory = CreateDefaultSubobject<UInkpotStory>(TEXT("BadInkStory"));
 }
 
 void UInkpotStories::Initialise()
 {
-	BadStory->Initialise( MakeShared<FInkpotStoryInternal>( BadInkJSON , FInkpotStoryInternal::BadStoryHandle ) );
+	InitialiseStoryFactory();
 	Reset();
 }
+
+void UInkpotStories::InitialiseStoryFactory()
+{
+	const UInkpotSettings *settings = GetDefault<UInkpotSettings>();
+	FSoftClassPath storyFactoryClassName = settings->StoryFactoryClass;
+	UClass* storyFactoryClass = (storyFactoryClassName.IsValid() ? LoadObject<UClass>(NULL, *storyFactoryClassName.ToString()) : UGameInstance::StaticClass() );
+
+	StoryFactory = NewObject<UInkpotStoryFactoryBase>(this, storyFactoryClass);
+	StoryFactory->Initialise();
+}
+
 
 void UInkpotStories::Reset()
 {
@@ -24,18 +33,6 @@ void UInkpotStories::Reset()
 	Stories.Empty();
 	StoryAssets.Empty();
 	StoryHistories.Empty();
-}
-
-TSharedPtr<FInkpotStoryInternal> UInkpotStories::CreateStoryInternal(UInkpotStoryAsset* InInkpotStoryAsset, int32 InHandle )
-{
-	if(!InInkpotStoryAsset)
-	{
-		INKPOT_ERROR("No story asset.");
-		return nullptr;
-	}
-
-	const FString &json = InInkpotStoryAsset->GetCompiledJSON();
-	return MakeShared<FInkpotStoryInternal>( json, InHandle );
 }
 
 UInkpotStory* UInkpotStories::BeginStory( UInkpotStoryAsset* InInkpotStoryAsset )
@@ -47,22 +44,18 @@ UInkpotStory* UInkpotStories::BeginStory( UInkpotStoryAsset* InInkpotStoryAsset 
 	else
 		handle = NextStoryHandle++;
 
-	TSharedPtr<FInkpotStoryInternal> storyInternal = CreateStoryInternal( InInkpotStoryAsset, handle );
-	if(!storyInternal->IsValidStory())
+	UInkpotStory* storyNew = StoryFactory->CreateStory(InInkpotStoryAsset, handle, this);
+
+	if (storyNew->GetID() != FInkpotStoryInternal::BadStoryHandle)
 	{
-		INKPOT_ERROR("Story asset is not a valid Ink story.");
-		return BadStory;
+		Stories.Emplace(handle, storyNew);
+
+		StoryAssets.Emplace(handle, InInkpotStoryAsset);
+
+		UInkpotStoryHistory* history = NewObject<UInkpotStoryHistory>(storyNew);
+		history->Initialise(storyNew);
+		StoryHistories.Emplace(handle, history);
 	}
-
-	UInkpotStory *storyNew = NewObject<UInkpotStory>(this);
-	storyNew->Initialise( storyInternal );
-	Stories.Emplace( handle, storyNew );
-
-	StoryAssets.Emplace( handle, InInkpotStoryAsset );
-
-	UInkpotStoryHistory *history = NewObject<UInkpotStoryHistory>( storyNew );
-	history->Initialise( storyNew );
-	StoryHistories.Emplace( handle, history );
 
 	return storyNew;
 }
@@ -88,7 +81,7 @@ UInkpotStory* UInkpotStories::GetStory( int32 InStoryHandle ) const
 	if(!Stories.Contains(InStoryHandle))
 	{
 		INKPOT_ERROR("Story ID does not exist.");
-		return BadStory;
+		return StoryFactory->BadStory();
 	}
 	return Stories[InStoryHandle];
 }
@@ -104,7 +97,7 @@ UInkpotStory* UInkpotStories::Reload( UInkpotStoryAsset* InInkpotStoryAsset )
 	if(!storyInProgressPtr)
 		return nullptr;
 
-	TSharedPtr<FInkpotStoryInternal> storyInternal = CreateStoryInternal( InInkpotStoryAsset, handle );
+	TSharedPtr<FInkpotStoryInternal> storyInternal = StoryFactory->CreateInternalStory( InInkpotStoryAsset, handle );
 	if(!storyInternal->IsValidStory())
 		return nullptr;
 
