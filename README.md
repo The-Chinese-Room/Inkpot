@@ -60,6 +60,14 @@ https://github.com/The-Chinese-Room/InkpotDemo
 
 ## FAQ
 
+### I cannot compile the plugin.
+* Inkpot is distributed as C++ source code and will need compiling. <br>
+Make sure you have **Visual Studio 2022** installed.<br>
+
+* If you get this error _VisualStudioUnsupported x64 must be installed in order to build this target_.<br> 
+For Unreal Engine 5.4, you need to be on v17.8 of the MSCV v143 toolchain. See here for more details.<br>
+https://forums.unrealengine.com/t/visualstudiounsupported-x64-must-be-installed-trying-to-update-a-project-from-5-3-2-to-5-4-1/1835116/5
+
 ### My Ink files will not import.
 
 * Make sure you have **.Net framework 5.0** installed.<br>
