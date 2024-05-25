@@ -20,7 +20,7 @@ public:
 
 #if WITH_EDITOR
 	virtual void PostInitProperties() override;
-	virtual void GetAssetRegistryTags( TArray<FAssetRegistryTag>& OutTags ) const override;
+	virtual void GetAssetRegistryTags( FAssetRegistryTagsContext InContext ) const override;
 #endif
 #if WITH_EDITORONLY_DATA
 	virtual void Serialize(FArchive& Ar) override;
