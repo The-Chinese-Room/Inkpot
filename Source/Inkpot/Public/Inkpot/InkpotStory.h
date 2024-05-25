@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Coreminimal.h"
+#include "CoreMinimal.h"
 #include "Inkpot/InkpotStoryInternal.h"
 #include "Inkpot/InkpotChoice.h"
 #include "Inkpot/InkpotLine.h"
@@ -22,7 +22,7 @@ class INKPOT_API UInkpotStory : public UObject
 	GENERATED_BODY()
 
 public:
-	void Initialise( TSharedPtr<FInkpotStoryInternal>  InInkpotStory );
+	virtual void Initialise( TSharedPtr<FInkpotStoryInternal>  InInkpotStory );
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
 	FString Continue();
@@ -180,11 +180,18 @@ public:
 
 	TSharedPtr<FInkpotStoryInternal> GetStoryInternal();
 
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
 	void DumpMainContent();
+
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
 	void DumpContentAtPath( const FString& InName );
+
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
 	void DumpContentAtKnot( const FString& InName );
+
 	void DumpContainer(const FString& InName, TSharedPtr<Ink::FContainer> InContainer, int Indent = 0);
 
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
 	void GatherAllStrings( TMap<FString, FString> &OutStrings );
 
 protected:
@@ -203,6 +210,9 @@ protected:
 	TArray<FString> GetNamedContent( TSharedPtr<Ink::FContainer> Container );
 
 	void GatherAllStrings(const FString &InRootName, TSharedPtr<Ink::FContainer> InContainer, TMap<FString, FString>& OutStrings);
+	
+	virtual void ChoosePathInternal(const FString &InPath);
+	virtual void ChoosePathStringInternal( const FString& InPath, const TArray<FInkpotValue>& InValues );
 
 protected:
 	TSharedPtr<FInkpotStoryInternal> StoryInternal;

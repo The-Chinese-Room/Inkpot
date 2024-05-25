@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Coreminimal.h"
+#include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
 #include "InkpotStoryAsset.generated.h"
 

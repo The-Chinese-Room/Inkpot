@@ -19,9 +19,14 @@ UInkpot::UInkpot()
 }
 
 void UInkpot::Initialize(FSubsystemCollectionBase &InCollection )
-{
+{ 
 	Super::Initialize( InCollection );
 	Stories->Initialise();
+}
+
+void UInkpot::InitializeStoryFactory()
+{
+	Stories->InitialiseStoryFactory();
 }
 
 UInkpotStory* UInkpot::BeginStory( UInkpotStoryAsset* InStory )

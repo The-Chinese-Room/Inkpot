@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Coreminimal.h"
+#include "CoreMinimal.h"
 #include "Inkpot/InkpotValue.h"
 #include "InkFunctionTests.generated.h"
 

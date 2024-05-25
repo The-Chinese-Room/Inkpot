@@ -61,10 +61,20 @@ TArray<FString> UInkpotStory::TagsForContentAtPath( const FString &InPath)
 
 void UInkpotStory::ChoosePath( const FString &InPath )
 {
+	ChoosePathInternal(InPath);
+}
+
+void UInkpotStory::ChoosePathInternal( const FString &InPath )
+{
 	StoryInternal->ChoosePathString( InPath, true, TArray<TSharedPtr<Ink::FValueType>>() );
 }
 
 void UInkpotStory::ChoosePathString( const FString &InPath, const TArray<FInkpotValue> &InValues )
+{
+	ChoosePathStringInternal( InPath, InValues );
+}
+
+void UInkpotStory::ChoosePathStringInternal( const FString& InPath, const TArray<FInkpotValue>& InValues )
 {
 	TArray<TSharedPtr<Ink::FValueType>> values;
 	values.Reserve( InValues.Num() );

@@ -19,6 +19,8 @@ public:
 	UInkpot();
 
 	virtual void Initialize(FSubsystemCollectionBase&) override;
+	void InitializeStoryFactory();
+
 	void Register();
 
 	UFUNCTION(BlueprintCallable, Category=Inkpot )

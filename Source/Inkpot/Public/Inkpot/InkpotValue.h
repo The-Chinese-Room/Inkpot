@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Coreminimal.h"
+#include "CoreMinimal.h"
 #include "Ink/Value.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "InkpotValue.generated.h"
