@@ -20,8 +20,7 @@ void UInkpotStories::InitialiseStoryFactory()
 {
 	const UInkpotSettings *settings = GetDefault<UInkpotSettings>();
 	FSoftClassPath storyFactoryClassName = settings->StoryFactoryClass;
-	UClass* storyFactoryClass = (storyFactoryClassName.IsValid() ? LoadObject<UClass>(NULL, *storyFactoryClassName.ToString()) : UGameInstance::StaticClass() );
-
+	UClass* storyFactoryClass = (storyFactoryClassName.IsValid() ? LoadObject<UClass>(NULL, *storyFactoryClassName.ToString() ) : UInkpotStoryFactory::StaticClass() );
 	StoryFactory = NewObject<UInkpotStoryFactoryBase>(this, storyFactoryClass);
 	StoryFactory->Initialise();
 }
