@@ -5,6 +5,10 @@ This is version **1.02.21** of the plugin.</br>
 
 Inkpot is a wrapper for the wonderful narrative scripting language **Ink** developed by [Inkle Studios](https://www.inklestudios.com/ink/).<br>
 
+For general support and chat with other users, check out Inkle's discord <br>
+https://discord.gg/kshu8aYY<br>
+
+
 ### Changes in 1.02.21
 Fixed assertion when accessing variables that do not exist in the ink script.<br>
 Fixed relative path resolution bug that caused Ink source files to not import.<br>
