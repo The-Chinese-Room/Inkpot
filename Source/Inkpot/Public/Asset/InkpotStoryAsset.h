@@ -23,7 +23,7 @@ public:
 	virtual void GetAssetRegistryTags( FAssetRegistryTagsContext InContext ) const override;
 #endif
 #if WITH_EDITORONLY_DATA
-	virtual void Serialize(FArchive& Ar) override;
+	virtual void Serialize(FStructuredArchiveRecord Record) override;
 	class UAssetImportData* GetAssetImportData();
 	void UpdateAssetInfo( const FString &InFilename );
 #endif
