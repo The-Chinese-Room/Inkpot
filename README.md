@@ -1,13 +1,22 @@
 # Inkpot
 **Inkpot** - An container for **Ink** within the Unreal Engine developed by [The Chinese Room](https://www.thechineseroom.co.uk/).<br><br>
 This is a plugin for Unreal Engine 5.3 or later.<br>
-This is version **1.02.21** of the plugin.</br>
+This is version **1.03.21** of the plugin.</br>
 
 Inkpot is a wrapper for the wonderful narrative scripting language **Ink** developed by [Inkle Studios](https://www.inklestudios.com/ink/).<br>
 
 For general support and chat with other users, check out Inkle's discord <br>
 https://discord.gg/kshu8aYY<br>
 
+### Changes in 1.03.21
+Added new abstract factory creation for stories, youclass UInkpotStory can now be subclassed on a per project basis.<br>
+Switched settings back to regular UDeveloperSettings as backed by CVAR version did not seem to work.<br>
+Fixed for 5.4 compilation error, template instantiation context error in InkPlusPlusTest.cpp(738).<br>
+Fixed compiler warnings in 5.4.<br>
+Fixed assertion when attempting to access no existent variable in story.<br>
+Fixed typo in headers that would fail on certain compilers ( #include "Coreminimal.h" should have been #include "CoreMinimal.h" )<br>
+FIxed Deprecation warning for GetAssetRegistryTags.<br>
+Updated serialize function to match parent in UInkpotStoryAsset.<br>
 
 ### Changes in 1.02.21
 Fixed assertion when accessing variables that do not exist in the ink script.<br>
