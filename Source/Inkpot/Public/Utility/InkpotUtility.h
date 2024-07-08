@@ -4,7 +4,7 @@
 
 namespace InkpotUtil
 {
-	const FString* GetTag(const TArray<FString>& Tags, const FString& Tag)
+	FORCEINLINE const FString* GetTag(const TArray<FString>& Tags, const FString& Tag)
 	{
 		for (const FString& tag : Tags)
 			if (tag.StartsWith(Tag))

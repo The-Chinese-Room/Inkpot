@@ -45,4 +45,7 @@ private:
 private:
 	UPROPERTY()
 	UInkpotStories *Stories;
+
+	UPROPERTY()
+	TWeakObjectPtr<UGameInstance> GameInstance{ nullptr };
 };
