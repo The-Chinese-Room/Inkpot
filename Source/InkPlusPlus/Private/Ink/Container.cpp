@@ -276,6 +276,11 @@ void Ink::FContainer::AddToNamedContentOnly(TSharedPtr<Ink::FObject> InNamedCont
 	NamedContent->Add(contentName, InNamedContent);
 }
 
+void Ink::FContainer::RemoveFromNamedContent(const FString& InName)
+{
+	NamedContent->Remove( InName );
+}
+
 TSharedPtr<Ink::FPath> Ink::FContainer::GetInternalPathToFirstLeafContent()
 {
 	TArray<TSharedPtr<Ink::FComponent>> components;

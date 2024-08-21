@@ -1960,6 +1960,11 @@ void Ink::FStory::UnbindExternalFunction(const FString& funcName)
     _externals.Remove (funcName);
 }
 
+bool Ink::FStory::IsExternalFunctionBound(const FString& funcName)
+{
+	return _externals.Find(funcName) != nullptr;
+}
+
 void Ink::FStory::ObserveAllVariables(TWeakPtr<FStoryVariableObserver> Observer)
 {
 	IfAsyncWeCant("observe a new variable");

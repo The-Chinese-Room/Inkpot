@@ -18,6 +18,10 @@ void UInkpotStory::Initialise( TSharedPtr<FInkpotStoryInternal>  InInkpotStory )
 	StoryInternal->OnChoosePathString().AddUObject(this, &UInkpotStory::OnChoosePathStringInternal );
 }
 
+void UInkpotStory::PostBegin()
+{
+}
+
 TSharedPtr<FInkpotStoryInternal> UInkpotStory::GetStoryInternal()
 {
 	return StoryInternal;
@@ -85,10 +89,20 @@ void UInkpotStory::ChoosePathStringInternal( const FString& InPath, const TArray
 
 FString UInkpotStory::Continue()
 {
+	return ContinueInternal();
+}
+
+FString UInkpotStory::ContinueInternal()
+{
 	return StoryInternal->Continue();
 }
 
 FString UInkpotStory::ContinueMaximally()
+{
+	return ContinueMaximallyInternal();
+}
+
+FString UInkpotStory::ContinueMaximallyInternal()
 {
 	return StoryInternal->ContinueMaximally();
 }
@@ -103,6 +117,11 @@ FString UInkpotStory::ContinueMaximallyAtPath(const FString& InPath)
 }
 
 bool UInkpotStory::CanContinue()
+{
+	return CanContinueInternal();
+}
+
+bool UInkpotStory::CanContinueInternal()
 {
 	return StoryInternal->CanContinue();
 }
@@ -499,12 +518,18 @@ void UInkpotStory::DumpContainer(const FString &InName, TSharedPtr<Ink::FContain
 	pad += '\t';
 
 	TArray<TSharedPtr<Ink::FObject>> *contents = InContainer->GetContent().Get();
+	TSet<TSharedPtr<Ink::FContainer>> containersDumped;
+
 	for( TSharedPtr<Ink::FObject> obj : *contents)
 	{
 		TSharedPtr<Ink::FContainer> container = Ink::FObject::DynamicCastTo<Ink::FContainer>(obj);
 		if( container )
 		{
-			DumpContainer( "inline", container, Indent + 1 );
+			containersDumped.Add(container);
+			FString name = container->GetName();
+			if (name.IsEmpty())
+				name = "inline";
+			DumpContainer(name, container, Indent + 1 );
 		}
 		else
 		{
@@ -520,6 +545,8 @@ void UInkpotStory::DumpContainer(const FString &InName, TSharedPtr<Ink::FContain
 	{
 		TSharedPtr<Ink::FContainer> container = Ink::FObject::DynamicCastTo<Ink::FContainer>( pair.Value );
 		if(!container)
+			continue;
+		if(containersDumped.Contains(container))
 			continue;
 		DumpContainer( pair.Key, container, Indent + 1 );
 	}
@@ -649,6 +676,12 @@ TArray<FString> UInkpotStory::GetNamedContent(TSharedPtr<Ink::FContainer> InCont
 
 void UInkpotStory::BindExternalFunction( const FString &InFunctionName, FInkpotExternalFunction InFunction, bool bInLookAheadSafe  )
 {
+	if (StoryInternal->IsExternalFunctionBound(InFunctionName))
+	{
+		INKPOT_WARN("Function '%s' is already bound, use UnbindExternalFunction to clear.", *InFunctionName);
+		return;
+	}
+
 	TSharedPtr<FStoryExternalFunction> function = MakeShared<FStoryExternalFunction>();
 	function->BindWeakLambda
 	(
@@ -667,6 +700,12 @@ void UInkpotStory::BindExternalFunction( const FString &InFunctionName, FInkpotE
 
 void UInkpotStory::UnbindExternalFunction( const FString &InFunctionName )
 {
+	if (!StoryInternal->IsExternalFunctionBound(InFunctionName))
+	{
+		INKPOT_WARN("Function '%s' does not exist.", *InFunctionName);
+		return;
+	}
+
 	StoryInternal->UnbindExternalFunction( InFunctionName );
 }
 

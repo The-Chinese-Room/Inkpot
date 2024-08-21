@@ -172,7 +172,7 @@ public:
 	FOnSwitchFlow& OnSwitchFlow(); 
 	FOnStoryLoadJSON& OnStoryLoadJSON(); 
 
-	void ResetContent( TSharedPtr<FInkpotStoryInternal> InNewStoryContent ); 
+	virtual void ResetContent( TSharedPtr<FInkpotStoryInternal> InNewStoryContent ); 
 	void ResetState();
 
 	int32 GetID() const;
@@ -181,7 +181,7 @@ public:
 	TSharedPtr<FInkpotStoryInternal> GetStoryInternal();
 
 	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
-	void DumpMainContent();
+	virtual void DumpMainContent();
 
 	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
 	void DumpContentAtPath( const FString& InName );
@@ -194,14 +194,20 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
 	void GatherAllStrings( TMap<FString, FString> &OutStrings );
 
+	virtual void PostBegin();
+
 protected:
+	virtual bool CanContinueInternal();
+	virtual FString ContinueInternal();
+	virtual FString ContinueMaximallyInternal();
+
 	void OnContinueInternal();
 	void OnMakeChoiceInternal(TSharedPtr<Ink::FChoice> InChoice);
 	void OnEvaluateFunctionInternal(const FString& InFunctionName, const TArray<TSharedPtr<Ink::FValueType>>& InFunctionParms);
 	void OnCompleteEvaluateFunctionInternal(const FString& InFunctionName, const TArray<TSharedPtr<Ink::FValueType>>& InFunctionParms, const FString& OutParmName, TSharedPtr<Ink::FValueType> OutParmType);
 	void OnChoosePathStringInternal(const FString& InPath, const TArray<TSharedPtr<Ink::FValueType>>& InPathType );
-	void BroadcastFlowChange();
 
+	void BroadcastFlowChange();
 	void UpdateChoices();
 
 	void DumpDebug();
