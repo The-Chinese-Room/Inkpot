@@ -5,8 +5,10 @@ This is version **1.03.21** of the plugin.</br>
 
 Inkpot is a wrapper for the wonderful narrative scripting language **Ink** developed by [Inkle Studios](https://www.inklestudios.com/ink/).<br>
 
-For general support and chat with other users, check out Inkle's discord <br>
-https://discord.gg/kshu8aYY<br>
+For a demo of how this integrates with an Unreal project see [the inkpot demo](https://github.com/The-Chinese-Room/InkpotDemo/).<br>
+
+For general support and chat with other users, check out [Inkle's discord](https://discord.com/invite/inkle#unreal-projects) <br>
+(You'll find Inkpot chat in #unreal-projects)
 
 ### Changes in 1.03.21
 Added new abstract factory creation for stories, youclass UInkpotStory can now be subclassed on a per project basis.<br>
