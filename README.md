@@ -1,7 +1,8 @@
 # Inkpot
 **Inkpot** - An container for **Ink** within the Unreal Engine developed by [The Chinese Room](https://www.thechineseroom.co.uk/).<br><br>
 This is a plugin for Unreal Engine 5.3 or later.<br>
-This is version **1.03.21** of the plugin.</br>
+The latest release is version **1.03.21** of the plugin.</br>
+The head revision contains work in progress towards the next release.<br>
 
 Inkpot is a wrapper for the wonderful narrative scripting language **Ink** developed by [Inkle Studios](https://www.inklestudios.com/ink/).<br>
 
