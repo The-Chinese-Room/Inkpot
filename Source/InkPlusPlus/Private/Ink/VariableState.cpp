@@ -90,27 +90,28 @@ TSharedPtr<Ink::FObject> Ink::FVariableState::GetVariable(const FString& Variabl
 }
 
 
-void Ink::FVariableState::SetVariable(const FString& VariableName, const TSharedPtr<Ink::FObject>& Value)
+bool Ink::FVariableState::SetVariable(const FString& VariableName, const TSharedPtr<Ink::FObject>& Value)
 {
 	if (!_defaultGlobalVariables.Contains(VariableName))
 	{
 		FObject::StoryException.Throw("Cannot assign to a variable (" + VariableName + ") that hasn't been declared in the story");
-		return;
+		return false;
 	}
 
 	if (!Value.IsValid())
 	{
 		UE_LOG(InkPlusPlus, Error, TEXT("Cannot pass null to VariableState"));
-		return;
+		return false;
 	}
 
 	if (!FObject::DynamicCastTo<Ink::FValue>(Value).IsValid())
 	{
 		UE_LOG(InkPlusPlus, Error, TEXT("Invalid value passed to VariableState : %s"), *Value->ToString());
-		return;
+		return false;
 	}
 
 	SetGlobal(VariableName, Value);
+	return true;
 }
 
 
