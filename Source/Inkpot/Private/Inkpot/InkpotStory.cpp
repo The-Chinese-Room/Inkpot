@@ -229,81 +229,86 @@ int32 UInkpotStory::GetAliveFlowCount()
 	return count; 
 }
 
-void UInkpotStory::SetValue(const FString &InVariable, FInkpotValue InValue)
+void UInkpotStory::SetValue(const FString &InVariable, FInkpotValue InValue, bool &OutSuccess )
 {
 	TSharedPtr<Ink::FVariableState> variableState = StoryInternal->GetVariablesState();
-	variableState->SetVariable( InVariable, Ink::FValue::Create(**InValue) );
+	OutSuccess = variableState->SetVariable( InVariable, Ink::FValue::Create(**InValue) );
 }
 
-FInkpotValue UInkpotStory::GetValue(const FString &InVariable)
+void UInkpotStory::GetValue(const FString &InVariable, FInkpotValue &OutReturnValue, bool &OutSuccess )
 {
 	TSharedPtr<Ink::FVariableState> variableState = StoryInternal->GetVariablesState();
 	TSharedPtr<Ink::FObject> variableObj = variableState->GetVariable( InVariable );
 	TSharedPtr<Ink::FValue> variable = StaticCastSharedPtr<Ink::FValue>( variableObj );
 	Ink::FValueType value;
 	if(variable.IsValid())
+	{
 		value = variable->GetValueObject();
+		OutSuccess = true;
+	}
 	else
+	{
 		INKPOT_ERROR("Could not get value of variable '%s'", *InVariable );
-	return FInkpotValue(value);
+		OutSuccess = false;
+	}
+	OutReturnValue = FInkpotValue(value);
 }
 
-void UInkpotStory::SetBool(const FString &InVariable, bool bInValue)
+void UInkpotStory::SetBool(const FString &InVariable, bool bInValue, bool &OutSuccess )
 {
 	TSharedPtr<Ink::FVariableState> variableState = StoryInternal->GetVariablesState();
-	variableState->SetVariable( InVariable, MakeShared<Ink::FValueBool>( bInValue ) );
+	OutSuccess = variableState->SetVariable( InVariable, MakeShared<Ink::FValueBool>( bInValue ) );
 }
 
-bool UInkpotStory::GetBool(const FString &InVariable)
+void UInkpotStory::GetBool(const FString &InVariable, bool &OutReturnValue, bool &OutSuccess )
 {
-	bool rval;
-	bool success = GetVariable<bool, Ink::FValueBool>(InVariable, Ink::EValueType::Bool, rval );
-	return rval;
+	OutSuccess = GetVariable<bool, Ink::FValueBool>(InVariable, Ink::EValueType::Bool, OutReturnValue );
 }
 
-void UInkpotStory::SetInt(const FString &InVariable, int32 InValue)
+void UInkpotStory::SetInt(const FString &InVariable, int32 InValue, bool &OutSuccess )
 {
 	TSharedPtr<Ink::FVariableState> variableState = StoryInternal->GetVariablesState();
-	variableState->SetVariable( InVariable, MakeShared<Ink::FValueInt>( InValue ) );
+	OutSuccess = variableState->SetVariable( InVariable, MakeShared<Ink::FValueInt>( InValue ) );
 }
 
-int32 UInkpotStory::GetInt(const FString &InVariable)
+void UInkpotStory::GetInt(const FString &InVariable, int32 &OutValue ,  bool &OutSuccess )
 {
-	int32 rval;
-	bool success = GetVariable<int32, Ink::FValueInt>(InVariable, Ink::EValueType::Int, rval );
-	return rval;
+	OutSuccess = GetVariable<int32, Ink::FValueInt>(InVariable, Ink::EValueType::Int, OutValue );
 }
 
-void UInkpotStory::SetFloat(const FString &InVariable, float InValue )
+void UInkpotStory::SetFloat(const FString &InVariable, float InValue, bool &OutSuccess )
 {
 	TSharedPtr<Ink::FVariableState> variableState = StoryInternal->GetVariablesState();
-	variableState->SetVariable( InVariable, MakeShared<Ink::FValueFloat>(InValue));
+	OutSuccess = variableState->SetVariable( InVariable, MakeShared<Ink::FValueFloat>(InValue));
 }
 
-float UInkpotStory::GetFloat(const FString &InVariable)
+void UInkpotStory::GetFloat(const FString &InVariable, float &OutReturnValue, bool &OutSuccess )
 {
-	float rval;
-	bool success = GetVariable<float, Ink::FValueFloat>(InVariable, Ink::EValueType::Float, rval );
-	return rval;
+	OutSuccess = GetVariable<float, Ink::FValueFloat>(InVariable, Ink::EValueType::Float, OutReturnValue );
 }
 
-void UInkpotStory::SetString(const FString &InVariable, const FString &InValue )
+void UInkpotStory::SetString(const FString &InVariable, const FString &InValue, bool &OutSuccess )
 {
 	TSharedPtr<Ink::FVariableState> variableState = StoryInternal->GetVariablesState();
-	variableState->SetVariable( InVariable, MakeShared<Ink::FValueString>(InValue) );
+	OutSuccess = variableState->SetVariable( InVariable, MakeShared<Ink::FValueString>(InValue) );
 }
 
-FString UInkpotStory::GetString( const FString& InVariable )
+void UInkpotStory::GetString( const FString& InVariable, FString &OutReturnValue, bool &OutSuccess )
 {
-	FString rval;
-	bool success = GetVariable<FString, Ink::FValueString>(InVariable, Ink::EValueType::String, rval );
-	return rval;
+	OutSuccess = GetVariable<FString, Ink::FValueString>(InVariable, Ink::EValueType::String, OutReturnValue );
 }
 
-void UInkpotStory::SetEmpty(const FString &InVariable)
+void UInkpotStory::SetEmpty(const FString &InVariable, bool &OutSuccess )
 {
 	TSharedPtr<Ink::FVariableState> variableState = StoryInternal->GetVariablesState();
-	variableState->SetVariable( InVariable, MakeShared<Ink::FValue>() );
+	OutSuccess  = variableState->SetVariable( InVariable, MakeShared<Ink::FValue>() );
+}
+
+bool UInkpotStory::IsVariableDefined( const FString& InVariable )
+{
+	TSharedPtr<Ink::FVariableState> variableState = StoryInternal->GetVariablesState();
+	TSharedPtr<Ink::FObject> variable = variableState->GetVariable(  InVariable );
+	return variable.IsValid();
 }
 
 int32 UInkpotStory::GetVariableKeys( TArray<FString> &OutKeys )
@@ -773,3 +778,4 @@ void UInkpotStory::SetStorySeed( int Seed )
 {
 	StoryInternal->GetStoryState()->SetStorySeed( Seed );
 }
+

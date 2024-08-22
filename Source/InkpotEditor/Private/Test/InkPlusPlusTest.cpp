@@ -937,7 +937,12 @@ bool FInkTests::RunTest(const FString& InkTestName)
 											int32 intValue;
 											if ((*setVariableObject)->TryGetNumberField(VARIABLE_VALUE, intValue))
 											{
-												story->SetInt(variableName, intValue);
+												bool success;
+												story->SetInt(variableName, intValue, success );
+												if (!success)
+												{
+													INKPOT_ERROR("%s : Unable to set integer variable %s.", *InkTestName, *variableName);
+												}
 											}
 										}
 										else if (variableType.Equals("Float"))
@@ -945,7 +950,12 @@ bool FInkTests::RunTest(const FString& InkTestName)
 											double floatValue;
 											if ((*setVariableObject)->TryGetNumberField(VARIABLE_VALUE, floatValue))
 											{
-												story->SetFloat( variableName, static_cast<float>(floatValue));
+												bool success;
+												story->SetFloat( variableName, static_cast<float>(floatValue), success);
+												if (!success)
+												{
+													INKPOT_ERROR("%s : Unable to set floating point variable %s.", *InkTestName, *variableName);
+												}
 											}
 										}
 										else if (variableType.Equals("String"))
@@ -953,7 +963,12 @@ bool FInkTests::RunTest(const FString& InkTestName)
 											FString stringValue;
 											if ((*setVariableObject)->TryGetStringField(VARIABLE_VALUE, stringValue))
 											{
-												story->SetString(variableName, stringValue);
+												bool success;
+												story->SetString(variableName, stringValue, success);
+												if (!success)
+												{
+													INKPOT_ERROR("%s : Unable to set string variable %s.", *InkTestName, *variableName);
+												}
 											}
 										}
 										else if (variableType.Equals("null"))
@@ -961,7 +976,12 @@ bool FInkTests::RunTest(const FString& InkTestName)
 											FString stringValue;
 											if ((*setVariableObject)->TryGetStringField(VARIABLE_VALUE, stringValue))
 											{
-												story->SetEmpty(variableName);
+												bool success;
+												story->SetEmpty(variableName, success );
+												if (!success)
+												{
+													INKPOT_ERROR("%s : Unable to unset variable %s.", *InkTestName, *variableName);
+												}
 											}
 										}
 									}

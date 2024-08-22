@@ -91,37 +91,40 @@ public:
 	void ChoosePathString( const FString &Path, const TArray<FInkpotValue> &Values );
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
-	void SetValue(const FString &Variable, FInkpotValue Value);
+	void SetValue(const FString &Variable, FInkpotValue Value, bool &Success );
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
-	FInkpotValue GetValue(const FString &Variable);
+	void GetValue(const FString &Variable, FInkpotValue &ReturnValue, bool &Success );
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
-	void SetBool(const FString &Variable, bool bValue);
+	void SetBool(const FString &Variable, bool bValue, bool &Success );
 
 	UFUNCTION(BlueprintPure, Category="Inkpot|Story")
-	bool GetBool(const FString &Variable);
+	void GetBool(const FString &Variable, bool &ReturnValue, bool &Success );
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
-	void SetInt(const FString &Variable, int32 Value);
+	void SetInt(const FString &Variable, int32 Value, bool &Success );
 
 	UFUNCTION(BlueprintPure, Category="Inkpot|Story")
-	int32 GetInt(const FString &Variable);
+	void GetInt(const FString &Variable, int32 &ReturnValue, bool &Success );
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
-	void SetFloat( const FString& Variable, float Value );
+	void SetFloat( const FString& Variable, float Value, bool &Success );
 
 	UFUNCTION(BlueprintPure, Category="Inkpot|Story")
-	float GetFloat( const FString& Variable );
+	void GetFloat( const FString& Variable, float &ReturnValue, bool &Success );
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
-	void SetString( const FString& Variable, const FString& Value );
+	void SetString( const FString& Variable, const FString& Value, bool &Success );
 
 	UFUNCTION(BlueprintPure, Category="Inkpot|Story")
-	FString GetString( const FString& Variable );
+	void GetString( const FString& Variable, FString &ReturnValue, bool &Success );
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
-	void SetEmpty( const FString& Variable );
+	void SetEmpty( const FString& Variable, bool &Success );
+
+	UFUNCTION(BlueprintPure, Category="Inkpot|Story")
+	bool IsVariableDefined( const FString& Variable );
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
 	void SetOnVariableChange( UPARAM(DisplayName="Event") FOnInkpotVariableChange Delegate, const FString &Variable );
