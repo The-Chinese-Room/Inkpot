@@ -34,7 +34,6 @@ UInkpotStory* UInkpot::BeginStory( UInkpotStoryAsset* InStory )
 	UInkpotStory* story = Stories->BeginStory( InStory );
 	if(EventOnStoryBegin.IsBound())
 		EventOnStoryBegin.Broadcast( story );
-	story->PostBegin();
 	return story;
 }
 

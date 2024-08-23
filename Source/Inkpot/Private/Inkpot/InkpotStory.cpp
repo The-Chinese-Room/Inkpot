@@ -18,10 +18,6 @@ void UInkpotStory::Initialise( TSharedPtr<FInkpotStoryInternal>  InInkpotStory )
 	StoryInternal->OnChoosePathString().AddUObject(this, &UInkpotStory::OnChoosePathStringInternal );
 }
 
-void UInkpotStory::PostBegin()
-{
-}
-
 TSharedPtr<FInkpotStoryInternal> UInkpotStory::GetStoryInternal()
 {
 	return StoryInternal;
@@ -168,8 +164,7 @@ bool UInkpotStory::SwitchFlow( const FString &InFlowName )
 {
 	bool isFlowAlive = IsFlowAlive( InFlowName );
 	StoryInternal->SwitchFlow( InFlowName );
-	UpdateChoices();
-	BroadcastFlowChange();
+	OnFlowChangeInternal();
 	return !isFlowAlive; 
 }
 
@@ -179,8 +174,7 @@ void UInkpotStory::RemoveFlow(const FString& InFlowName)
 	StoryInternal->RemoveFlow( InFlowName );
 	if( !InFlowName.Equals( currentFlow ) )
 		return;
-	UpdateChoices();
-	BroadcastFlowChange();
+	OnFlowChangeInternal();
 }
 
 FString UInkpotStory::GetCurrentFlowName()
@@ -191,8 +185,14 @@ FString UInkpotStory::GetCurrentFlowName()
 void UInkpotStory::SwitchToDefaultFlow()
 {
 	StoryInternal->SwitchToDefaultFlow();
+	OnFlowChangeInternal();
+}
+
+void UInkpotStory::OnFlowChangeInternal()
+{
 	UpdateChoices();
 	BroadcastFlowChange();
+	DebugRefresh();
 }
 
 void UInkpotStory::BroadcastFlowChange()
@@ -233,6 +233,7 @@ void UInkpotStory::SetValue(const FString &InVariable, FInkpotValue InValue)
 {
 	TSharedPtr<Ink::FVariableState> variableState = StoryInternal->GetVariablesState();
 	variableState->SetVariable( InVariable, Ink::FValue::Create(**InValue) );
+	DebugRefresh();
 }
 
 FInkpotValue UInkpotStory::GetValue(const FString &InVariable)
@@ -252,6 +253,7 @@ void UInkpotStory::SetBool(const FString &InVariable, bool bInValue)
 {
 	TSharedPtr<Ink::FVariableState> variableState = StoryInternal->GetVariablesState();
 	variableState->SetVariable( InVariable, MakeShared<Ink::FValueBool>( bInValue ) );
+	DebugRefresh();
 }
 
 bool UInkpotStory::GetBool(const FString &InVariable)
@@ -265,6 +267,7 @@ void UInkpotStory::SetInt(const FString &InVariable, int32 InValue)
 {
 	TSharedPtr<Ink::FVariableState> variableState = StoryInternal->GetVariablesState();
 	variableState->SetVariable( InVariable, MakeShared<Ink::FValueInt>( InValue ) );
+	DebugRefresh();
 }
 
 int32 UInkpotStory::GetInt(const FString &InVariable)
@@ -278,6 +281,7 @@ void UInkpotStory::SetFloat(const FString &InVariable, float InValue )
 {
 	TSharedPtr<Ink::FVariableState> variableState = StoryInternal->GetVariablesState();
 	variableState->SetVariable( InVariable, MakeShared<Ink::FValueFloat>(InValue));
+	DebugRefresh();
 }
 
 float UInkpotStory::GetFloat(const FString &InVariable)
@@ -291,6 +295,7 @@ void UInkpotStory::SetString(const FString &InVariable, const FString &InValue )
 {
 	TSharedPtr<Ink::FVariableState> variableState = StoryInternal->GetVariablesState();
 	variableState->SetVariable( InVariable, MakeShared<Ink::FValueString>(InValue) );
+	DebugRefresh();
 }
 
 FString UInkpotStory::GetString( const FString& InVariable )
@@ -304,6 +309,7 @@ void UInkpotStory::SetEmpty(const FString &InVariable)
 {
 	TSharedPtr<Ink::FVariableState> variableState = StoryInternal->GetVariablesState();
 	variableState->SetVariable( InVariable, MakeShared<Ink::FValue>() );
+	DebugRefresh();
 }
 
 int32 UInkpotStory::GetVariableKeys( TArray<FString> &OutKeys )
@@ -369,11 +375,15 @@ void UInkpotStory::ClearAllVariableObservers( const FString& Variable )
 
 void UInkpotStory::OnContinueInternal()
 {
-	UpdateChoices();
-	DumpDebug();
-	if(!EventOnContinue.IsBound())
-		return;
-	EventOnContinue.Broadcast( this );
+	if (!bIsInFunctionEvaluation)
+	{
+		UpdateChoices();
+		DumpDebug();
+		if (!EventOnContinue.IsBound())
+			return;
+		EventOnContinue.Broadcast(this);
+	}
+	DebugRefresh();
 }
 
 void UInkpotStory::OnMakeChoiceInternal(TSharedPtr<Ink::FChoice> InChoice)
@@ -390,12 +400,15 @@ void UInkpotStory::OnMakeChoiceInternal(TSharedPtr<Ink::FChoice> InChoice)
 
 void UInkpotStory::OnEvaluateFunctionInternal(const FString& InFunctionName, const TArray<TSharedPtr<Ink::FValueType>>& InFunctionParms)
 {
-
+	//INKPOT_LOG("Starting function %s", *InFunctionName);
+	bIsInFunctionEvaluation = true;
 }
 
 void UInkpotStory::OnCompleteEvaluateFunctionInternal(const FString& InFunctionName, const TArray<TSharedPtr<Ink::FValueType>>& InFunctionParms, const FString& OutParmName, TSharedPtr<Ink::FValueType> OutParmType)
 {
-
+	//INKPOT_LOG("Completing function %s", *InFunctionName);
+	bIsInFunctionEvaluation = false;
+	DebugRefresh();
 }
 
 void UInkpotStory::OnChoosePathStringInternal(const FString& InPath, const TArray<TSharedPtr<Ink::FValueType>>& InPathType )
@@ -404,6 +417,7 @@ void UInkpotStory::OnChoosePathStringInternal(const FString& InPath, const TArra
 	if(!EventOnChoosePath.IsBound())
 		return;
 	EventOnChoosePath.Broadcast( this, InPath ); 
+	DebugRefresh();
 }
 
 void UInkpotStory::DumpDebug()
@@ -709,6 +723,16 @@ void UInkpotStory::UnbindExternalFunction( const FString &InFunctionName )
 	StoryInternal->UnbindExternalFunction( InFunctionName );
 }
 
+void UInkpotStory::EvaluateFunction(const FString& FunctionName, const TArray<FInkpotValue> &InValues)
+{
+	TArray<TSharedPtr<Ink::FValueType>> values;
+	values.Reserve(InValues.Num());
+	for (const FInkpotValue& inValue : InValues)
+		values.Emplace(*inValue);
+
+	StoryInternal->EvaluateFunction(FunctionName, values);
+}
+
 FOnStoryContinue& UInkpotStory::OnContinue()
 {
 	return EventOnContinue;
@@ -773,3 +797,20 @@ void UInkpotStory::SetStorySeed( int Seed )
 {
 	StoryInternal->GetStoryState()->SetStorySeed( Seed );
 }
+
+void UInkpotStory::DebugRefresh()
+{
+#if WITH_EDITOR
+	if (!EventOnDebugRefresh.IsBound())
+		return;
+	EventOnDebugRefresh.Broadcast(this);
+#endif
+}
+
+#if WITH_EDITOR
+FOnStoryContinue& UInkpotStory::OnDebugRefresh()
+{
+	return EventOnDebugRefresh;
+}
+#endif
+

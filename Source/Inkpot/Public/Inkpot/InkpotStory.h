@@ -148,6 +148,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
 	void UnbindExternalFunction( const FString &FunctionName );
 
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
+	void EvaluateFunction(const FString& FunctionName, const TArray<FInkpotValue>& InValues);
+	
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
 	FString ToJSON();
 
@@ -172,6 +175,10 @@ public:
 	FOnSwitchFlow& OnSwitchFlow(); 
 	FOnStoryLoadJSON& OnStoryLoadJSON(); 
 
+#if WITH_EDITOR 
+	FOnStoryContinue& OnDebugRefresh();
+#endif 
+
 	virtual void ResetContent( TSharedPtr<FInkpotStoryInternal> InNewStoryContent ); 
 	void ResetState();
 
@@ -194,7 +201,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
 	void GatherAllStrings( TMap<FString, FString> &OutStrings );
 
-	virtual void PostBegin();
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
+	void DumpDebug();
 
 protected:
 	virtual bool CanContinueInternal();
@@ -207,10 +215,10 @@ protected:
 	void OnCompleteEvaluateFunctionInternal(const FString& InFunctionName, const TArray<TSharedPtr<Ink::FValueType>>& InFunctionParms, const FString& OutParmName, TSharedPtr<Ink::FValueType> OutParmType);
 	void OnChoosePathStringInternal(const FString& InPath, const TArray<TSharedPtr<Ink::FValueType>>& InPathType );
 
+	virtual void OnFlowChangeInternal();
 	void BroadcastFlowChange();
 	void UpdateChoices();
 
-	void DumpDebug();
 	void DumpDebug(UInkpotChoice *Choice);
 	
 	TArray<FString> GetNamedContent( TSharedPtr<Ink::FContainer> Container );
@@ -219,6 +227,8 @@ protected:
 	
 	virtual void ChoosePathInternal(const FString &InPath);
 	virtual void ChoosePathStringInternal( const FString& InPath, const TArray<FInkpotValue>& InValues );
+
+	void DebugRefresh();
 
 protected:
 	TSharedPtr<FInkpotStoryInternal> StoryInternal;
@@ -240,9 +250,17 @@ protected:
 	UPROPERTY(BlueprintAssignable, Category="Inkpot|Story", meta=(DisplayName="OnStoryLoadJSON") )
 	FOnStoryLoadJSON EventOnStoryLoadJSON;
 
+#if WITH_EDITORONLY_DATA 
+	UPROPERTY(BlueprintAssignable, Category = "Inkpot|Story", meta = (DisplayName = "OnDebugRefresh"))
+	FOnStoryContinue EventOnDebugRefresh;
+#endif 
+
 private:
 	UPROPERTY(Transient)
 	TArray<UInkpotChoice*> Choices;
+
+	UPROPERTY(Transient)
+	bool bIsInFunctionEvaluation{ false };
 };
 
 

@@ -28,14 +28,17 @@ public class Inkpot : ModuleRules
                 "InkPlusPlus",
 
                 "DeveloperSettings",
-            }
+			}
         );
 		
 		PrivateDependencyModuleNames.AddRange(
 			new string[]
 			{
-            }
-        );
+				"Slate",
+				"SlateCore",
+				"UMG"
+			}
+		);
 		
 		DynamicallyLoadedModuleNames.AddRange(
 			new string[]

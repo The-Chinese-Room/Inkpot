@@ -24,6 +24,12 @@ TSharedPtr<FInkpotStoryInternal> UInkpotStoryFactoryBase::CreateInternalStory(UI
 	{
 		INKPOT_ERROR("No story asset.");
 	}
+
+	if (!storyInternal->IsValidStory())
+	{
+		INKPOT_ERROR("Story asset is not a valid Ink story.");
+	}
+
 	return storyInternal;
 }
 
@@ -37,7 +43,6 @@ UInkpotStory* UInkpotStoryFactory::CreateStory(UInkpotStoryAsset* InInkpotStoryA
 	TSharedPtr<FInkpotStoryInternal> storyInternal = CreateInternalStory( InInkpotStoryAsset, InHandle );
 	if (!storyInternal->IsValidStory())
 	{
-		INKPOT_ERROR("Story asset is not a valid Ink story.");
 		return ABadStory;
 	}
 	else
