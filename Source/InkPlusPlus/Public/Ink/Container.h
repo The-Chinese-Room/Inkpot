@@ -75,15 +75,15 @@ namespace Ink
 
 		Ink::FSearchResult GetContentAtPath(TSharedPtr<Ink::FPath> InPath, int32 InPartialPathStart = 0, int32 InPartialPathLength = -1);
 
-	private:
-		TSharedPtr<Ink::FObject> GetContentWithPathComponent(const Ink::FComponent& InComponent);
-	
+		void AddToNamedContentOnly(TSharedPtr<Ink::FObject> InNamedContent);
+		void RemoveFromNamedContent(const FString &InName);
+
 	private:
 		void AddContent(const TArray<TSharedPtr<Ink::FObject>>& ContentList);
 		void AddContent(TSharedPtr<Ink::FObject> InObject);
 		void TryAddNamedContent(TSharedPtr<Ink::FObject> InObject);
-		void AddToNamedContentOnly(TSharedPtr<Ink::FObject> InNamedContent);
 
+		TSharedPtr<Ink::FObject> GetContentWithPathComponent(const Ink::FComponent& InComponent);
 		TSharedPtr<Ink::FPath> GetInternalPathToFirstLeafContent();
 	
 	private:

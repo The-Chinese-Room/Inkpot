@@ -108,6 +108,7 @@ namespace Ink
 
 		void BindExternalFunctionGeneral(const FString& funcName, TSharedPtr<FStoryExternalFunction> func, bool lookaheadSafe = true);
 		void UnbindExternalFunction(const FString& funcName);
+		bool IsExternalFunctionBound(const FString& funcName);
 
 		void ObserveAllVariables(TWeakPtr<FStoryVariableObserver> Observer);
 		void ObserveVariable(const FString& VariableName, TWeakPtr<FStoryVariableObserver> Observer);

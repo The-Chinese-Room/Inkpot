@@ -8,6 +8,6 @@ namespace Ink
     	Tunnel,
     	Function,
     	FunctionEvaluationFromGame,
-		Null
+        Null
     };
 }

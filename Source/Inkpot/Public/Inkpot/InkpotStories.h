@@ -6,6 +6,7 @@
 #include "InkpotStories.generated.h"
 
 class UInkpotStoryAsset;
+class UInkpotStoryFactoryBase;
 
 UCLASS()
 class INKPOT_API UInkpotStories : public UObject
@@ -16,6 +17,7 @@ public:
 	UInkpotStories();
 
 	void Initialise();
+	void InitialiseStoryFactory();
 	void Reset();
 
 	UInkpotStory* BeginStory( UInkpotStoryAsset* InkpotStoryAsset );
@@ -28,13 +30,9 @@ private:
 	UInkpotStory* GetStory( int32 InStoryHandle ) const;
 	void EndStory(int32 InStoryHandle);
 
-	TSharedPtr<FInkpotStoryInternal> CreateStoryInternal(UInkpotStoryAsset* InInkpotStoryAsset, int32 InHandle );
 
 private:
 	int32 NextStoryHandle{0};
-
-	UPROPERTY()
-	UInkpotStory *BadStory;
 
 	UPROPERTY(Transient)
 	TMap<int32, UInkpotStory*> Stories;
@@ -44,4 +42,7 @@ private:
 
 	UPROPERTY(Transient)
 	TMap<int32, UInkpotStoryHistory*> StoryHistories;
+
+	UPROPERTY(Transient)
+	UInkpotStoryFactoryBase *StoryFactory;
 };

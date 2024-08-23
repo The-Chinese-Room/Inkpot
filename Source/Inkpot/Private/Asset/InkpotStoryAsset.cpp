@@ -54,21 +54,23 @@ void UInkpotStoryAsset::PostInitProperties()
 #endif
 
 #if WITH_EDITOR
-void UInkpotStoryAsset::GetAssetRegistryTags(TArray<FAssetRegistryTag>& OutTags) const
+void UInkpotStoryAsset::GetAssetRegistryTags( FAssetRegistryTagsContext InContext ) const
 {
 	if (AssetImportData)
 	{
-		OutTags.Add(FAssetRegistryTag(SourceFileTagName(), AssetImportData->GetSourceData().ToJson(), FAssetRegistryTag::TT_Hidden));
+		InContext.AddTag( FAssetRegistryTag(SourceFileTagName(), AssetImportData->GetSourceData().ToJson(), FAssetRegistryTag::TT_Hidden) );
 	}
-	Super::GetAssetRegistryTags( OutTags );
+	Super::GetAssetRegistryTags( InContext );
 }
 #endif
 
 #if WITH_EDITORONLY_DATA
-void UInkpotStoryAsset::Serialize(FArchive& Ar)
+void UInkpotStoryAsset::Serialize(FStructuredArchiveRecord Record)
 {
-	Super::Serialize(Ar);
-	if (Ar.IsLoading() && Ar.UEVer() < VER_UE4_ASSET_IMPORT_DATA_AS_JSON && !AssetImportData)
+	Super::Serialize(Record);
+
+	const FArchive& UnderlyingArchive = Record.GetUnderlyingArchive();
+	if (UnderlyingArchive.IsLoading() && UnderlyingArchive.UEVer() < VER_UE4_ASSET_IMPORT_DATA_AS_JSON && !AssetImportData)
 	{
 		AssetImportData = NewObject<UAssetImportData>(this, TEXT("AssetImportData"));
 	}

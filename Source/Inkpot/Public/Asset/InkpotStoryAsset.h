@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Coreminimal.h"
+#include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
 #include "InkpotStoryAsset.generated.h"
 
@@ -20,10 +20,10 @@ public:
 
 #if WITH_EDITOR
 	virtual void PostInitProperties() override;
-	virtual void GetAssetRegistryTags( TArray<FAssetRegistryTag>& OutTags ) const override;
+	virtual void GetAssetRegistryTags( FAssetRegistryTagsContext InContext ) const override;
 #endif
 #if WITH_EDITORONLY_DATA
-	virtual void Serialize(FArchive& Ar) override;
+	virtual void Serialize(FStructuredArchiveRecord Record) override;
 	class UAssetImportData* GetAssetImportData();
 	void UpdateAssetInfo( const FString &InFilename );
 #endif

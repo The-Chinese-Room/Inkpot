@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Coreminimal.h"
+#include "CoreMinimal.h"
 #include "Inkpot/InkpotStoryInternal.h"
 #include "Inkpot/InkpotChoice.h"
 #include "Inkpot/InkpotLine.h"
@@ -91,37 +91,40 @@ public:
 	void ChoosePathString( const FString &Path, const TArray<FInkpotValue> &Values );
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
-	void SetValue(const FString &Variable, FInkpotValue Value);
+	void SetValue(const FString &Variable, FInkpotValue Value, bool &Success );
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
-	FInkpotValue GetValue(const FString &Variable);
+	void GetValue(const FString &Variable, FInkpotValue &ReturnValue, bool &Success );
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
-	void SetBool(const FString &Variable, bool bValue);
+	void SetBool(const FString &Variable, bool bValue, bool &Success );
 
 	UFUNCTION(BlueprintPure, Category="Inkpot|Story")
-	bool GetBool(const FString &Variable);
+	void GetBool(const FString &Variable, bool &ReturnValue, bool &Success );
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
-	void SetInt(const FString &Variable, int32 Value);
+	void SetInt(const FString &Variable, int32 Value, bool &Success );
 
 	UFUNCTION(BlueprintPure, Category="Inkpot|Story")
-	int32 GetInt(const FString &Variable);
+	void GetInt(const FString &Variable, int32 &ReturnValue, bool &Success );
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
-	void SetFloat( const FString& Variable, float Value );
+	void SetFloat( const FString& Variable, float Value, bool &Success );
 
 	UFUNCTION(BlueprintPure, Category="Inkpot|Story")
-	float GetFloat( const FString& Variable );
+	void GetFloat( const FString& Variable, float &ReturnValue, bool &Success );
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
-	void SetString( const FString& Variable, const FString& Value );
+	void SetString( const FString& Variable, const FString& Value, bool &Success );
 
 	UFUNCTION(BlueprintPure, Category="Inkpot|Story")
-	FString GetString( const FString& Variable );
+	void GetString( const FString& Variable, FString &ReturnValue, bool &Success );
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
-	void SetEmpty( const FString& Variable );
+	void SetEmpty( const FString& Variable, bool &Success );
+
+	UFUNCTION(BlueprintPure, Category="Inkpot|Story")
+	bool IsVariableDefined( const FString& Variable );
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
 	void SetOnVariableChange( UPARAM(DisplayName="Event") FOnInkpotVariableChange Delegate, const FString &Variable );
@@ -172,7 +175,7 @@ public:
 	FOnSwitchFlow& OnSwitchFlow(); 
 	FOnStoryLoadJSON& OnStoryLoadJSON(); 
 
-	void ResetContent( TSharedPtr<FInkpotStoryInternal> InNewStoryContent ); 
+	virtual void ResetContent( TSharedPtr<FInkpotStoryInternal> InNewStoryContent ); 
 	void ResetState();
 
 	int32 GetID() const;
@@ -180,21 +183,34 @@ public:
 
 	TSharedPtr<FInkpotStoryInternal> GetStoryInternal();
 
-	void DumpMainContent();
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
+	virtual void DumpMainContent();
+
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
 	void DumpContentAtPath( const FString& InName );
+
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
 	void DumpContentAtKnot( const FString& InName );
+
 	void DumpContainer(const FString& InName, TSharedPtr<Ink::FContainer> InContainer, int Indent = 0);
 
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
 	void GatherAllStrings( TMap<FString, FString> &OutStrings );
-	
+
+	virtual void PostBegin();
+
 protected:
+	virtual bool CanContinueInternal();
+	virtual FString ContinueInternal();
+	virtual FString ContinueMaximallyInternal();
+
 	void OnContinueInternal();
 	void OnMakeChoiceInternal(TSharedPtr<Ink::FChoice> InChoice);
 	void OnEvaluateFunctionInternal(const FString& InFunctionName, const TArray<TSharedPtr<Ink::FValueType>>& InFunctionParms);
 	void OnCompleteEvaluateFunctionInternal(const FString& InFunctionName, const TArray<TSharedPtr<Ink::FValueType>>& InFunctionParms, const FString& OutParmName, TSharedPtr<Ink::FValueType> OutParmType);
 	void OnChoosePathStringInternal(const FString& InPath, const TArray<TSharedPtr<Ink::FValueType>>& InPathType );
-	void BroadcastFlowChange();
 
+	void BroadcastFlowChange();
 	void UpdateChoices();
 
 	void DumpDebug();
@@ -206,6 +222,9 @@ protected:
 	virtual void ChoosePathStringInternal( const FString& InPath, const TArray<FInkpotValue>& InValues );
 
 	void GatherAllStrings(const FString &InRootName, TSharedPtr<Ink::FContainer> InContainer, TMap<FString, FString>& OutStrings);
+	
+	virtual void ChoosePathInternal(const FString &InPath);
+	virtual void ChoosePathStringInternal( const FString& InPath, const TArray<FInkpotValue>& InValues );
 
 protected:
 	TSharedPtr<FInkpotStoryInternal> StoryInternal;

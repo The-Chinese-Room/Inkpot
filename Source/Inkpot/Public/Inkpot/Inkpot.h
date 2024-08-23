@@ -19,6 +19,8 @@ public:
 	UInkpot();
 
 	virtual void Initialize(FSubsystemCollectionBase&) override;
+	void InitializeStoryFactory();
+
 	void Register();
 
 	UFUNCTION(BlueprintCallable, Category=Inkpot )
@@ -43,4 +45,7 @@ private:
 private:
 	UPROPERTY()
 	UInkpotStories *Stories;
+
+	UPROPERTY()
+	TWeakObjectPtr<UGameInstance> GameInstance{ nullptr };
 };

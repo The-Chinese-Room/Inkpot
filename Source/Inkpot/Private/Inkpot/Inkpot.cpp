@@ -19,9 +19,14 @@ UInkpot::UInkpot()
 }
 
 void UInkpot::Initialize(FSubsystemCollectionBase &InCollection )
-{
+{ 
 	Super::Initialize( InCollection );
 	Stories->Initialise();
+}
+
+void UInkpot::InitializeStoryFactory()
+{
+	Stories->InitialiseStoryFactory();
 }
 
 UInkpotStory* UInkpot::BeginStory( UInkpotStoryAsset* InStory )
@@ -29,6 +34,7 @@ UInkpotStory* UInkpot::BeginStory( UInkpotStoryAsset* InStory )
 	UInkpotStory* story = Stories->BeginStory( InStory );
 	if(EventOnStoryBegin.IsBound())
 		EventOnStoryBegin.Broadcast( story );
+	story->PostBegin();
 	return story;
 }
 
@@ -61,6 +67,13 @@ void UInkpot::BindPostImport()
 #if WITH_EDITOR
 void UInkpot::OnAssetPostImport(UFactory* InFactory, UObject* InObject)
 {
+	if (!GameInstance.IsValid())
+		return;
+	if (!GameInstance->GetWorld())
+		return;
+	if (GameInstance->GetWorld()->WorldType != EWorldType::PIE)
+		return;
+
 	if(!FInkpotCVars::bReloadIfAssetChanged)
 		return;
 	UInkpotStoryAsset *newAsset = Cast<UInkpotStoryAsset>(InObject);
@@ -69,15 +82,17 @@ void UInkpot::OnAssetPostImport(UFactory* InFactory, UObject* InObject)
 	UInkpotStory* story = Stories->Reload( newAsset );
 	if(!story)
 		return;
-	if(EventOnStoryBegin.IsBound())
-		EventOnStoryBegin.Broadcast( story );
-	if(FInkpotCVars::bReplayIfReloaded)
-		Stories->Replay( story, false );
+
+	if (EventOnStoryBegin.IsBound())
+		EventOnStoryBegin.Broadcast(story);
+	if (FInkpotCVars::bReplayIfReloaded)
+		Stories->Replay(story, false);
 }
 #endif 
 
 void UInkpot::OnStartGameInstance( UGameInstance *InInstance )
 {
 	Stories->Reset();
+	GameInstance = InInstance;
 }
 
