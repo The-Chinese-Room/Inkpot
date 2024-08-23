@@ -223,9 +223,6 @@ protected:
 
 	void GatherAllStrings(const FString &InRootName, TSharedPtr<Ink::FContainer> InContainer, TMap<FString, FString>& OutStrings);
 	
-	virtual void ChoosePathInternal(const FString &InPath);
-	virtual void ChoosePathStringInternal( const FString& InPath, const TArray<FInkpotValue>& InValues );
-
 protected:
 	TSharedPtr<FInkpotStoryInternal> StoryInternal;
 	
