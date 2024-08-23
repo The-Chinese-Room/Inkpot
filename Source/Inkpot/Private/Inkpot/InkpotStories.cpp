@@ -4,7 +4,6 @@
 #include "Asset/InkpotStoryAsset.h"
 #include "Ink/Choice.h"
 #include "Utility/InkpotLog.h"
-#include "Utility/InkpotUtility.h"
 
 UInkpotStories::UInkpotStories()
 : Super()

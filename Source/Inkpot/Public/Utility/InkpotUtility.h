@@ -4,7 +4,7 @@
 
 namespace InkpotUtil
 {
-	INKPOT_API const FString* GetTag(const TArray<FString>& Tags, const FString& Tag)
+	FORCEINLINE const FString* GetTag(const TArray<FString>& Tags, const FString& Tag)
 	{
 		for (const FString& tag : Tags)
 			if (tag.StartsWith(Tag))
@@ -13,7 +13,7 @@ namespace InkpotUtil
 	}
 
 	template<typename T>
-	INKPOT_API bool GetValue(const TArray<FString>& Tags, const FString& Tag, T& Out)
+	bool GetValue(const TArray<FString>& Tags, const FString& Tag, T& Out)
 	{
 		const FString* tag = GetTag(Tags, Tag);
 		if (!tag)
