@@ -36,7 +36,7 @@ namespace Ink
 		void SetCallStack(TSharedPtr<Ink::FCallStack> CallStack);
 
 		TSharedPtr<Ink::FObject> GetVariable(const FString& VariableName);
-		void SetVariable(const FString& VariableName, const TSharedPtr<Ink::FObject>& Value);
+		bool SetVariable(const FString& VariableName, const TSharedPtr<Ink::FObject>& Value);
 
 		void ApplyPatch();
 		void SetJsonToken(const TMap<FString, TSharedPtr<FJsonValue>>& JsonToken);

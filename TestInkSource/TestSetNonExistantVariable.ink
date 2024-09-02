@@ -6,6 +6,7 @@ Hello {x}.
 /*
 INK_TEST_STORY_START
 [
+    {"EXPECTED_EXCEPTION": "Unable to set string variable"},
     {"EXPECTED_EXCEPTION": "Cannot assign to a variable"},
 	{"TEST_ERROR_EQUAL": 0},
 	{"TEST_WARNING_EQUAL": 0},
