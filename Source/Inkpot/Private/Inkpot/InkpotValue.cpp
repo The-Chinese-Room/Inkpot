@@ -94,12 +94,7 @@ FString UInkpotLibrary::InkpotArrayValueAsString(const TArray<FInkpotValue> &InV
 	return InkpotValueAsString( InValues[InIndex] );
 }
 
-FInkpotValue UInkpotLibrary::MakeInkpotList(const TArray<FString> &InValues)
-{
-	return MakeInkpotNamedList( TEXT( "InkpotTemp" ), InValues );
-}
-
-FInkpotValue UInkpotLibrary::MakeInkpotNamedList(const FString &InName, const TArray<FString> &InValues)
+FInkpotValue UInkpotLibrary::MakeInkpotList(FString InName, TArray<FString> InValues)
 {
 	Ink::FInkList list;
 	int32 count = 0;
