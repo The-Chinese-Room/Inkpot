@@ -232,6 +232,8 @@ protected:
 	virtual void ChoosePathStringInternal( const FString& InPath, const TArray<FInkpotValue>& InValues );
 
 	void DebugRefresh();
+	bool ValidateInkListOrigin( const FInkpotValue& InValue );
+	bool CreateInkValues( const TArray<FInkpotValue>& InValues, TArray<TSharedPtr<Ink::FValueType>>& OutValues );
 
 protected:
 	TSharedPtr<FInkpotStoryInternal> StoryInternal;

@@ -83,8 +83,7 @@ public:
 
 	/* Create an Ink List from an array of Strings */
 	UFUNCTION(BlueprintPure, Category="Inkpot|Value")
-	static INKPOT_API FInkpotValue MakeInkpotList(const TArray<FString> &Value);
-	static INKPOT_API FInkpotValue MakeInkpotNamedList(const FString &Name, const TArray<FString> &Value);
+	static INKPOT_API FInkpotValue MakeInkpotList(FString Definition, TArray<FString> Value);
 
 	/* Get an array of strings from an Ink List */
 	UFUNCTION(BlueprintPure, Category="Inkpot|Value")

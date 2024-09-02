@@ -6,7 +6,7 @@ namespace Ink
 {
 	class FValueList;
 	
-	class FListDefinitionsOrigin
+	class INKPLUSPLUS_API FListDefinitionsOrigin
 	{	
 	public:
 		FListDefinitionsOrigin() = delete;
@@ -18,7 +18,9 @@ namespace Ink
 		bool TryListGetDefinition(const FString& InName, TSharedPtr<FListDefinition>& OutListDefinition);
 		TSharedPtr<Ink::FValueList> FindSingleItemListWithName(const FString& InName);
 		
-		INKPLUSPLUS_API TArray<TSharedPtr<FListDefinition>> GetLists() const;
+		TArray<TSharedPtr<FListDefinition>> GetLists() const;
+
+		void AddListDefinition(TSharedPtr<Ink::FListDefinition> InOrigin);
 	
 	private:
 		TMap<FString, TSharedPtr<Ink::FListDefinition>> Lists;

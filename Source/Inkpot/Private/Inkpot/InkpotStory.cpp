@@ -5,6 +5,7 @@
 #include "Ink/StoryState.h"
 #include "Ink/SearchResult.h"
 #include "Ink/Path.h"
+#include "Ink/Inklist.h"
 #include "Utility/InkpotLog.h"
 
 
@@ -74,12 +75,72 @@ void UInkpotStory::ChoosePathString( const FString &InPath, const TArray<FInkpot
 	ChoosePathStringInternal( InPath, InValues );
 }
 
+bool UInkpotStory::ValidateInkListOrigin( const FInkpotValue &InValue )
+{
+	Ink::FInkList &list = (*InValue)->GetSubtype<Ink::FInkList>();
+	TSharedPtr<TArray<TSharedPtr<Ink::FListDefinition>> >&origins = list.GetOrigins();
+	if( !origins.IsValid() )
+	{
+		origins = MakeShared<TArray<TSharedPtr<Ink::FListDefinition>>>();
+		TSharedPtr<Ink::FListDefinitionsOrigin> definitions = StoryInternal->GetListDefinitions();
+
+		TArray<Ink::FInkListItem> listItems;
+		list.GetKeys( listItems );
+		for ( Ink::FInkListItem& item : listItems )
+		{
+			TSharedPtr<Ink::FListDefinition> origin;
+			bool gotDefintion = definitions->TryListGetDefinition( item.OriginName, origin );
+			if(!gotDefintion)
+			{
+				// TODO: could create on the fly here, though need to check impact on Ink VM serialisation
+				#ifdef create_list_origins_on_the_fly
+				TMap<FString, int32> listValues;
+				for( int i=0; i<listItems.Num() ; ++i )
+					listValues.Add( listItems[i].ItemName, i );
+				origin = MakeShared<Ink::FListDefinition>( item.OriginName, listValues );
+				definitions->AddListDefinition( origin );
+				#else
+				// for the moment just fail the operation
+				INKPOT_ERROR("Failed to find List definition '%s'", *item.OriginName );
+				return false;
+				#endif
+			}
+
+			bool gotItem = origin->ContainsItemWithName( item.ItemName );
+			if(!gotItem)
+			{
+				INKPOT_ERROR("Failed to find entry '%s' in List definition '%s'", *item.ItemName, *item.OriginName );
+				return false;
+			}
+
+			origins->AddUnique( origin );
+		}
+	}
+	return true;
+}
+
+bool UInkpotStory::CreateInkValues( const TArray<FInkpotValue>& InValues, TArray<TSharedPtr<Ink::FValueType>> &OutValues)
+{
+	OutValues.Reserve( InValues.Num() );
+	for( const FInkpotValue &inValue : InValues )
+	{
+		if( (*inValue)->HasSubtype<Ink::FInkList>() )
+		{
+			if ( !ValidateInkListOrigin( inValue ) )
+				return false;
+		}
+		OutValues.Emplace( *inValue );
+	}
+	return true;
+}
+
 void UInkpotStory::ChoosePathStringInternal( const FString& InPath, const TArray<FInkpotValue>& InValues )
 {
 	TArray<TSharedPtr<Ink::FValueType>> values;
-	values.Reserve( InValues.Num() );
-	for( const FInkpotValue &inValue : InValues )
-		values.Emplace( *inValue );
+	if(!CreateInkValues( InValues, values ))
+	{
+		return;
+	}
 	StoryInternal->ChoosePathString( InPath, true, values );
 }
 
