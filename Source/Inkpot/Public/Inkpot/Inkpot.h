@@ -26,6 +26,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category=Inkpot )
 	UInkpotStory* BeginStory( UInkpotStoryAsset* InkpotStoryAsset );
 
+	UFUNCTION(BlueprintCallable, Category = Inkpot)
+	UInkpotStory* GetStory( TSoftObjectPtr<UInkpotStoryAsset> InkpotStoryAsset );
+
 	UFUNCTION(BlueprintCallable, Category=Inkpot )
 	void EndStory( UInkpotStory* InkpotStory );
 

@@ -43,6 +43,7 @@ TArray<UBlotterVariable*> UInkpotBlotter::GetVariables(UInkpotStory* Story)
 			bv->SetName(key);
 			bv->SetValue(value);
 			bv->SetType(obj);
+			bv->SetIndex(i);
 
 			variables.Add(  bv );
 		}
@@ -53,7 +54,8 @@ TArray<UBlotterVariable*> UInkpotBlotter::GetVariables(UInkpotStory* Story)
 
 		bv->SetName(TEXT("[EMPTY]"));
 		bv->SetValue(TEXT(""));
-		bv->SetType(nullptr);
+		bv->SetType(EBlotterVariableType::None);
+		bv->SetIndex(0);
 
 		variables.Add(bv);
 	}
@@ -117,3 +119,55 @@ TArray<UBlotterString*> UInkpotBlotter::GetChoices(UInkpotStory* InStory)
 	}
 	return MakeDisplayStrings(choices);
 }
+
+TArray<UBlotterVariable*> UInkpotBlotter::GetOrigins(UInkpotStory* Story)
+{
+	TArray<UBlotterVariable*> origins;
+
+	int32 index = 0;
+
+	TSharedPtr<Ink::FListDefinitionsOrigin> definitions = Story->GetStoryInternal()->GetListDefinitions();
+	if (definitions.IsValid())
+	{
+		TArray<TSharedPtr<Ink::FListDefinition>> lists = definitions->GetLists();
+		for (auto &list : lists)
+		{
+			FString sItems;
+			const TMap<FString, int32>& items = list->GetItemNameToValues();
+			bool first = true;
+			for (auto& item : items)
+			{
+				if (!first)
+					sItems.Append(TEXT(", "));
+				sItems.Append( item.Key );
+				first = false;
+			}
+
+			UBlotterVariable* bv = NewObject<UBlotterVariable>(this);
+
+			bv->SetName( list->GetName() );
+			bv->SetValue( sItems );
+			bv->SetType(EBlotterVariableType::ListDefinition);
+			bv->SetIndex(index++);
+
+			origins.Add(bv);
+		}
+	}
+
+	if(index == 0)
+	{
+		UBlotterVariable* bv = NewObject<UBlotterVariable>(this);
+
+		bv->SetName(TEXT("[EMPTY]"));
+		bv->SetValue(TEXT(""));
+		bv->SetType(EBlotterVariableType::None);
+		bv->SetIndex(0);
+
+		origins.Add(bv);
+	}
+
+	return origins;
+}
+
+
+

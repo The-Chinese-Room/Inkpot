@@ -23,47 +23,93 @@ const FText& UBlotterVariable::GetValue() const
 	return Value;
 }
 
-void UBlotterVariable::SetType(const FText& InType)
+void UBlotterVariable::SetType(EBlotterVariableType InType)
 {
 	Type = InType;
+	TypeText = GetTypeText(Type);
 }
 
 const FText& UBlotterVariable::GetType() const
 {
-	return Type;
+	return TypeText;
 }
 
 void UBlotterVariable::SetType(TSharedPtr<Ink::FObject> InObj)
 {
-
-	FText type = GetTypeName(InObj);
-	SetType(type);
+	Type = GetTypeFromObject( InObj );
+	TypeText = GetTypeText( Type );
 }
 
-FText UBlotterVariable::GetTypeName(TSharedPtr<Ink::FObject> InObj)
+EBlotterVariableType UBlotterVariable::GetTypeFromObject(TSharedPtr<Ink::FObject> InObj)
 {
 	if (!InObj.IsValid())
-		return FText::FromString(TEXT("[none]"));
+		return EBlotterVariableType::None;
 
-	if( InObj->CanCastTo(Ink::EInkObjectClass::FChoicePoint					))	return FText::FromString(TEXT("Choice Point"));
-	else if( InObj->CanCastTo(Ink::EInkObjectClass::FContainer				))	return FText::FromString(TEXT("Container"));
-	else if( InObj->CanCastTo(Ink::EInkObjectClass::FControlCommand			))	return FText::FromString(TEXT("Control Command"));
-	else if( InObj->CanCastTo(Ink::EInkObjectClass::FDivert					))	return FText::FromString(TEXT("Divert"));
-	else if( InObj->CanCastTo(Ink::EInkObjectClass::FGlue					))	return FText::FromString(TEXT("Glue"));
-	else if( InObj->CanCastTo(Ink::EInkObjectClass::FNativeFunctionCall		))	return FText::FromString(TEXT("Native Function Call"));
-	else if( InObj->CanCastTo(Ink::EInkObjectClass::FTag					))	return FText::FromString(TEXT("Tag"));
-	else if( InObj->CanCastTo(Ink::EInkObjectClass::FValueBool				))	return FText::FromString(TEXT("Value Bool"));
-	else if( InObj->CanCastTo(Ink::EInkObjectClass::FValueDivertTarget		))	return FText::FromString(TEXT("Value Divert Target"));
-	else if( InObj->CanCastTo(Ink::EInkObjectClass::FValueFloat				))	return FText::FromString(TEXT("Value Float"));
-	else if( InObj->CanCastTo(Ink::EInkObjectClass::FValueInt				))	return FText::FromString(TEXT("Value Int"));
-	else if( InObj->CanCastTo(Ink::EInkObjectClass::FValueList				))	return FText::FromString(TEXT("Value List"));
-	else if( InObj->CanCastTo(Ink::EInkObjectClass::FValueString			))	return FText::FromString(TEXT("Value String"));
-	else if( InObj->CanCastTo(Ink::EInkObjectClass::FValueVariablePointer	))	return FText::FromString(TEXT("Value Variable Pointer"));
-	else if( InObj->CanCastTo(Ink::EInkObjectClass::FValue					))	return FText::FromString(TEXT("Value"));
-	else if( InObj->CanCastTo(Ink::EInkObjectClass::FVariableAssignment		))	return FText::FromString(TEXT("Variable Assignment"));
-	else if( InObj->CanCastTo(Ink::EInkObjectClass::FVariableReference		))	return FText::FromString(TEXT("Variable Reference"));
-	else if( InObj->CanCastTo(Ink::EInkObjectClass::FVoid					))	return FText::FromString(TEXT("Void"));
-	else																		return FText::FromString(TEXT("Object"));
+	if( InObj->CanCastTo(Ink::EInkObjectClass::FChoicePoint					))	return EBlotterVariableType::ChoicePoint;
+	else if( InObj->CanCastTo(Ink::EInkObjectClass::FContainer				))	return EBlotterVariableType::Container;
+	else if( InObj->CanCastTo(Ink::EInkObjectClass::FControlCommand			))	return EBlotterVariableType::ControlCommand;
+	else if( InObj->CanCastTo(Ink::EInkObjectClass::FDivert					))	return EBlotterVariableType::Divert;
+	else if( InObj->CanCastTo(Ink::EInkObjectClass::FGlue					))	return EBlotterVariableType::Glue;
+	else if( InObj->CanCastTo(Ink::EInkObjectClass::FNativeFunctionCall		))	return EBlotterVariableType::NativeFunctionCall;
+	else if( InObj->CanCastTo(Ink::EInkObjectClass::FTag					))	return EBlotterVariableType::Tag;
+	else if( InObj->CanCastTo(Ink::EInkObjectClass::FValueBool				))	return EBlotterVariableType::ValueBool;
+	else if( InObj->CanCastTo(Ink::EInkObjectClass::FValueDivertTarget		))	return EBlotterVariableType::ValueDivertTarget;
+	else if( InObj->CanCastTo(Ink::EInkObjectClass::FValueFloat				))	return EBlotterVariableType::ValueFloat;
+	else if( InObj->CanCastTo(Ink::EInkObjectClass::FValueInt				))	return EBlotterVariableType::ValueInt;
+	else if( InObj->CanCastTo(Ink::EInkObjectClass::FValueList				))	return EBlotterVariableType::ValueList;
+	else if( InObj->CanCastTo(Ink::EInkObjectClass::FValueString			))	return EBlotterVariableType::ValueString;
+	else if( InObj->CanCastTo(Ink::EInkObjectClass::FValueVariablePointer	))	return EBlotterVariableType::ValueVariablePointer;
+	else if( InObj->CanCastTo(Ink::EInkObjectClass::FValue					))	return EBlotterVariableType::Value;
+	else if( InObj->CanCastTo(Ink::EInkObjectClass::FVariableAssignment		))	return EBlotterVariableType::VariableAssignment;
+	else if( InObj->CanCastTo(Ink::EInkObjectClass::FVariableReference		))	return EBlotterVariableType::VariableReference;
+	else if( InObj->CanCastTo(Ink::EInkObjectClass::FVoid					))	return EBlotterVariableType::Void;
+	else																		return EBlotterVariableType::Object;
 }
+
+FText UBlotterVariable::GetTypeText(EBlotterVariableType InType)
+{
+	switch (InType)
+	{
+	default:
+	case EBlotterVariableType::None:						return FText::FromString(TEXT("None"));
+	case EBlotterVariableType::ChoicePoint:					return FText::FromString(TEXT("Choice Point"));
+	case EBlotterVariableType::Container:					return FText::FromString(TEXT("Container"));
+	case EBlotterVariableType::ControlCommand:				return FText::FromString(TEXT("Control Command"));
+	case EBlotterVariableType::Divert:						return FText::FromString(TEXT("Divert"));
+	case EBlotterVariableType::Glue:						return FText::FromString(TEXT("Glue"));
+	case EBlotterVariableType::NativeFunctionCall:			return FText::FromString(TEXT("Native Function Call"));
+	case EBlotterVariableType::Tag:							return FText::FromString(TEXT("Tag"));
+	case EBlotterVariableType::ValueBool:					return FText::FromString(TEXT("Value Bool"));
+	case EBlotterVariableType::ValueDivertTarget:			return FText::FromString(TEXT("Value Divert Target"));
+	case EBlotterVariableType::ValueFloat:					return FText::FromString(TEXT("Value Float"));
+	case EBlotterVariableType::ValueInt:					return FText::FromString(TEXT("Value Int"));
+	case EBlotterVariableType::ValueList:					return FText::FromString(TEXT("Value List"));
+	case EBlotterVariableType::ValueString:					return FText::FromString(TEXT("Value String"));
+	case EBlotterVariableType::ValueVariablePointer:		return FText::FromString(TEXT("Value Variable Pointer"));
+	case EBlotterVariableType::Value:						return FText::FromString(TEXT("Value"));
+	case EBlotterVariableType::VariableAssignment:			return FText::FromString(TEXT("Variable Assignment"));
+	case EBlotterVariableType::VariableReference:			return FText::FromString(TEXT("Variable Reference"));
+	case EBlotterVariableType::Void:						return FText::FromString(TEXT("Void"));
+	case EBlotterVariableType::Object:						return FText::FromString(TEXT("Object"));
+	case EBlotterVariableType::ListDefinition:				return FText::FromString(TEXT("List Definition"));
+	}
+}
+
+int32 UBlotterVariable::GetIndex() const
+{
+	return Index;
+}
+
+void UBlotterVariable::SetIndex(uint32 InIndex)
+{
+	Index = InIndex;
+}
+
+bool UBlotterVariable::IsIndexEven() const
+{
+	return (Index & 0x01) == 0;
+}
+
+
 
 

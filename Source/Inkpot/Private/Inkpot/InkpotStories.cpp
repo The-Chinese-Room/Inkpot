@@ -85,6 +85,23 @@ UInkpotStory* UInkpotStories::GetStory( int32 InStoryHandle ) const
 	return Stories[InStoryHandle];
 }
 
+UInkpotStory* UInkpotStories::GetStory( TSoftObjectPtr<UInkpotStoryAsset>  InStoryAssetPath )
+{
+	FString inStoryAssetPath = InStoryAssetPath.ToString();
+	for (auto pair : StoryAssets)
+	{
+		UInkpotStoryAsset* asset = pair.Value;
+		FString assetPath = asset->GetPathName();
+		if (inStoryAssetPath.Equals(assetPath))
+		{
+			int32 storyID = pair.Key;
+			return GetStory(storyID);
+		}
+	}
+	INKPOT_ERROR("Story '%s' is not running.", *inStoryAssetPath);
+	return StoryFactory->BadStory();
+}
+
 UInkpotStory* UInkpotStories::Reload( UInkpotStoryAsset* InInkpotStoryAsset )
 {
 	const int32 *keyptr = StoryAssets.FindKey( InInkpotStoryAsset );

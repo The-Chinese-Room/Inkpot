@@ -100,7 +100,14 @@ FInkpotValue UInkpotLibrary::MakeInkpotList(FString InName, TArray<FString> InVa
 	int32 count = 0;
 	for( const FString &value : InValues )
 	{
-		Ink::FInkListItem item( InName, value );
+		FString originName, itemName;
+		bool bIsOriginSpecified = value.Split(TEXT("."), &originName, &itemName);
+		if (!bIsOriginSpecified)
+		{
+			originName = InName;
+			itemName = value;
+		}
+		Ink::FInkListItem item( originName, itemName );
 		list.Add( item, ++count );
 	}
 	return FInkpotValue( MakeShared<Ink::FValueType>( list ) );
@@ -114,8 +121,11 @@ TArray<FString> UInkpotLibrary::InkpotValueAsList(const FInkpotValue &InValue)
 		Ink::FInkList list = (*InValue)->GetSubtype<Ink::FInkList>();
 		TArray<Ink::FInkListItem> listItems;
 		list.GetKeys(listItems);
-		for( Ink::FInkListItem &item : listItems )
-			listEntries.Add( item.ItemName );
+		for (Ink::FInkListItem& item : listItems)
+		{
+			FString fullentry = FString::Printf(TEXT("%s.%s"), *item.OriginName, *item.ItemName);
+			listEntries.Add( fullentry );
+		}
 	}
 	else
 	{

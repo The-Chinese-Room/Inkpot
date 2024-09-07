@@ -94,34 +94,52 @@ public:
 	void SetValue(const FString &Variable, FInkpotValue Value, bool &Success );
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
-	void GetValue(const FString &Variable, FInkpotValue &ReturnValue, bool &Success );
+	void GetValue(const FString &Variable, FInkpotValue &ReturnValue, bool &bSuccess );
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
-	void SetBool(const FString &Variable, bool bValue, bool &Success );
+	void SetBool(const FString &Variable, bool bValue, bool &bSuccess );
 
 	UFUNCTION(BlueprintPure, Category="Inkpot|Story")
-	void GetBool(const FString &Variable, bool &ReturnValue, bool &Success );
+	void GetBool(const FString &Variable, bool &ReturnValue, bool &bSuccess );
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
-	void SetInt(const FString &Variable, int32 Value, bool &Success );
+	void SetInt(const FString &Variable, int32 Value, bool &bSuccess );
 
 	UFUNCTION(BlueprintPure, Category="Inkpot|Story")
-	void GetInt(const FString &Variable, int32 &ReturnValue, bool &Success );
+	void GetInt(const FString &Variable, int32 &ReturnValue, bool &bSuccess );
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
-	void SetFloat( const FString& Variable, float Value, bool &Success );
+	void SetFloat( const FString& Variable, float Value, bool &bSuccess );
 
 	UFUNCTION(BlueprintPure, Category="Inkpot|Story")
-	void GetFloat( const FString& Variable, float &ReturnValue, bool &Success );
+	void GetFloat( const FString& Variable, float &ReturnValue, bool &bSuccess );
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
-	void SetString( const FString& Variable, const FString& Value, bool &Success );
+	void SetString( const FString& Variable, const FString& Value, bool &bSuccess );
 
 	UFUNCTION(BlueprintPure, Category="Inkpot|Story")
-	void GetString( const FString& Variable, FString &ReturnValue, bool &Success );
+	void GetString( const FString& Variable, FString &ReturnValue, bool &bSuccess );
+
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
+	void SetListEntries(const FString& Variable, const TArray<FString>& Values, bool& bSuccess, bool bAppend = true);
+
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
+	void SetListEntry(const FString& Variable, const FString& Value, bool& bSuccess, bool bAppend = true );
+
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
+	void ClearListEntry(const FString& Variable, const FString& Value, bool& bSuccess);
+
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
+	void ClearListEntries(const FString& Variable, const TArray<FString>& Values, bool& bSuccess);
+
+	UFUNCTION(BlueprintPure, Category = "Inkpot|Story")
+	void GetListEntries(const FString& Variable, TArray<FString>& ReturnValue, bool& bSuccess);
+
+	UFUNCTION(BlueprintPure, Category = "Inkpot|Story")
+	void CheckListEntry(const FString& Variable, const FString& Value, bool& bReturnValue, bool& bSuccess);
 
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
-	void SetEmpty( const FString& Variable, bool &Success );
+	void SetEmpty( const FString& Variable, bool &bSuccess );
 
 	UFUNCTION(BlueprintPure, Category="Inkpot|Story")
 	bool IsVariableDefined( const FString& Variable );
@@ -232,8 +250,14 @@ protected:
 	virtual void ChoosePathStringInternal( const FString& InPath, const TArray<FInkpotValue>& InValues );
 
 	void DebugRefresh();
+	TSharedPtr<Ink::FListDefinition> GetListOrigin(const FString& InOriginName, const FString& InItemName);
 	bool ValidateInkListOrigin( const FInkpotValue& InValue );
 	bool CreateInkValues( const TArray<FInkpotValue>& InValues, TArray<TSharedPtr<Ink::FValueType>>& OutValues );
+	FInkpotValue MakeSingleEntryList(const FString& InVariable, const FString& InValue, bool& bOutSuccess);
+
+	void OnVariableStateChangeEvent(const FString& VariableName, TSharedPtr<Ink::FObject> NewValueObj);
+
+	void BindOnVariableStateChangeEvent();
 
 protected:
 	TSharedPtr<FInkpotStoryInternal> StoryInternal;

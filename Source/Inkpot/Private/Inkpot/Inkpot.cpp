@@ -95,3 +95,7 @@ void UInkpot::OnStartGameInstance( UGameInstance *InInstance )
 	GameInstance = InInstance;
 }
 
+UInkpotStory* UInkpot::GetStory( TSoftObjectPtr<UInkpotStoryAsset> InkpotStoryAssetPath)
+{
+	return Stories->GetStory(InkpotStoryAssetPath);
+}

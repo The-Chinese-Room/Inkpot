@@ -35,6 +35,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Inkpot|Blotter")
 	TArray<UBlotterVariable*> GetVariables(UInkpotStory* Story);
 
+	UFUNCTION(BlueprintPure, Category = "Inkpot|Blotter")
+	TArray<UBlotterVariable*> GetOrigins(UInkpotStory* Story);
+
 	UFUNCTION(BlueprintImplementableEvent, Category = "Inkpot|Blotter", meta = (DisplayName = "OnDebugRefresh"))
 	void ReceiveOnDebugRefresh(UInkpotStory* Story);
 

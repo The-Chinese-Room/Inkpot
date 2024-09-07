@@ -1,5 +1,6 @@
 #include "Inkpot/InkpotStory.h"
 #include "Inkpot/InkpotChoice.h"
+#include "Inkpot/InkpotValue.h"
 #include "Inkpot/Inkpot.h"
 #include "Ink/Choice.h"
 #include "Ink/StoryState.h"
@@ -17,6 +18,7 @@ void UInkpotStory::Initialise( TSharedPtr<FInkpotStoryInternal>  InInkpotStory )
 	StoryInternal->OnEvaluateFunction().AddUObject(this, &UInkpotStory::OnEvaluateFunctionInternal );
 	StoryInternal->OnCompleteEvaluateFunction().AddUObject(this, &UInkpotStory::OnCompleteEvaluateFunctionInternal );
 	StoryInternal->OnChoosePathString().AddUObject(this, &UInkpotStory::OnChoosePathStringInternal );
+	BindOnVariableStateChangeEvent();
 }
 
 TSharedPtr<FInkpotStoryInternal> UInkpotStory::GetStoryInternal()
@@ -75,47 +77,50 @@ void UInkpotStory::ChoosePathString( const FString &InPath, const TArray<FInkpot
 	ChoosePathStringInternal( InPath, InValues );
 }
 
+TSharedPtr<Ink::FListDefinition> UInkpotStory::GetListOrigin(const FString& InOriginName, const FString& InItemName)
+{
+	TSharedPtr<Ink::FListDefinitionsOrigin> definitions = StoryInternal->GetListDefinitions();
+	TSharedPtr<Ink::FListDefinition> origin;
+	bool gotDefintion = definitions->TryListGetDefinition(InOriginName, origin);
+	if (!gotDefintion)
+	{
+		INKPOT_ERROR("Failed to find List definition '%s'", *InOriginName);
+		return nullptr;
+	}
+
+	bool gotItem = origin->ContainsItemWithName(InItemName);
+	if (!gotItem)
+	{
+		INKPOT_ERROR("Failed to find entry '%s' in List definition '%s'", *InItemName, *InOriginName);
+		return nullptr;
+	}
+	return origin;
+}
+
 bool UInkpotStory::ValidateInkListOrigin( const FInkpotValue &InValue )
 {
+	// only interested if the value is actually a list, return true for other types 
+	if (!(*InValue)->HasSubtype<Ink::FInkList>())
+		return true;
+
 	Ink::FInkList &list = (*InValue)->GetSubtype<Ink::FInkList>();
 	TSharedPtr<TArray<TSharedPtr<Ink::FListDefinition>> >&origins = list.GetOrigins();
 	if( !origins.IsValid() )
-	{
 		origins = MakeShared<TArray<TSharedPtr<Ink::FListDefinition>>>();
-		TSharedPtr<Ink::FListDefinitionsOrigin> definitions = StoryInternal->GetListDefinitions();
 
-		TArray<Ink::FInkListItem> listItems;
-		list.GetKeys( listItems );
-		for ( Ink::FInkListItem& item : listItems )
-		{
-			TSharedPtr<Ink::FListDefinition> origin;
-			bool gotDefintion = definitions->TryListGetDefinition( item.OriginName, origin );
-			if(!gotDefintion)
-			{
-				// TODO: could create on the fly here, though need to check impact on Ink VM serialisation
-				#ifdef create_list_origins_on_the_fly
-				TMap<FString, int32> listValues;
-				for( int i=0; i<listItems.Num() ; ++i )
-					listValues.Add( listItems[i].ItemName, i );
-				origin = MakeShared<Ink::FListDefinition>( item.OriginName, listValues );
-				definitions->AddListDefinition( origin );
-				#else
-				// for the moment just fail the operation
-				INKPOT_ERROR("Failed to find List definition '%s'", *item.OriginName );
-				return false;
-				#endif
-			}
+	TSharedPtr<Ink::FListDefinitionsOrigin> definitions = StoryInternal->GetListDefinitions();
 
-			bool gotItem = origin->ContainsItemWithName( item.ItemName );
-			if(!gotItem)
-			{
-				INKPOT_ERROR("Failed to find entry '%s' in List definition '%s'", *item.ItemName, *item.OriginName );
-				return false;
-			}
+	TArray<Ink::FInkListItem> listItems;
+	list.GetKeys(listItems);
+	for (Ink::FInkListItem& item : listItems)
+	{
+		TSharedPtr<Ink::FListDefinition> origin = GetListOrigin(item.OriginName, item.ItemName);
+		if (!origin.IsValid())
+			return false;
 
-			origins->AddUnique( origin );
-		}
+		origins->AddUnique(origin);
 	}
+
 	return true;
 }
 
@@ -124,11 +129,8 @@ bool UInkpotStory::CreateInkValues( const TArray<FInkpotValue>& InValues, TArray
 	OutValues.Reserve( InValues.Num() );
 	for( const FInkpotValue &inValue : InValues )
 	{
-		if( (*inValue)->HasSubtype<Ink::FInkList>() )
-		{
-			if ( !ValidateInkListOrigin( inValue ) )
-				return false;
-		}
+		if ( !ValidateInkListOrigin( inValue ) )
+			return false;
 		OutValues.Emplace( *inValue );
 	}
 	return true;
@@ -138,9 +140,7 @@ void UInkpotStory::ChoosePathStringInternal( const FString& InPath, const TArray
 {
 	TArray<TSharedPtr<Ink::FValueType>> values;
 	if(!CreateInkValues( InValues, values ))
-	{
 		return;
-	}
 	StoryInternal->ChoosePathString( InPath, true, values );
 }
 
@@ -294,7 +294,6 @@ void UInkpotStory::SetValue(const FString &InVariable, FInkpotValue InValue, boo
 {
 	TSharedPtr<Ink::FVariableState> variableState = StoryInternal->GetVariablesState();
 	OutSuccess = variableState->SetVariable( InVariable, Ink::FValue::Create(**InValue) );
-	DebugRefresh();
 }
 
 void UInkpotStory::GetValue(const FString &InVariable, FInkpotValue &OutReturnValue, bool &OutSuccess )
@@ -320,7 +319,6 @@ void UInkpotStory::SetBool(const FString &InVariable, bool bInValue, bool &OutSu
 {
 	TSharedPtr<Ink::FVariableState> variableState = StoryInternal->GetVariablesState();
 	OutSuccess = variableState->SetVariable( InVariable, MakeShared<Ink::FValueBool>( bInValue ) );
-	DebugRefresh();
 }
 
 void UInkpotStory::GetBool(const FString &InVariable, bool &OutReturnValue, bool &OutSuccess )
@@ -332,7 +330,6 @@ void UInkpotStory::SetInt(const FString &InVariable, int32 InValue, bool &OutSuc
 {
 	TSharedPtr<Ink::FVariableState> variableState = StoryInternal->GetVariablesState();
 	OutSuccess = variableState->SetVariable( InVariable, MakeShared<Ink::FValueInt>( InValue ) );
-	DebugRefresh();
 }
 
 void UInkpotStory::GetInt(const FString &InVariable, int32 &OutValue ,  bool &OutSuccess )
@@ -344,7 +341,6 @@ void UInkpotStory::SetFloat(const FString &InVariable, float InValue, bool &OutS
 {
 	TSharedPtr<Ink::FVariableState> variableState = StoryInternal->GetVariablesState();
 	OutSuccess = variableState->SetVariable( InVariable, MakeShared<Ink::FValueFloat>(InValue));
-	DebugRefresh();
 }
 
 void UInkpotStory::GetFloat(const FString &InVariable, float &OutReturnValue, bool &OutSuccess )
@@ -356,7 +352,6 @@ void UInkpotStory::SetString(const FString &InVariable, const FString &InValue, 
 {
 	TSharedPtr<Ink::FVariableState> variableState = StoryInternal->GetVariablesState();
 	OutSuccess = variableState->SetVariable( InVariable, MakeShared<Ink::FValueString>(InValue) );
-	DebugRefresh();
 }
 
 void UInkpotStory::GetString( const FString& InVariable, FString &OutReturnValue, bool &OutSuccess )
@@ -368,7 +363,6 @@ void UInkpotStory::SetEmpty(const FString &InVariable, bool &OutSuccess )
 {
 	TSharedPtr<Ink::FVariableState> variableState = StoryInternal->GetVariablesState();
 	OutSuccess  = variableState->SetVariable( InVariable, MakeShared<Ink::FValue>() );
-	DebugRefresh();
 }
 
 bool UInkpotStory::IsVariableDefined( const FString& InVariable )
@@ -474,15 +468,13 @@ void UInkpotStory::OnCompleteEvaluateFunctionInternal(const FString& InFunctionN
 {
 	//INKPOT_LOG("Completing function %s", *InFunctionName);
 	bIsInFunctionEvaluation = false;
-	DebugRefresh();
 }
 
 void UInkpotStory::OnChoosePathStringInternal(const FString& InPath, const TArray<TSharedPtr<Ink::FValueType>>& InPathType )
 {
 	UpdateChoices();
-	if(!EventOnChoosePath.IsBound())
-		return;
-	EventOnChoosePath.Broadcast( this, InPath ); 
+	if(EventOnChoosePath.IsBound())
+		EventOnChoosePath.Broadcast( this, InPath ); 
 	DebugRefresh();
 }
 
@@ -792,10 +784,8 @@ void UInkpotStory::UnbindExternalFunction( const FString &InFunctionName )
 void UInkpotStory::EvaluateFunction(const FString& FunctionName, const TArray<FInkpotValue> &InValues)
 {
 	TArray<TSharedPtr<Ink::FValueType>> values;
-	values.Reserve(InValues.Num());
-	for (const FInkpotValue& inValue : InValues)
-		values.Emplace(*inValue);
-
+	if (!CreateInkValues(InValues, values))
+		return;
 	StoryInternal->EvaluateFunction(FunctionName, values);
 }
 
@@ -839,6 +829,7 @@ void UInkpotStory::ResetContent( TSharedPtr<FInkpotStoryInternal> InNewStoryCont
 void UInkpotStory::ResetState()
 {
 	StoryInternal->ResetState();
+	BindOnVariableStateChangeEvent();
 }
 
 FString UInkpotStory::ToJSON()
@@ -854,6 +845,124 @@ void UInkpotStory::LoadJSON(const FString &InJSON)
 		EventOnStoryLoadJSON.Broadcast( this );
 }
 
+void UInkpotStory::GetListEntries(const FString& InVariable, TArray<FString>& ReturnValues, bool& bOutSuccess)
+{
+	FInkpotValue value;
+	GetValue(InVariable, value, bOutSuccess);
+	ReturnValues = UInkpotLibrary::InkpotValueAsList(value);
+}
+
+void UInkpotStory::SetListEntries(const FString& InVariable, const TArray<FString>& InValues, bool& bOutSuccess, bool bInAppend)
+{
+	if (!bInAppend)
+	{
+		SetEmpty(InVariable, bOutSuccess);
+		if (!bOutSuccess)
+			return;
+	}
+
+	for (const FString& value : InValues)
+	{
+		SetListEntry(InVariable, value, bOutSuccess, true);
+		if (!bOutSuccess)
+			return;
+	}
+}
+
+FInkpotValue UInkpotStory::MakeSingleEntryList( const FString& InVariable, const FString& InValue, bool& bOutSuccess)
+{
+	FInkpotValue newvalue = UInkpotLibrary::MakeInkpotList(InVariable, { InValue });
+	bOutSuccess = ValidateInkListOrigin(newvalue);
+	return newvalue;
+}
+
+void UInkpotStory::SetListEntry(const FString& InVariable, const FString& InValue, bool& bOutSuccess, bool bInAppend)
+{
+	FInkpotValue newvalue = MakeSingleEntryList(InVariable, InValue, bOutSuccess );
+	if (!bOutSuccess)
+		return;
+
+	if (bInAppend)
+	{
+		FInkpotValue currentValue;
+		GetValue(InVariable, currentValue, bOutSuccess);
+		if (!bOutSuccess)
+			return;
+
+		if ((*currentValue)->HasSubtype<Ink::FInkList>())
+		{
+			// TODO : a blueprinttype encapsulation of the list itself 
+			const Ink::FInkList &currentlist = (*currentValue)->GetSubtype<Ink::FInkList>();
+			Ink::FInkList &newlist = (*newvalue)->GetSubtype<Ink::FInkList>();
+			newlist = newlist.Union( currentlist );
+		}
+
+		SetValue(InVariable, newvalue, bOutSuccess);
+	}
+	else
+	{
+		SetValue(InVariable, newvalue, bOutSuccess);
+	}
+}
+
+void UInkpotStory::ClearListEntry(const FString& InVariable, const FString& InValue, bool& bOutSuccess)
+{
+	FInkpotValue currentValue;
+	GetValue(InVariable, currentValue, bOutSuccess);
+	if (!bOutSuccess)
+		return;
+
+	if (!(*currentValue)->HasSubtype<Ink::FInkList>())
+	{
+		INKPOT_ERROR("Variable '%s' is not a List.", *InVariable);
+		bOutSuccess = false;
+		return;
+	}
+
+	FInkpotValue removevalue = MakeSingleEntryList(InVariable, InValue, bOutSuccess);
+	if (!bOutSuccess)
+		return;
+
+	Ink::FInkList& removelist = (*removevalue)->GetSubtype<Ink::FInkList>();
+	Ink::FInkList& currentlist = (*currentValue)->GetSubtype<Ink::FInkList>();
+
+	currentlist = currentlist.Without(removelist);
+	SetValue( InVariable, currentValue, bOutSuccess);
+}
+
+void UInkpotStory::ClearListEntries(const FString& InVariable, const TArray<FString>& InValues, bool& bOutSuccess)
+{
+	for (const FString& value : InValues)
+	{
+		ClearListEntry(InVariable, value, bOutSuccess);
+		if (!bOutSuccess)
+			return;
+	}
+}
+
+void UInkpotStory::CheckListEntry(const FString& InVariable, const FString& InValue, bool& ReturnValue, bool& bOutSuccess)
+{
+	FInkpotValue currentValue;
+	GetValue(InVariable, currentValue, bOutSuccess);
+	if (!bOutSuccess)
+		return;
+
+	if (!(*currentValue)->HasSubtype<Ink::FInkList>())
+	{
+		INKPOT_ERROR("Variable '%s' is not a List.", *InVariable);
+		bOutSuccess = false;
+		return;
+	}
+
+	FInkpotValue queryvalue = MakeSingleEntryList(InVariable, InValue, bOutSuccess);
+	if (!bOutSuccess)
+		return;
+
+	Ink::FInkList& querylist = (*queryvalue)->GetSubtype<Ink::FInkList>();
+	Ink::FInkList& currentlist = (*currentValue)->GetSubtype<Ink::FInkList>();
+	ReturnValue = currentlist.HasIntersection( querylist );
+}
+
 int UInkpotStory::GetStorySeed() const
 {
 	return StoryInternal->GetStoryState()->GetStorySeed();
@@ -862,6 +971,16 @@ int UInkpotStory::GetStorySeed() const
 void UInkpotStory::SetStorySeed( int Seed )
 {
 	StoryInternal->GetStoryState()->SetStorySeed( Seed );
+}
+
+void UInkpotStory::BindOnVariableStateChangeEvent()
+{
+	StoryInternal->GetVariablesState()->VariableChanged.AddUObject(this, &UInkpotStory::OnVariableStateChangeEvent);
+}
+
+void UInkpotStory::OnVariableStateChangeEvent(const FString& VariableName, TSharedPtr<Ink::FObject> NewValueObj)
+{
+	DebugRefresh();
 }
 
 void UInkpotStory::DebugRefresh()
@@ -879,4 +998,7 @@ FOnStoryContinue& UInkpotStory::OnDebugRefresh()
 	return EventOnDebugRefresh;
 }
 #endif
+
+
+
 
