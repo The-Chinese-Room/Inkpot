@@ -1,6 +1,8 @@
 #include "Inkpot/InkpotList.h"
 #include "Inkpot/InkpotStory.h"
+#include "Utility/InkpotLog.h"
 
+static Ink::FInkList BADLIST;
 
 FInkpotList::FInkpotList()
 : FInkpotValue()
@@ -14,13 +16,23 @@ FInkpotList::FInkpotList(TSharedPtr<Ink::FValueType> InValue)
 
 Ink::FInkList &FInkpotList::GetList() const
 {
-	return Value->GetSubtype<Ink::FInkList>();
+	if ( IsValid() )
+	{
+		return Value->GetSubtype<Ink::FInkList>();
+	}
+	else
+	{
+		INKPOT_ERROR("List is invalid");
+		return BADLIST;
+	}
 }
 
 void FInkpotList::ToStringArray( TArray<FString>& OutValues, bool bUseOrigin ) const
 {
 	OutValues.Reset();
+
 	Ink::FInkList &list = GetList();
+
 	TArray<Ink::FInkListItem> listItems;
 	list.GetKeys(listItems);
 	OutValues.Reserve( listItems.Num() );

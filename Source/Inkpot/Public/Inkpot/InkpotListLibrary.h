@@ -23,11 +23,11 @@ public:
 	static INKPOT_API void PrintToLog(const FInkpotList &Value, bool bUseOrigin = true );
 
 	/* Create an Ink List from an array of Strings */
-	UFUNCTION(BlueprintCallable, Category="Inkpot|List")
+	UFUNCTION(BlueprintPure, Category="Inkpot|List")
 	static INKPOT_API FInkpotList MakeInkpotList(FString Definition, TArray<FString> Value);
 
 	/* Create an Ink List from a single string */
-	UFUNCTION(BlueprintCallable, Category="Inkpot|List")
+	UFUNCTION(BlueprintPure, Category="Inkpot|List")
 	static INKPOT_API FInkpotList MakeInkpotSingleEntryList(FString Definition, FString Value);
 
 	/* Get an array of strings from an Ink List */

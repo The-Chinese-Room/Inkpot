@@ -21,6 +21,8 @@ public:
 
 	TSharedPtr<Ink::FValueType> operator *() const;
 
+	bool IsValid() const;
+
 protected:
 	TSharedPtr<Ink::FValueType> Value;
 };

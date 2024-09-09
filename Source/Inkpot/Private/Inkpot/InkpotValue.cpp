@@ -22,3 +22,9 @@ TSharedPtr<Ink::FValueType> FInkpotValue::operator *() const
 	return Value;
 }
 
+bool FInkpotValue::IsValid() const
+{
+	return Value.IsValid();
+}
+
+

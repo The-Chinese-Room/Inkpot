@@ -21,6 +21,11 @@ void UInkpotStories::InitialiseStoryFactory()
 	const UInkpotSettings *settings = GetDefault<UInkpotSettings>();
 	FSoftClassPath storyFactoryClassName = settings->StoryFactoryClass;
 	UClass* storyFactoryClass = (storyFactoryClassName.IsValid() ? LoadObject<UClass>(NULL, *storyFactoryClassName.ToString() ) : UInkpotStoryFactory::StaticClass() );
+	if (!storyFactoryClass)
+	{
+		INKPOT_ERROR("Inkpot story factory class is not set");
+		return;
+	}
 	StoryFactory = NewObject<UInkpotStoryFactoryBase>(this, storyFactoryClass);
 	StoryFactory->Initialise();
 }
