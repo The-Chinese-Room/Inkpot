@@ -1,6 +1,7 @@
 #include "Blotter/InkpotBlotter.h"
 #include "Inkpot/Inkpot.h"
 #include "Inkpot/InkpotStory.h"
+#include "Blotter/BlotterString.h"
 
 bool UInkpotBlotter::Initialize()
 {

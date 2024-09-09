@@ -1,6 +1,7 @@
 #include "Inkpot/InkpotStory.h"
 #include "Inkpot/InkpotChoice.h"
-#include "Inkpot/InkpotValue.h"
+#include "Inkpot/InkpotValueLibrary.h"
+#include "Inkpot/InkpotListLibrary.h"
 #include "Inkpot/Inkpot.h"
 #include "Ink/Choice.h"
 #include "Ink/StoryState.h"
@@ -97,40 +98,17 @@ TSharedPtr<Ink::FListDefinition> UInkpotStory::GetListOrigin(const FString& InOr
 	return origin;
 }
 
-bool UInkpotStory::ValidateInkListOrigin( const FInkpotValue &InValue )
-{
-	// only interested if the value is actually a list, return true for other types 
-	if (!(*InValue)->HasSubtype<Ink::FInkList>())
-		return true;
-
-	Ink::FInkList &list = (*InValue)->GetSubtype<Ink::FInkList>();
-	TSharedPtr<TArray<TSharedPtr<Ink::FListDefinition>> >&origins = list.GetOrigins();
-	if( !origins.IsValid() )
-		origins = MakeShared<TArray<TSharedPtr<Ink::FListDefinition>>>();
-
-	TSharedPtr<Ink::FListDefinitionsOrigin> definitions = StoryInternal->GetListDefinitions();
-
-	TArray<Ink::FInkListItem> listItems;
-	list.GetKeys(listItems);
-	for (Ink::FInkListItem& item : listItems)
-	{
-		TSharedPtr<Ink::FListDefinition> origin = GetListOrigin(item.OriginName, item.ItemName);
-		if (!origin.IsValid())
-			return false;
-
-		origins->AddUnique(origin);
-	}
-
-	return true;
-}
-
 bool UInkpotStory::CreateInkValues( const TArray<FInkpotValue>& InValues, TArray<TSharedPtr<Ink::FValueType>> &OutValues)
 {
 	OutValues.Reserve( InValues.Num() );
 	for( const FInkpotValue &inValue : InValues )
 	{
-		if ( !ValidateInkListOrigin( inValue ) )
-			return false;
+		if ( (*inValue)->HasSubtype<Ink::FInkList>() )
+		{
+			FInkpotList list = UInkpotValueLibrary::InkpotValueAsList( inValue );
+			if(!list.ValidateOrigin(this))
+				return false;
+		}
 		OutValues.Emplace( *inValue );
 	}
 	return true;
@@ -845,122 +823,26 @@ void UInkpotStory::LoadJSON(const FString &InJSON)
 		EventOnStoryLoadJSON.Broadcast( this );
 }
 
-void UInkpotStory::GetListEntries(const FString& InVariable, TArray<FString>& ReturnValues, bool& bOutSuccess)
+void UInkpotStory::SetList( const FString& InVariable, const FInkpotList &InValue, bool &bOutSuccess )
+{
+	bOutSuccess = InValue.ValidateOrigin( this );
+	if( bOutSuccess )
+		SetValue( InVariable, *InValue, bOutSuccess );
+}
+
+void UInkpotStory::GetList( const FString& InVariable, FInkpotList &ReturnValue, bool &bOutSuccess )
 {
 	FInkpotValue value;
-	GetValue(InVariable, value, bOutSuccess);
-	ReturnValues = UInkpotLibrary::InkpotValueAsList(value);
-}
-
-void UInkpotStory::SetListEntries(const FString& InVariable, const TArray<FString>& InValues, bool& bOutSuccess, bool bInAppend)
-{
-	if (!bInAppend)
+	GetValue( InVariable,  value, bOutSuccess);
+	if( (*value)->HasSubtype<Ink::FInkList>() )
 	{
-		SetEmpty(InVariable, bOutSuccess);
-		if (!bOutSuccess)
-			return;
-	}
-
-	for (const FString& value : InValues)
-	{
-		SetListEntry(InVariable, value, bOutSuccess, true);
-		if (!bOutSuccess)
-			return;
-	}
-}
-
-FInkpotValue UInkpotStory::MakeSingleEntryList( const FString& InVariable, const FString& InValue, bool& bOutSuccess)
-{
-	FInkpotValue newvalue = UInkpotLibrary::MakeInkpotList(InVariable, { InValue });
-	bOutSuccess = ValidateInkListOrigin(newvalue);
-	return newvalue;
-}
-
-void UInkpotStory::SetListEntry(const FString& InVariable, const FString& InValue, bool& bOutSuccess, bool bInAppend)
-{
-	FInkpotValue newvalue = MakeSingleEntryList(InVariable, InValue, bOutSuccess );
-	if (!bOutSuccess)
-		return;
-
-	if (bInAppend)
-	{
-		FInkpotValue currentValue;
-		GetValue(InVariable, currentValue, bOutSuccess);
-		if (!bOutSuccess)
-			return;
-
-		if ((*currentValue)->HasSubtype<Ink::FInkList>())
-		{
-			// TODO : a blueprinttype encapsulation of the list itself 
-			const Ink::FInkList &currentlist = (*currentValue)->GetSubtype<Ink::FInkList>();
-			Ink::FInkList &newlist = (*newvalue)->GetSubtype<Ink::FInkList>();
-			newlist = newlist.Union( currentlist );
-		}
-
-		SetValue(InVariable, newvalue, bOutSuccess);
+		ReturnValue = *value; // copy ref 
 	}
 	else
 	{
-		SetValue(InVariable, newvalue, bOutSuccess);
-	}
-}
-
-void UInkpotStory::ClearListEntry(const FString& InVariable, const FString& InValue, bool& bOutSuccess)
-{
-	FInkpotValue currentValue;
-	GetValue(InVariable, currentValue, bOutSuccess);
-	if (!bOutSuccess)
-		return;
-
-	if (!(*currentValue)->HasSubtype<Ink::FInkList>())
-	{
-		INKPOT_ERROR("Variable '%s' is not a List.", *InVariable);
+		INKPOT_ERROR("Variable '%s' is not a list type.", *InVariable );
 		bOutSuccess = false;
-		return;
 	}
-
-	FInkpotValue removevalue = MakeSingleEntryList(InVariable, InValue, bOutSuccess);
-	if (!bOutSuccess)
-		return;
-
-	Ink::FInkList& removelist = (*removevalue)->GetSubtype<Ink::FInkList>();
-	Ink::FInkList& currentlist = (*currentValue)->GetSubtype<Ink::FInkList>();
-
-	currentlist = currentlist.Without(removelist);
-	SetValue( InVariable, currentValue, bOutSuccess);
-}
-
-void UInkpotStory::ClearListEntries(const FString& InVariable, const TArray<FString>& InValues, bool& bOutSuccess)
-{
-	for (const FString& value : InValues)
-	{
-		ClearListEntry(InVariable, value, bOutSuccess);
-		if (!bOutSuccess)
-			return;
-	}
-}
-
-void UInkpotStory::CheckListEntry(const FString& InVariable, const FString& InValue, bool& ReturnValue, bool& bOutSuccess)
-{
-	FInkpotValue currentValue;
-	GetValue(InVariable, currentValue, bOutSuccess);
-	if (!bOutSuccess)
-		return;
-
-	if (!(*currentValue)->HasSubtype<Ink::FInkList>())
-	{
-		INKPOT_ERROR("Variable '%s' is not a List.", *InVariable);
-		bOutSuccess = false;
-		return;
-	}
-
-	FInkpotValue queryvalue = MakeSingleEntryList(InVariable, InValue, bOutSuccess);
-	if (!bOutSuccess)
-		return;
-
-	Ink::FInkList& querylist = (*queryvalue)->GetSubtype<Ink::FInkList>();
-	Ink::FInkList& currentlist = (*currentValue)->GetSubtype<Ink::FInkList>();
-	ReturnValue = currentlist.HasIntersection( querylist );
 }
 
 int UInkpotStory::GetStorySeed() const
