@@ -19,17 +19,15 @@ TSharedPtr<FInkpotStoryInternal> UInkpotStoryFactoryBase::CreateInternalStory(UI
 	{
 		const FString& json = InInkpotStoryAsset->GetCompiledJSON();
 		storyInternal = MakeShared<FInkpotStoryInternal>(json, InHandle);
+		if (!storyInternal->IsValidStory())
+		{
+			INKPOT_ERROR("Story asset is not a valid Ink story.");
+		}
 	}
 	else
 	{
 		INKPOT_ERROR("No story asset.");
 	}
-
-	if (!storyInternal->IsValidStory())
-	{
-		INKPOT_ERROR("Story asset is not a valid Ink story.");
-	}
-
 	return storyInternal;
 }
 
@@ -41,7 +39,7 @@ UInkpotStory* UInkpotStoryFactoryBase::BadStory()
 UInkpotStory* UInkpotStoryFactory::CreateStory(UInkpotStoryAsset* InInkpotStoryAsset, int32 InHandle, UObject *InOwner )
 { 
 	TSharedPtr<FInkpotStoryInternal> storyInternal = CreateInternalStory( InInkpotStoryAsset, InHandle );
-	if (!storyInternal->IsValidStory())
+	if (!storyInternal.IsValid() || !storyInternal->IsValidStory())
 	{
 		return ABadStory;
 	}
