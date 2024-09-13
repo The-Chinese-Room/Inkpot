@@ -19,8 +19,3 @@ public:
 };
 
 
-UCLASS()
-class INKPOTEDITOR_API UBlotterUIVarEntry : public UBlotterUIEntryVariable
-{
-	GENERATED_BODY()
-};
