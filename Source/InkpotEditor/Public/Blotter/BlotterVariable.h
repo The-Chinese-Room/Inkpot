@@ -5,6 +5,7 @@
 #include "ink/Object.h"
 #include "BlotterVariable.generated.h"
 
+class UInkpotStory;
 
 UENUM()
 enum class EBlotterVariableType : uint8
@@ -38,18 +39,19 @@ class INKPOTEDITOR_API UBlotterVariable : public UObject
 {
 	GENERATED_BODY()
 public:
+	void SetStory( UInkpotStory *Story );
 
-	//UFUNCTION(BlueprintCallable, Category = "Inkpot|Blotter")
 	void SetName(const FString& Name);
 
 	UFUNCTION(BlueprintPure, Category = "Inkpot|Blotter")
 	const FText& GetName() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Inkpot|Blotter")
-	void SetValue(const FString& Value);
+	void SetDisplayValue(const FString& Value);
 
 	UFUNCTION(BlueprintPure, Category = "Inkpot|Blotter")
-	const FText& GetValue() const;
+	const FText& GetDisplayValue() const;
+	bool SetVariableFromString(const FString& Value);
 
 	UFUNCTION(BlueprintPure, Category = "Inkpot|Blotter")
 	const FText& GetType() const;
@@ -64,23 +66,29 @@ public:
 
 	void SetIndex(uint32 InIndex );
 
+	UFUNCTION(BlueprintPure, Category = "Inkpot|Blotter")
+	bool IsReadOnly() const;
+
 protected:
 	EBlotterVariableType GetTypeFromObject(TSharedPtr<Ink::FObject> InObj);
 	FText GetTypeText(EBlotterVariableType InType);
 
 private:
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(Transient)
+	UInkpotStory* Story;
+
+	UPROPERTY(Transient)
 	FText	Name;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(Transient)
 	FText	Value;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(Transient)
 	FText	TypeText;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(Transient)
 	EBlotterVariableType Type;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(Transient)
 	uint32	Index;
 };

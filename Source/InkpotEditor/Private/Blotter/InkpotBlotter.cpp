@@ -2,6 +2,8 @@
 #include "Inkpot/Inkpot.h"
 #include "Inkpot/InkpotStory.h"
 #include "Blotter/BlotterString.h"
+#include "Inkpot/InkpotValueLibrary.h"
+#include "Inkpot/InkpotListLibrary.h"
 
 bool UInkpotBlotter::Initialize()
 {
@@ -16,9 +18,10 @@ void UInkpotBlotter::BindInkpotStoryBegin()
 	inkpot->EventOnStoryBegin.AddDynamic(this, &UInkpotBlotter::OnStoryBegin);
 }
 
-void UInkpotBlotter::OnStoryBegin(UInkpotStory *Story)
+void UInkpotBlotter::OnStoryBegin(UInkpotStory *InStory)
 {
-	Story->OnDebugRefresh().AddDynamic(this, &UInkpotBlotter::OnDebugRefresh);
+	InStory->OnDebugRefresh().AddDynamic(this, &UInkpotBlotter::OnDebugRefresh);
+	ReceiveOnDebugRefresh(InStory);
 }
 
 void UInkpotBlotter::OnDebugRefresh(UInkpotStory* InStory)
@@ -38,11 +41,31 @@ TArray<UBlotterVariable*> UInkpotBlotter::GetVariables(UInkpotStory* Story)
 			UBlotterVariable* bv = NewObject<UBlotterVariable>(this);
 
 			const FString& key = keys[i];
-			TSharedPtr<Ink::FObject> obj = Story->GetVariable(key);
-			const FString& value = obj->ToString();
+			FInkpotValue value;
+			bool bSuccess;
 
+			Story->GetValue(key, value, bSuccess );
+			if(!bSuccess)
+				continue;
+
+			TSharedPtr<Ink::FObject> obj = Story->GetVariable(key);
+
+			FString displayvalue;
+			if((*value)->HasSubtype<Ink::FInkList>())
+			{
+				FInkpotList list = UInkpotValueLibrary::InkpotValueAsList( value );
+				UInkpotListLibrary::ToString( list, displayvalue );
+				FString origin = key + TEXT(".");
+				displayvalue.ReplaceInline( *origin, TEXT("") );
+			}
+			else
+			{
+				displayvalue = obj->ToString();
+			}
+
+			bv->SetStory(Story);
 			bv->SetName(key);
-			bv->SetValue(value);
+			bv->SetDisplayValue(displayvalue);
 			bv->SetType(obj);
 			bv->SetIndex(i);
 
@@ -53,8 +76,9 @@ TArray<UBlotterVariable*> UInkpotBlotter::GetVariables(UInkpotStory* Story)
 	{
 		UBlotterVariable* bv = NewObject<UBlotterVariable>(this);
 
+		bv->SetStory(nullptr);
 		bv->SetName(TEXT("[EMPTY]"));
-		bv->SetValue(TEXT(""));
+		bv->SetDisplayValue(TEXT(""));
 		bv->SetType(EBlotterVariableType::None);
 		bv->SetIndex(0);
 
@@ -147,7 +171,7 @@ TArray<UBlotterVariable*> UInkpotBlotter::GetOrigins(UInkpotStory* Story)
 			UBlotterVariable* bv = NewObject<UBlotterVariable>(this);
 
 			bv->SetName( list->GetName() );
-			bv->SetValue( sItems );
+			bv->SetDisplayValue( sItems );
 			bv->SetType(EBlotterVariableType::ListDefinition);
 			bv->SetIndex(index++);
 
@@ -160,7 +184,7 @@ TArray<UBlotterVariable*> UInkpotBlotter::GetOrigins(UInkpotStory* Story)
 		UBlotterVariable* bv = NewObject<UBlotterVariable>(this);
 
 		bv->SetName(TEXT("[EMPTY]"));
-		bv->SetValue(TEXT(""));
+		bv->SetDisplayValue(TEXT(""));
 		bv->SetType(EBlotterVariableType::None);
 		bv->SetIndex(0);
 

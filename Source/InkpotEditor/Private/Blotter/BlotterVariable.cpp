@@ -1,7 +1,12 @@
 #include "Blotter/BlotterVariable.h"
 #include "Inkpot/Inkpot.h"
 #include "Inkpot/InkpotStory.h"
+#include "Inkpot/InkpotListLibrary.h"
 
+void UBlotterVariable::SetStory( UInkpotStory *InStory )
+{
+	Story = InStory;
+}
 
 void UBlotterVariable::SetName(const FString& InName)
 {
@@ -13,12 +18,12 @@ const FText& UBlotterVariable::GetName() const
 	return Name;
 }
 
-void UBlotterVariable::SetValue(const FString& InValue)
+void UBlotterVariable::SetDisplayValue(const FString& InValue)
 {
-	Value = FText::FromString(InValue);
+	Value = FText::FromString( InValue );
 }
 
-const FText& UBlotterVariable::GetValue() const
+const FText& UBlotterVariable::GetDisplayValue() const
 {
 	return Value;
 }
@@ -95,6 +100,38 @@ FText UBlotterVariable::GetTypeText(EBlotterVariableType InType)
 	}
 }
 
+bool UBlotterVariable::IsReadOnly() const
+{
+	switch (Type)
+	{
+	default:
+	case EBlotterVariableType::None:						
+	case EBlotterVariableType::ChoicePoint:					
+	case EBlotterVariableType::Container:					
+	case EBlotterVariableType::ControlCommand:				
+	case EBlotterVariableType::Divert:						
+	case EBlotterVariableType::Glue:						
+	case EBlotterVariableType::NativeFunctionCall:			
+	case EBlotterVariableType::Tag:							
+	case EBlotterVariableType::ValueDivertTarget:			
+	case EBlotterVariableType::ValueVariablePointer:		
+	case EBlotterVariableType::Value:						
+	case EBlotterVariableType::VariableAssignment:			
+	case EBlotterVariableType::VariableReference:			
+	case EBlotterVariableType::Void:						
+	case EBlotterVariableType::Object:						
+	case EBlotterVariableType::ListDefinition:				
+		return true;
+
+	case EBlotterVariableType::ValueBool:					
+	case EBlotterVariableType::ValueFloat:					
+	case EBlotterVariableType::ValueInt:					
+	case EBlotterVariableType::ValueList:					
+	case EBlotterVariableType::ValueString:					
+		return false;
+	}
+}
+
 int32 UBlotterVariable::GetIndex() const
 {
 	return Index;
@@ -110,6 +147,58 @@ bool UBlotterVariable::IsIndexEven() const
 	return (Index & 0x01) == 0;
 }
 
+bool UBlotterVariable::SetVariableFromString(const FString& InValue)
+{
+	if(IsReadOnly())
+		return false;
 
+	if(!IsValid(Story))
+		return false;
+
+	bool bSuccess = false;
+
+	switch (Type)
+	{
+	default:
+		break;
+
+	case EBlotterVariableType::ValueBool:
+		{
+			bool bValue = InValue.ToBool();
+			Story->SetBool( Name.ToString(), bValue, bSuccess );
+		}
+		break;
+
+	case EBlotterVariableType::ValueFloat:					
+		{
+			float value = FCString::Atof( *InValue );
+			Story->SetFloat( Name.ToString(), value, bSuccess );
+		}
+		break;
+
+	case EBlotterVariableType::ValueInt:					
+		{
+			int value = FCString::Atod( *InValue );
+			Story->SetInt( Name.ToString(), value, bSuccess );
+		}
+		break;
+
+	case EBlotterVariableType::ValueList:			
+		{
+			FInkpotList list = UInkpotListLibrary::MakeInkpotListFromString(Name.ToString(), InValue);
+			Story->SetList( Name.ToString(), list, bSuccess );
+		}
+		break;
+
+	case EBlotterVariableType::ValueString:					
+		{
+			Story->SetString( Name.ToString(), InValue, bSuccess );
+		}
+		break;
+	}
+
+	return bSuccess;
+}
+ 
 
 

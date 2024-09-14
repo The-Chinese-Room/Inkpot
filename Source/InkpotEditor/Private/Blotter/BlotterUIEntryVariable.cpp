@@ -3,8 +3,19 @@
 
 void UBlotterUIEntryVariable::NativeOnListItemObjectSet(UObject* InListItemObject)
 {
-	UBlotterVariable* var = Cast<UBlotterVariable>(InListItemObject);
-	if (!var)
+	BlotterVariable = Cast<UBlotterVariable>(InListItemObject);
+	if (!BlotterVariable)
 		return;
-	ReceiveOnVariableUpdate(var);
+	ReceiveOnVariableUpdate( BlotterVariable );
+
+}
+
+void UBlotterUIEntryVariable::SetVariableFromText(const FText& Value)
+{
+	if(!IsValid(BlotterVariable))
+		return;
+
+	bool bSuccess = BlotterVariable->SetVariableFromString( Value.ToString() );
+	if(!bSuccess)
+		ReceiveOnVariableUpdate( BlotterVariable );
 }

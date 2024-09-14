@@ -15,7 +15,13 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnVariableUpdate"))
 	void ReceiveOnVariableUpdate(const UBlotterVariable* Variable);
 
+	UFUNCTION(BlueprintCallable)
+	void SetVariableFromText( const FText& Value );
+
 	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;
+
+private:
+	UBlotterVariable* BlotterVariable;
 };
 
 
