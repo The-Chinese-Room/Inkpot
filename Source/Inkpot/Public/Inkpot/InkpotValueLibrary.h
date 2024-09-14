@@ -67,7 +67,7 @@ public:
 
 	/* Cast Inkpot value to an InkpotList */
 	UFUNCTION(BlueprintPure, Category="Inkpot|Value")
-	static INKPOT_API FInkpotList InkpotValueAsList( const FInkpotValue &Values );
+	static INKPOT_API FInkpotList InkpotValueAsList( const FInkpotValue &Value );
 
 	/* Cast Ink array value to an InkpotList */
 	UFUNCTION(BlueprintPure, Category="Inkpot|Value")

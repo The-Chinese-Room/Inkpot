@@ -24,6 +24,11 @@ void UInkpotListLibrary::PrintToLog(const FInkpotList &InList, bool bInUseOrigin
 	}
 }
 
+void UInkpotListLibrary::ToString(const FInkpotList &InList, FString &ReturnValue, bool bInUseOrigin )
+{
+	InList.ToString( ReturnValue, bInUseOrigin );
+}
+
 FInkpotList UInkpotListLibrary::MakeInkpotList(FString InDefinition, TArray<FString> InValues)
 {
 	Ink::FInkList list;

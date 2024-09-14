@@ -22,6 +22,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Inkpot|List")
 	static INKPOT_API void PrintToLog(const FInkpotList &Value, bool bUseOrigin = true );
 
+	/* prints the contents of the list to a string */
+	UFUNCTION(BlueprintPure, Category="Inkpot|List")
+	static INKPOT_API void ToString(const FInkpotList &Value, FString &ReturnValue, bool bUseOrigin = true );
+
 	/* Create an Ink List from an array of Strings */
 	UFUNCTION(BlueprintPure, Category="Inkpot|List")
 	static INKPOT_API FInkpotList MakeInkpotList(FString Definition, TArray<FString> Value);

@@ -18,6 +18,7 @@ public:
 	Ink::FInkList& GetList() const;
 
 	void ToStringArray( TArray<FString>& OutValues, bool bUseOrigin = true ) const;
+	void ToString( FString& OutValue, bool bUseOrigin = true ) const;
 
 	bool ValidateOrigin( UInkpotStory *InStory ) const;
 };

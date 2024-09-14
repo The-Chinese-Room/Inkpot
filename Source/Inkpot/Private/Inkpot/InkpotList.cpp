@@ -70,4 +70,26 @@ bool FInkpotList::ValidateOrigin( UInkpotStory *InStory ) const
 	return true;
 }
 
+void FInkpotList::ToString( FString& OutValue, bool bInUseOrigin ) const
+{
+	OutValue.Reset();
 
+	TArray<FString> items;
+	ToStringArray( items, bInUseOrigin );
+
+	FString delim(TEXT( ", "));
+
+	int len = 0;
+	for( FString &item : items )
+		len+=item.Len() + delim.Len();
+	OutValue.Reserve(len);
+
+	bool first = true;
+	for( FString &item : items )
+	{
+		if(!first)
+			OutValue.Append(delim);
+		first = false;
+		OutValue.Append(item);
+	}
+}
