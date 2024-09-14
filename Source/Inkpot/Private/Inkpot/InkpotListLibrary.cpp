@@ -48,9 +48,15 @@ FInkpotList UInkpotListLibrary::MakeInkpotList(FString InDefinition, TArray<FStr
 	return FInkpotList( MakeShared<Ink::FValueType>( list ) );
 }
 
-FInkpotList UInkpotListLibrary::MakeInkpotSingleEntryList(FString InDefinition, FString InValue)
+FInkpotList UInkpotListLibrary::MakeInkpotListFromString(FString InDefinition, FString InValue)
 {
-	return MakeInkpotList( InDefinition, { InValue } );
+	TArray<FString> items;
+	InValue.ParseIntoArray( items, TEXT( "," ), true );
+	for(FString &item : items )
+		item.TrimStartAndEndInline();
+
+	FInkpotList list = MakeInkpotList( InDefinition, items );
+	return list;
 }
 
 void UInkpotListLibrary::InkpotListAsStrings(const FInkpotList &InList, TArray<FString> &ReturnValue, bool bUseOrigin )

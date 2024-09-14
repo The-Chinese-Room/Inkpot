@@ -32,7 +32,7 @@ public:
 
 	/* Create an Ink List from a single string */
 	UFUNCTION(BlueprintPure, Category="Inkpot|List")
-	static INKPOT_API FInkpotList MakeInkpotSingleEntryList(FString Definition, FString Value);
+	static INKPOT_API FInkpotList MakeInkpotListFromString(FString Definition, FString Value);
 
 	/* Get an array of strings from an Ink List */
 	UFUNCTION(BlueprintPure, Category="Inkpot|List")
