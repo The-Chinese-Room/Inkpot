@@ -103,13 +103,21 @@ bool UInkpotStory::CreateInkValues( const TArray<FInkpotValue>& InValues, TArray
 	OutValues.Reserve( InValues.Num() );
 	for( const FInkpotValue &inValue : InValues )
 	{
-		if ( (*inValue)->HasSubtype<Ink::FInkList>() )
+		if(!inValue.IsValid())
 		{
-			FInkpotList list = UInkpotValueLibrary::InkpotValueAsList( inValue );
-			if(!list.ValidateOrigin(this))
-				return false;
+			INKPOT_ERROR("Bad value being passed to Ink");
+			return false;
 		}
-		OutValues.Emplace( *inValue );
+		else
+		{
+			if ( (*inValue)->HasSubtype<Ink::FInkList>() )
+			{
+				FInkpotList list = UInkpotValueLibrary::InkpotValueAsList( inValue );
+				if(!list.ValidateOrigin(this))
+					return false;
+			}
+			OutValues.Emplace( *inValue );
+		}
 	}
 	return true;
 }
