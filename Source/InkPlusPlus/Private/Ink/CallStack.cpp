@@ -1,4 +1,4 @@
-﻿#include "Ink/CallStack.h"
+#include "Ink/CallStack.h"
 
 #include "Utility/InkPlusPlusLog.h"
 #include "Ink/Container.h"
@@ -208,6 +208,11 @@ Ink::FPointer Ink::FThread::GetPreviousPointer() const
 
 void Ink::FThread::SetPreviousPointer(Ink::FPointer InPreviousPointer)
 {
+#ifdef TCR_DEBUG_DIVERTS
+	const FString ptrStr = InPreviousPointer.ToString();
+	UE_LOG(InkPlusPlus, Display, TEXT("PREVIOUS %p %s"), InPreviousPointer.GetContainer().Get(), *ptrStr); // Ink Pointer ->  debug
+#endif
+
 	PreviousPointer = InPreviousPointer;
 }
 
