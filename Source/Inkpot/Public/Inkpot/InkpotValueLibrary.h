@@ -17,7 +17,7 @@ public:
 	 * DefaultInkpotValue
 	 * Default value for returning from functions.
 	 * 
-	 * @return an empty inkpot value.
+	 * @returns an empty inkpot value.
 	 */
 	UFUNCTION(BlueprintPure, Category="Inkpot|Value")
 	static INKPOT_API FInkpotValue DefaultInkpotValue();
@@ -26,8 +26,8 @@ public:
 	 * MakeBoolInkpotValue
 	 * Create an Inkpot Value from a boolean.
 	 *
-	 * @param bValue, the boolean to convert.
-	 * @return a new inkpot value.
+	 * @param bValue - the boolean to convert.
+	 * @returns a new inkpot value.
 	 */
 	UFUNCTION(BlueprintPure, Category="Inkpot|Value")
 	static INKPOT_API FInkpotValue MakeBoolInkpotValue(bool bValue);
@@ -36,8 +36,8 @@ public:
 	 * InkpotValueAsBool
 	 * Cast an Inkpot value to a boolean.
 	 *
-	 * @param Value, the Inkpot value to convert.
-	 * @return a boolean.
+	 * @param Value - the Inkpot value to convert.
+	 * @returns a boolean.
 	 */
 	UFUNCTION(BlueprintPure, Category="Inkpot|Value")
 	static INKPOT_API bool InkpotValueAsBool(const FInkpotValue &Value);
@@ -46,9 +46,9 @@ public:
 	 * InkpotArrayValueAsBool
 	 * Cast an Inkpot array value to a boolean.
 	 *
-	 * @param Values, the array of Inkpot values.
-	 * @param Index, the indexed value in the array to convert.
-	 * @return a boolean.
+	 * @param Values - the array of Inkpot values.
+	 * @param Index - the indexed value in the array to convert.
+	 * @returns a boolean.
 	 */
 	UFUNCTION(BlueprintPure, Category="Inkpot|Value")
 	static INKPOT_API bool InkpotArrayValueAsBool(const TArray<FInkpotValue> &Values, int Index = 0);
@@ -58,8 +58,8 @@ public:
 	 * MakeIntInkpotValue
 	 * Create an Inkpot Value from an integer.
 	 *
-	 * @param Value, the integer to convert.
-	 * @return a new inkpot value.
+	 * @param Value - the integer to convert.
+	 * @returns a new inkpot value.
 	 */
 	UFUNCTION(BlueprintPure, Category="Inkpot|Value")
 	static INKPOT_API FInkpotValue MakeIntInkpotValue(int32 Value);
@@ -68,8 +68,8 @@ public:
 	 * InkpotValueAsInt
 	 * Cast Inkpot value to an integer.
 	 *
-	 * @param Value, the Inkpot value to convert.
-	 * @return an integer.
+	 * @param Value - the Inkpot value to convert.
+	 * @returns an integer.
 	 */
 	UFUNCTION(BlueprintPure, Category="Inkpot|Value")
 	static INKPOT_API int32 InkpotValueAsInt(const FInkpotValue &Value);
@@ -78,9 +78,9 @@ public:
 	 * InkpotArrayValueAsInt
 	 * Cast an Inkpot array value to an integer.
 	 *
-	 * @param Values, the array of Inkpot values.
-	 * @param Index, the indexed value in the array to convert.
-	 * @return an integer.
+	 * @param Values - the array of Inkpot values.
+	 * @param Index - the indexed value in the array to convert.
+	 * @returns an integer.
 	 */
 	UFUNCTION(BlueprintPure, Category="Inkpot|Value")
 	static INKPOT_API int32 InkpotArrayValueAsInt(const TArray<FInkpotValue> &Values, int Index = 0);
@@ -89,8 +89,8 @@ public:
 	 * MakeFloatInkpotValue
 	 * Create an Inkpot value from a floating point number.
 	 *
-	 * @param Value, the floating point number to convert.
-	 * @return a new inkpot value.
+	 * @param Value - the floating point number to convert.
+	 * @returns a new inkpot value.
 	 */
 	UFUNCTION(BlueprintPure, Category="Inkpot|Value")
 	static INKPOT_API FInkpotValue MakeFloatInkpotValue(float Value);
@@ -99,8 +99,8 @@ public:
 	 * InkpotValueAsFloat
 	 * Cast Inkpot value to a floating point number.
 	 *
-	 * @param Value, the Inkpot value to convert.
-	 * @return a float.
+	 * @param Value - the Inkpot value to convert.
+	 * @returns a float.
 	 */
 	UFUNCTION(BlueprintPure, Category="Inkpot|Value")
 	static INKPOT_API float InkpotValueAsFloat(const FInkpotValue &Value);
@@ -109,9 +109,9 @@ public:
 	 * InkpotArrayValueAsFloat
 	 * Cast an Inkpot array value to a floating point number.
 	 *
-	 * @param Values, the array of Inkpot values.
-	 * @param Index, the indexed value in the array to convert.
-	 * @return a float.
+	 * @param Values - the array of Inkpot values.
+	 * @param Index - the indexed value in the array to convert.
+	 * @returns a float.
 	 */
 	UFUNCTION(BlueprintPure, Category="Inkpot|Value")
 	static INKPOT_API float InkpotArrayValueAsFloat(const TArray<FInkpotValue> &Values, int Index = 0);
@@ -120,8 +120,8 @@ public:
 	 * MakeStringInkpotValue
 	 * Create an Inkpot value from a string.
 	 *
-	 * @param Value, the string to convert.
-	 * @return a new inkpot value.
+	 * @param Value - the string to convert.
+	 * @returns a new inkpot value.
 	 */
 	UFUNCTION(BlueprintPure, Category="Inkpot|Value")
 	static INKPOT_API FInkpotValue MakeStringInkpotValue(const FString &Value);
@@ -130,8 +130,8 @@ public:
 	 * InkpotValueAsString
 	 * Cast Ink value to a string.
 	 *
-	 * @param Value, the Inkpot value to convert.
-	 * @return a string.
+	 * @param Value - the Inkpot value to convert.
+	 * @returns a string.
 	 */
 	UFUNCTION(BlueprintPure, Category="Inkpot|Value")
 	static INKPOT_API FString InkpotValueAsString(const FInkpotValue &Value);
@@ -140,9 +140,9 @@ public:
 	 * InkpotArrayValueAsString
 	 * Cast an Inkpot array value to a string.
 	 *
-	 * @param Values, the array of Inkpot values.
-	 * @param Index, the indexed value in the array to convert.
-	 * @return a string.
+	 * @param Values - the array of Inkpot values.
+	 * @param Index - the indexed value in the array to convert.
+	 * @returns a string.
 	 */
 	UFUNCTION(BlueprintPure, Category="Inkpot|Value")
 	static INKPOT_API FString InkpotArrayValueAsString(const TArray<FInkpotValue> &Values, int Index = 0);
@@ -151,8 +151,8 @@ public:
 	 * InkpotValueAsList
 	 * Cast Inkpot value to an InkpotList.
 	 *
-	 * @param Value, the Inkpot value to convert.
-	 * @return an InkpotList.
+	 * @param Value - the Inkpot value to convert.
+	 * @returns an InkpotList.
 	 */
 	UFUNCTION(BlueprintPure, Category="Inkpot|Value")
 	static INKPOT_API FInkpotList InkpotValueAsList( const FInkpotValue &Value );
@@ -161,9 +161,9 @@ public:
 	 * InkpotArrayValueAsList
 	 * Cast Inkpot array value to an InkpotList.
 	 *
-	 * @param Values, the array of Inkpot values.
-	 * @param Index, the indexed value in the array to convert.
-	 * @return an InkpotList.
+	 * @param Values - the array of Inkpot values.
+	 * @param Index - the indexed value in the array to convert.
+	 * @returns an InkpotList.
 	 */
 
 	UFUNCTION(BlueprintPure, Category="Inkpot|Value")

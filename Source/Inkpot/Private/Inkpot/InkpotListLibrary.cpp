@@ -6,7 +6,7 @@ void UInkpotListLibrary::ToString(const FInkpotList &InList, FString &ReturnValu
 	InList.ToString( ReturnValue, bInUseOrigin );
 }
 
-FInkpotList UInkpotListLibrary::MakeInkpotList(FString InDefinition, TArray<FString> InValues)
+FInkpotList UInkpotListLibrary::MakeInkpotList(FString InOrigin, TArray<FString> InValues)
 {
 	Ink::FInkList list;
 	int32 count = 0;
@@ -16,7 +16,7 @@ FInkpotList UInkpotListLibrary::MakeInkpotList(FString InDefinition, TArray<FStr
 		bool bIsOriginSpecified = value.Split(TEXT("."), &originName, &itemName);
 		if (!bIsOriginSpecified)
 		{
-			originName = InDefinition;
+			originName = InOrigin;
 			itemName = value;
 		}
 		Ink::FInkListItem item( originName, itemName );
@@ -25,14 +25,14 @@ FInkpotList UInkpotListLibrary::MakeInkpotList(FString InDefinition, TArray<FStr
 	return FInkpotList( MakeShared<Ink::FValueType>( list ) );
 }
 
-FInkpotList UInkpotListLibrary::MakeInkpotListFromString(FString InDefinition, FString InValue)
+FInkpotList UInkpotListLibrary::MakeInkpotListFromString(FString InOrigin, FString InValue)
 {
 	TArray<FString> items;
 	InValue.ParseIntoArray( items, TEXT( "," ), true );
 	for(FString &item : items )
 		item.TrimStartAndEndInline();
 
-	FInkpotList list = MakeInkpotList( InDefinition, items );
+	FInkpotList list = MakeInkpotList(InOrigin, items );
 	return list;
 }
 

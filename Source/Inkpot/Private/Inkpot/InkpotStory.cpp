@@ -767,12 +767,13 @@ void UInkpotStory::UnbindExternalFunction( const FString &InFunctionName )
 	StoryInternal->UnbindExternalFunction( InFunctionName );
 }
 
-void UInkpotStory::EvaluateFunction(const FString& FunctionName, const TArray<FInkpotValue> &InValues)
+void UInkpotStory::EvaluateFunction(const FString& FunctionName, const TArray<FInkpotValue> &InValues, FInkpotValue& OutReturnValue, FString& CapturedText)
 {
 	TArray<TSharedPtr<Ink::FValueType>> values;
 	if (!CreateInkValues(InValues, values))
 		return;
-	StoryInternal->EvaluateFunction(FunctionName, values);
+	TSharedPtr<Ink::FValueType> returnValue = StoryInternal->EvaluateFunction(FunctionName, CapturedText, values);
+	OutReturnValue = returnValue;
 }
 
 FOnStoryContinue& UInkpotStory::OnContinue()
