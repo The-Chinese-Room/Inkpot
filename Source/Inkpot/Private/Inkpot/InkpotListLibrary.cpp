@@ -1,29 +1,6 @@
 #include "Inkpot/InkpotListLibrary.h"
 #include "Utility/InkpotLog.h"
 
-void UInkpotListLibrary::PrintToScreen(const FInkpotList &InList, bool bInUseOrigin )
-{
-	if (!GEngine)
-		return;
-
-	TArray<FString> items;
-	InkpotListAsStrings(InList, items, bInUseOrigin );
-	for( FString &item : items )
-	{
-		GEngine->AddOnScreenDebugMessage( -1, 15.0f, FColor::Green, item );
-	}
-}
-
-void UInkpotListLibrary::PrintToLog(const FInkpotList &InList, bool bInUseOrigin )
-{
-	TArray<FString> items;
-	InkpotListAsStrings(InList, items, bInUseOrigin );
-	for( FString &item : items )
-	{
-		INKPOT_LOG("%s", *item );
-	}
-}
-
 void UInkpotListLibrary::ToString(const FInkpotList &InList, FString &ReturnValue, bool bInUseOrigin )
 {
 	InList.ToString( ReturnValue, bInUseOrigin );

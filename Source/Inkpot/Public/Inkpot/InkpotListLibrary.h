@@ -14,14 +14,6 @@ class UInkpotListLibrary : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 public:
 
-	/* prints the contents of the list to screen for debug */
-	UFUNCTION(BlueprintCallable, Category="Inkpot|List")
-	static INKPOT_API void PrintToScreen(const FInkpotList &Value, bool bUseOrigin = true );
-
-	/* prints the contents of the list to the ouput log for debug */
-	UFUNCTION(BlueprintCallable, Category="Inkpot|List")
-	static INKPOT_API void PrintToLog(const FInkpotList &Value, bool bUseOrigin = true );
-
 	/* prints the contents of the list to a string */
 	UFUNCTION(BlueprintPure, Category="Inkpot|List")
 	static INKPOT_API void ToString(const FInkpotList &Value, FString &ReturnValue, bool bUseOrigin = true );

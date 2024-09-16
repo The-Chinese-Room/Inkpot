@@ -1180,12 +1180,10 @@ TArray<TSharedPtr<Ink::FObject>> Ink::FStoryState::PopEvaluationStack(int Number
 {
 	TArray<TSharedPtr<Ink::FObject>> popped;
 	popped.Reserve(NumberOfObjects);
-
 	for (int i = 0; i < NumberOfObjects; ++i)
 	{
 		popped.Add(EvaluationStack.Pop());
 	}
-
 	Algo::Reverse(popped);
 	return popped;
 }
