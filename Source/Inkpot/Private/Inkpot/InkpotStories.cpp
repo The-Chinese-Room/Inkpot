@@ -33,6 +33,7 @@ void UInkpotStories::InitialiseStoryFactory()
 
 void UInkpotStories::Reset()
 {
+	StoryFactory->Reset();
 	NextStoryHandle = 0;
 	Stories.Empty();
 	StoryAssets.Empty();
@@ -41,6 +42,12 @@ void UInkpotStories::Reset()
 
 UInkpotStory* UInkpotStories::BeginStory( UInkpotStoryAsset* InInkpotStoryAsset )
 {
+	if(!IsValid(InInkpotStoryAsset))
+	{
+		INKPOT_ERROR("Invalid Story Asset, could not begin story!");
+		return StoryFactory->BadStory();
+	}
+
 	int32 handle;
 	const int32 *keyptr = StoryAssets.FindKey( InInkpotStoryAsset );
 	if(keyptr)
