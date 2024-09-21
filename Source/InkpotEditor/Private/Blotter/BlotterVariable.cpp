@@ -84,19 +84,19 @@ FText UBlotterVariable::GetTypeText(EBlotterVariableType InType)
 	case EBlotterVariableType::Glue:						return FText::FromString(TEXT("Glue"));
 	case EBlotterVariableType::NativeFunctionCall:			return FText::FromString(TEXT("Native Function Call"));
 	case EBlotterVariableType::Tag:							return FText::FromString(TEXT("Tag"));
-	case EBlotterVariableType::ValueBool:					return FText::FromString(TEXT("Value Bool"));
-	case EBlotterVariableType::ValueDivertTarget:			return FText::FromString(TEXT("Value Divert Target"));
-	case EBlotterVariableType::ValueFloat:					return FText::FromString(TEXT("Value Float"));
-	case EBlotterVariableType::ValueInt:					return FText::FromString(TEXT("Value Int"));
-	case EBlotterVariableType::ValueList:					return FText::FromString(TEXT("Value List"));
-	case EBlotterVariableType::ValueString:					return FText::FromString(TEXT("Value String"));
-	case EBlotterVariableType::ValueVariablePointer:		return FText::FromString(TEXT("Value Variable Pointer"));
+	case EBlotterVariableType::ValueBool:					return FText::FromString(TEXT("Bool Value"));
+	case EBlotterVariableType::ValueDivertTarget:			return FText::FromString(TEXT("Divert Target Value"));
+	case EBlotterVariableType::ValueFloat:					return FText::FromString(TEXT("Float Value"));
+	case EBlotterVariableType::ValueInt:					return FText::FromString(TEXT("Int Value"));
+	case EBlotterVariableType::ValueList:					return FText::FromString(TEXT("List Value"));
+	case EBlotterVariableType::ValueString:					return FText::FromString(TEXT("String Value"));
+	case EBlotterVariableType::ValueVariablePointer:		return FText::FromString(TEXT("Variable Pointer Value"));
 	case EBlotterVariableType::Value:						return FText::FromString(TEXT("Value"));
 	case EBlotterVariableType::VariableAssignment:			return FText::FromString(TEXT("Variable Assignment"));
 	case EBlotterVariableType::VariableReference:			return FText::FromString(TEXT("Variable Reference"));
 	case EBlotterVariableType::Void:						return FText::FromString(TEXT("Void"));
 	case EBlotterVariableType::Object:						return FText::FromString(TEXT("Object"));
-	case EBlotterVariableType::ListDefinition:				return FText::FromString(TEXT("List Definition"));
+	case EBlotterVariableType::ListOrigin:					return FText::FromString(TEXT("List Origin"));
 	}
 }
 
@@ -120,7 +120,7 @@ bool UBlotterVariable::IsReadOnly() const
 	case EBlotterVariableType::VariableReference:			
 	case EBlotterVariableType::Void:						
 	case EBlotterVariableType::Object:						
-	case EBlotterVariableType::ListDefinition:				
+	case EBlotterVariableType::ListOrigin:				
 		return true;
 
 	case EBlotterVariableType::ValueBool:					
@@ -185,7 +185,7 @@ bool UBlotterVariable::SetVariableFromString(const FString& InValue)
 
 	case EBlotterVariableType::ValueList:			
 		{
-			FInkpotList list = UInkpotListLibrary::MakeInkpotListFromString(Name.ToString(), InValue);
+			FInkpotList list = UInkpotListLibrary::MakeInkpotList(Story, Name.ToString(), InValue);
 			Story->SetList( Name.ToString(), list, bSuccess );
 		}
 		break;

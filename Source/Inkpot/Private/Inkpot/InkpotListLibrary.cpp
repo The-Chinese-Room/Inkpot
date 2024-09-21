@@ -1,4 +1,5 @@
 #include "Inkpot/InkpotListLibrary.h"
+#include "Inkpot/InkpotStory.h"
 #include "Utility/InkpotLog.h"
 
 void UInkpotListLibrary::ToString(const FInkpotList &InList, FString &ReturnValue, bool bInUseOrigin )
@@ -6,7 +7,7 @@ void UInkpotListLibrary::ToString(const FInkpotList &InList, FString &ReturnValu
 	InList.ToString( ReturnValue, bInUseOrigin );
 }
 
-FInkpotList UInkpotListLibrary::MakeInkpotList(FString InOrigin, TArray<FString> InValues)
+FInkpotList UInkpotListLibrary::MakeInkpotListFromStringArray(UInkpotStory *InStory,FString InOrigin, TArray<FString> InValues)
 {
 	Ink::FInkList list;
 	int32 count = 0;
@@ -22,21 +23,27 @@ FInkpotList UInkpotListLibrary::MakeInkpotList(FString InOrigin, TArray<FString>
 		Ink::FInkListItem item( originName, itemName );
 		list.Add( item, ++count );
 	}
-	return FInkpotList( MakeShared<Ink::FValueType>( list ) );
+
+	FInkpotList rval( MakeShared<Ink::FValueType>( list ) );
+
+	if(InStory)
+		rval.ValidateOrigin( InStory );
+
+	return rval;
 }
 
-FInkpotList UInkpotListLibrary::MakeInkpotListFromString(FString InOrigin, FString InValue)
+FInkpotList UInkpotListLibrary::MakeInkpotList(UInkpotStory *InStory, FString InOrigin, FString InValue)
 {
 	TArray<FString> items;
 	InValue.ParseIntoArray( items, TEXT( "," ), true );
 	for(FString &item : items )
 		item.TrimStartAndEndInline();
 
-	FInkpotList list = MakeInkpotList(InOrigin, items );
+	FInkpotList list = MakeInkpotListFromStringArray(InStory, InOrigin, items );
 	return list;
 }
 
-void UInkpotListLibrary::InkpotListAsStrings(const FInkpotList &InList, TArray<FString> &ReturnValue, bool bUseOrigin )
+void UInkpotListLibrary::ToStringArray(const FInkpotList &InList, TArray<FString> &ReturnValue, bool bUseOrigin )
 {
 	InList.ToStringArray( ReturnValue, bUseOrigin );
 }
@@ -154,3 +161,56 @@ bool UInkpotListLibrary::Equals(const FInkpotList &A, const FInkpotList &B)
 
 	return rval;
 }
+
+FInkpotList UInkpotListLibrary::MinItem(const FInkpotList &A)
+{
+	Ink::FInkList &listA = A.GetList();
+
+	Ink::FInkList rval = listA.MinAsList();
+
+	return FInkpotList( MakeShared<Ink::FValueType>(rval) );
+}
+
+FInkpotList UInkpotListLibrary::MaxItem(const FInkpotList &A)
+{
+	Ink::FInkList &listA = A.GetList();
+
+	Ink::FInkList rval = listA.MaxAsList();
+
+	return FInkpotList( MakeShared<Ink::FValueType>(rval) );
+}
+
+FInkpotList UInkpotListLibrary::Inverse(const FInkpotList &A)
+{
+	Ink::FInkList &listA = A.GetList();
+
+	if(!listA.GetOrigins().IsValid())
+	{
+		INKPOT_ERROR("List has no origin set, validate against story first.");
+	}
+
+	Ink::FInkList rval = listA.Inverse();
+
+	return FInkpotList( MakeShared<Ink::FValueType>(rval) );
+}
+
+FInkpotList UInkpotListLibrary::All(const FInkpotList &A)
+{
+	Ink::FInkList &listA = A.GetList();
+
+	if(!listA.GetOrigins().IsValid())
+	{
+		INKPOT_ERROR("List has no origin set, validate against story first.");
+	}
+
+	Ink::FInkList rval = listA.All();
+
+	return FInkpotList( MakeShared<Ink::FValueType>(rval) );
+}
+
+const FInkpotList& UInkpotListLibrary::Validate(UInkpotStory *InStory, const FInkpotList &A)
+{
+	A.ValidateOrigin(InStory);
+	return A;
+}
+

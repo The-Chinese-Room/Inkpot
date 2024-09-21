@@ -30,7 +30,7 @@ enum class EBlotterVariableType : uint8
 	VariableReference,
 	Void,
 	Object,
-	ListDefinition
+	ListOrigin
 };
 
 

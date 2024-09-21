@@ -6,6 +6,8 @@
 #include "Inkpot/InkpotList.h"
 #include "InkpotListLibrary.generated.h"
 
+class UInkpotStory;
+
 UCLASS(meta=(BlueprintThreadSafe, ScriptName="InkpotListLibrary"), MinimalAPI)
 class UInkpotListLibrary : public UBlueprintFunctionLibrary
 {
@@ -16,49 +18,57 @@ public:
 	 * ToString ( Inkpot List )
 	 * prints the contents of the list to a comma delimeted string.
 	 *
-	 * @param Value - the list to print.
-	 * @param ReturnValue - the list as a comma delimeted string of item names.
-	 * @param bUseOrigin - should the item names have their origin as a dot delimeted prefix.
+	 * @param Value - The list to convert.
+	 * @param ReturnValue - The list as a comma delimeted string of item names.
+	 * @param bUseOrigin - Should the item names have their origin as a dot delimeted prefix.
 	 */
 	UFUNCTION(BlueprintPure, Category="Inkpot|List")
 	static INKPOT_API void ToString(const FInkpotList &Value, FString &ReturnValue, bool bUseOrigin = true );
 
 	/**
 	 * MakeInkpotList 
-	 * Creates an Inkpot List from the origin name and an array of item names.
-	 * If all items are dot prefixed with the origin name, origin can be left blank.
-	 * Actual origin reolution happens when the list is passed to the ink story.
-	 * 
-	 * @param Origin - the origin, this will be the name of the list in the Ink script.
-	 * @param Values - an array of strings for the item names. Item names may have a dot delimeted prefix from other origins.  
-	 * @returns A new Inkpotlist. 
-	 */
-	UFUNCTION(BlueprintPure, Category="Inkpot|List")
-	static INKPOT_API FInkpotList MakeInkpotList(FString Origin, TArray<FString> Values);
-
-	/**
-	 * MakeInkpotListFromString
 	 * Creates an Inkpot List from the origin name and a comma delimeted string of item names.
-	 * If all items are dot prefixed with the origin name, origin can be left blank.
-	 * Actual origin reolution happens when the list is passed to the ink story.
+	 * 
+	 * Notes: 
+	 * 1. If all items are dot prefixed with the origin name, origin can be left empty.
+	 * 2. Story may be left empty, if so, origin validation will happen when the list is passed to the ink story.
+	 * 3. Origin will need to be validated for 'inverse' and 'all' operations. 
 	 *
-	 * @param Origin - the origin, this will be the name of the list in the Ink script.
-	 * @param Value - commas delimeted list of item names. Item names may have a dot delimeted prefix from other origins.  
+	 * @param Story - The story in which the origin is defined, may be empty.
+	 * @param Origin - The origin, this will be the name of the list in the Ink script. May be empty if all items specify origin.
+	 * @param Value - A comma delimeted list of item names. Item names may have a dot delimeted origin name prefix from other origins.  
 	 * @returns An Inkpotlist.
 	 */
 	UFUNCTION(BlueprintPure, Category="Inkpot|List")
-	static INKPOT_API FInkpotList MakeInkpotListFromString(FString Origin, FString Value);
+	static INKPOT_API FInkpotList MakeInkpotList(UInkpotStory *Story, FString Origin, FString Value);
 
 	/**
-	 * InkpotListAsStrings
-	 * Converts an inkpot list to an array of strings.
-	 *
-	 * @param Value - list to convert.
-	 * @param ReturnValue - the list as a string array of item names.
-	 * @param bUseOrigin - should the item names have their origin as a dot delimeted prefix.
+	 * MakeInkpotListFromStringArray
+	 * Creates an Inkpot List from the origin name and an array of item names.
+	 * 
+	 * Notes: 
+	 * 1. If all items are dot prefixed with the origin name, origin can be left empty.
+	 * 2. Story may be left empty, if so, origin validation will happen when the list is passed to the ink story.
+	 * 3. Origin will need to be validated for 'inverse' and 'all' operations. 
+	 * 
+	 * @param Story - The story in which the origin is defined, may be empty.
+	 * @param Origin - The origin, this will be the name of the list in the Ink script. May be empty if all items specify origin.
+	 * @param Values - An array of strings for the item names. Item names may have a dot delimeted origin name prefix from other origins.  
+	 * @returns A new Inkpotlist. 
 	 */
 	UFUNCTION(BlueprintPure, Category="Inkpot|List")
-	static INKPOT_API void InkpotListAsStrings(const FInkpotList &Value, TArray<FString> &ReturnValue, bool bUseOrigin = true );
+	static INKPOT_API FInkpotList MakeInkpotListFromStringArray(UInkpotStory *Story, FString Origin,  TArray<FString> Values);
+
+	/**
+	 * ToStringArray ( Inkpot List )
+	 * Converts an inkpot list to an array of strings.
+	 *
+	 * @param Value - List to convert.
+	 * @param ReturnValue - The list as a string array of item names.
+	 * @param bUseOrigin - Should the item names have their origin as a dot delimeted prefix.
+	 */
+	UFUNCTION(BlueprintPure, Category="Inkpot|List")
+	static INKPOT_API void ToStringArray(const FInkpotList &Value, TArray<FString> &ReturnValue, bool bUseOrigin = true );
 
 	/**
 	 * Union
@@ -92,7 +102,7 @@ public:
 	 *
 	 * @param A - InkpotList.
 	 * @param B - InkpotList.
-	 * @returns true if there is an intersection, false otherwise.
+	 * @returns True if there is an intersection, false otherwise.
 	 */
 	UFUNCTION(BlueprintPure, meta=(DisplayName = "Has Intersection", CompactNodeTitle = "(^)"), Category="Inkpot|List")
 	static INKPOT_API bool HasIntersection(const FInkpotList &A, const FInkpotList &B);
@@ -127,7 +137,7 @@ public:
 	 * Returns true if the list contains an item matching the given name.
 	 *
 	 * @param Source - InkpotList to test.
-	 * @param ItemName - string, item name.
+	 * @param ItemName - String, item name.
 	 * @returns true if Source contains ItemName, false otherwise.
 	 */
 	UFUNCTION(BlueprintPure, meta=(DisplayName = "Contains Item", CompactNodeTitle = "?"), Category="Inkpot|List")
@@ -140,7 +150,7 @@ public:
 	 *
 	 * @param A - InkpotList.
 	 * @param B - InkpotList.
-	 * @returns true if A > B, false otherwise.
+	 * @returns True if A > B, false otherwise.
 	 */
 	UFUNCTION( BlueprintPure, meta = (DisplayName = "Greater Than", CompactNodeTitle = ">"), Category = "Inkpot|List" )
 	static INKPOT_API bool GreaterThan(const FInkpotList &A, const FInkpotList &B);
@@ -153,7 +163,7 @@ public:
 	 *
 	 * @param A - InkpotList.
 	 * @param B - InkpotList.
-	 * @returns true if A >= B, false otherwise.
+	 * @returns True if A >= B, false otherwise.
 	 */
 	UFUNCTION( BlueprintPure, meta = (DisplayName = "Greater than or equals", CompactNodeTitle = ">="), Category = "Inkpot|List" )
 	static INKPOT_API bool GreaterThanOrEquals(const FInkpotList &A, const FInkpotList &B);
@@ -165,7 +175,7 @@ public:
 	 *
 	 * @param A - InkpotList.
 	 * @param B - InkpotList.
-	 * @returns true if A < B, false otherwise.
+	 * @returns True if A < B, false otherwise.
 	 */
 	UFUNCTION(BlueprintPure, meta=(DisplayName = "Less than", CompactNodeTitle = "<"), Category="Inkpot|List")
 	static INKPOT_API bool LessThan(const FInkpotList &A, const FInkpotList &B);
@@ -178,7 +188,7 @@ public:
 	 * 
 	 * @param A - InkpotList.
 	 * @param B - InkpotList.
-	 * @returns true if A <= B, false otherwise.
+	 * @returns True if A <= B, false otherwise.
 	 */
 	UFUNCTION(BlueprintPure, meta=(DisplayName = "Less than or equals", CompactNodeTitle = "<="), Category="Inkpot|List")
 	static INKPOT_API bool LessThanOrEquals(const FInkpotList &A, const FInkpotList &B);
@@ -189,8 +199,70 @@ public:
 	 *
 	 * @param A - InkpotList.
 	 * @param B - InkpotList.
-	 * @returns true if A == B, false otherwise.
+	 * @returns True if A == B, false otherwise.
 	 */
 	UFUNCTION(BlueprintPure, meta=(DisplayName = "Equals", CompactNodeTitle = "=="), Category="Inkpot|List")
 	static INKPOT_API bool Equals(const FInkpotList &A, const FInkpotList &B);
+
+	/**
+	 * MinItem
+	 * Returns a list containing the min item from the passed in list.
+	 * Equivalent of calling ( LIST_MIN( A ) ) in ink 
+	 *
+	 * @param A - InkpotList.
+	 * @returns A new inkpot list with the min item.
+	 */
+	UFUNCTION(BlueprintPure, meta=(DisplayName = "MinItem", CompactNodeTitle = "min"), Category="Inkpot|List")
+	static INKPOT_API FInkpotList MinItem(const FInkpotList &A);
+
+	/**
+	 * MaxItem
+	 * Returns a list containing the max item from the passed in list.
+	 * Equivalent of calling ( LIST_MAX( A ) ) in ink 
+	 *
+	 * @param A - InkpotList.
+	 * @returns A new inkpot list with the max item.
+	 */
+	UFUNCTION(BlueprintPure, meta=(DisplayName = "MaxItem", CompactNodeTitle = "max"), Category="Inkpot|List")
+	static INKPOT_API FInkpotList MaxItem(const FInkpotList &A);
+
+	/**
+	 * Inverse
+	 * Returns a list containing the inverse of the list passed in with respect to the origin.
+	 * Equivalent of calling LIST_INVERT( A ) in ink 
+	 * ( List will need a validated origin )
+	 *
+	 * @param A - InkpotList.
+	 * @returns A new inkpot list that is the inverse of the passed in list.
+	 */
+	UFUNCTION(BlueprintPure, meta=(DisplayName = "Inverse", CompactNodeTitle = "~"), Category="Inkpot|List")
+	static INKPOT_API FInkpotList Inverse(const FInkpotList &A);
+
+	/**
+	 * All
+	 * Returns a list containing the all of the items as defined by the list origin.
+	 * Equivalent of calling LIST_ALL( A ) in ink 
+	 * ( List will need a validated origin )
+	 *
+	 * @param A - InkpotList.
+	 * @returns A new inkpot list that cotains all the items defined in the origin.
+	 */
+	UFUNCTION(BlueprintPure, meta=(DisplayName = "All", CompactNodeTitle = "all"), Category="Inkpot|List")
+	static INKPOT_API FInkpotList All(const FInkpotList &A);
+
+	/**
+	 * Validate
+	 * Validates the lists origin againt a story.
+	 * This makes sure that the list is valid in the context of the passed in story.
+	 * ie checks that the origin name of the list matches a list declaration in the ink story. 
+	 * 
+	 * Only required for lists that were created with no story context for certain operations (inverse, all).
+	 * List validation will happen automatically when a list value is passed to the Ink runtime story. 
+	 * Lists passed to Blueprint from Ink will not need validation. 
+	 *
+	 * @param A - InkpotList.
+	 * @returns A reference to the list passed in.
+	 */
+	UFUNCTION(BlueprintPure, meta=(DisplayName = "Validate"), Category="Inkpot|List")
+	static INKPOT_API const FInkpotList & Validate( UInkpotStory *Story, const FInkpotList &A );
 };

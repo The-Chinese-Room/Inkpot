@@ -172,7 +172,7 @@ TArray<UBlotterVariable*> UInkpotBlotter::GetOrigins(UInkpotStory* Story)
 
 			bv->SetName( list->GetName() );
 			bv->SetDisplayValue( sItems );
-			bv->SetType(EBlotterVariableType::ListDefinition);
+			bv->SetType(EBlotterVariableType::ListOrigin);
 			bv->SetIndex(index++);
 
 			origins.Add(bv);
