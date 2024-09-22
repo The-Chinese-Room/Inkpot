@@ -29,12 +29,10 @@ public:
 	 * MakeInkpotList 
 	 * Creates an Inkpot List from the origin name and a comma delimeted string of item names.
 	 * 
-	 * Notes: 
-	 * 1. If all items are dot prefixed with the origin name, origin can be left empty.
-	 * 2. Story may be left empty, if so, origin validation will happen when the list is passed to the ink story.
-	 * 3. Origin will need to be validated for 'inverse' and 'all' operations. 
+	 * Note: 
+	 * If all items are dot prefixed with the origin name, origin can be left empty.
 	 *
-	 * @param Story - The story in which the origin is defined, may be empty.
+	 * @param Story - The story in which the origin is defined.
 	 * @param Origin - The origin, this will be the name of the list in the Ink script. May be empty if all items specify origin.
 	 * @param Value - A comma delimeted list of item names. Item names may have a dot delimeted origin name prefix from other origins.  
 	 * @returns An Inkpotlist.
@@ -46,12 +44,10 @@ public:
 	 * MakeInkpotListFromStringArray
 	 * Creates an Inkpot List from the origin name and an array of item names.
 	 * 
-	 * Notes: 
-	 * 1. If all items are dot prefixed with the origin name, origin can be left empty.
-	 * 2. Story may be left empty, if so, origin validation will happen when the list is passed to the ink story.
-	 * 3. Origin will need to be validated for 'inverse' and 'all' operations. 
+	 * Note: 
+	 * If all items are dot prefixed with the origin name, origin can be left empty.
 	 * 
-	 * @param Story - The story in which the origin is defined, may be empty.
+	 * @param Story - The story in which the origin is defined.
 	 * @param Origin - The origin, this will be the name of the list in the Ink script. May be empty if all items specify origin.
 	 * @param Values - An array of strings for the item names. Item names may have a dot delimeted origin name prefix from other origins.  
 	 * @returns A new Inkpotlist. 

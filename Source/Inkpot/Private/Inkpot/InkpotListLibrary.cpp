@@ -28,6 +28,8 @@ FInkpotList UInkpotListLibrary::MakeInkpotListFromStringArray(UInkpotStory *InSt
 
 	if(InStory)
 		rval.ValidateOrigin( InStory );
+	else
+		INKPOT_WARN("No story, list is not validated");
 
 	return rval;
 }
