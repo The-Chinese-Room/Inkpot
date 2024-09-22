@@ -127,9 +127,8 @@ public:
 	UFUNCTION( BlueprintPure, meta = (DisplayName = "Contains List", CompactNodeTitle = "?"), Category = "Inkpot|List" )
 	static INKPOT_API bool ContainsList( const FInkpotList &Source, const FInkpotList &Querant );
 
-	/*  */
 	/**
-	 * ContainsList
+	 * ContainsItem
 	 * Returns true if the list contains an item matching the given name.
 	 *
 	 * @param Source - InkpotList to test.
