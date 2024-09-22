@@ -52,19 +52,22 @@ bool FInkpotList::ValidateOrigin( UInkpotStory *InStory ) const
 {
 	Ink::FInkList &list = GetList();
 
+	// create a new origins array if non exists
 	TSharedPtr<TArray<TSharedPtr<Ink::FListDefinition>> >&origins = list.GetOrigins();
 	if( !origins.IsValid() )
 		origins = MakeShared<TArray<TSharedPtr<Ink::FListDefinition>>>();
 
-	TArray<Ink::FInkListItem> listItems;
-	list.GetKeys(listItems);
-	for (Ink::FInkListItem& item : listItems)
+	for( auto &pair : list )
 	{
-		TSharedPtr<Ink::FListDefinition> origin = InStory->GetListOrigin(item.OriginName, item.ItemName);
+		Ink::FInkListItem& item = pair.Key;
+		// check the items has an origin named in the story and that the item matches too
+		TSharedPtr<Ink::FListDefinition> origin = InStory->GetListOrigin( item.OriginName, item.ItemName );
 		if (!origin.IsValid())
 			return false;
 
-		origins->AddUnique(origin);
+		// set correct value to that in the origin
+		pair.Value = origin->GetValueForItem( item );
+		origins->AddUnique( origin );
 	}
 
 	return true;
