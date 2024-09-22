@@ -1,14 +1,16 @@
 # Inkpot
-**Inkpot** - An container for **Ink** within the Unreal Engine developed by [The Chinese Room](https://www.thechineseroom.co.uk/).<br><br>
+**Inkpot** - A container for **Ink** within the Unreal Engine developed by [The Chinese Room](https://www.thechineseroom.co.uk/).<br><br>
 This is a plugin for Unreal Engine 5.4 or later.<br>
 This is version **1.10.21** of the plugin.</br>
 
 Inkpot is a wrapper for the wonderful narrative scripting language **Ink** developed by [Inkle Studios](https://www.inklestudios.com/ink/).<br>
 
-For a demo of how this integrates with an Unreal project see [the inkpot demo](https://github.com/The-Chinese-Room/InkpotDemo/).<br>
+For a demo of how this integrates with an Unreal project (& a load more documentation) see [the inkpot demo](https://github.com/The-Chinese-Room/InkpotDemo/).<br>
 
 For general support and chat with other users, check out [Inkle's discord](https://discord.com/invite/inkle#unreal-projects) <br>
 (You'll find Inkpot chat in #unreal-projects)
+
+## Changelog  
 
 ### Changes in 1.10.21
 Introducing the Blotter! or Inkpot Debugger, an Unreal editor utility widget that allows the viewing of and setting of Ink variables at runtime.<br>
