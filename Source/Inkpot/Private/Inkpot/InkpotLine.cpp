@@ -10,6 +10,7 @@ void UInkpotLine::Initialise(const FString &InString)
 	String = InString;
 	// TODO : Localisation support here
 	Text = FText::FromString(String);
+	SetDirty(true);
 }
 
 const FString& UInkpotLine::GetString() const
@@ -37,4 +38,14 @@ const TArray<FString> &UInkpotLine::GetTagsInternal() const
 {
 	UInkpotStory* story = GetStory();
 	return story->GetCurrentTags();
+}
+
+bool UInkpotLine::IsDirty()
+{
+	return bIsDirty;
+}
+
+void UInkpotLine::SetDirty(bool bInIsDirty)
+{
+	bIsDirty = bInIsDirty;
 }

@@ -1,4 +1,4 @@
-﻿
+
 #include "Ink/StoryState.h"
 #include "Utility/InkPlusPlusLog.h"
 #include "Ink/Flow.h"
@@ -337,8 +337,11 @@ Ink::FPointer Ink::FStoryState::GetCurrentPointer() const
 
 void Ink::FStoryState::SetCurrentPointer(Ink::FPointer InCurrentPointer)
 {
-	//const FString ptrStr = InCurrentPointer.ToString();
-	//UE_LOG(InkPlusPlus, Display, TEXT("%s"), *ptrStr); // Ink Pointer ->  debug
+#ifdef TCR_DEBUG_DIVERTS
+	const FString ptrStr = InCurrentPointer.ToString();
+	UE_LOG(InkPlusPlus, Display, TEXT("%p %s"), InCurrentPointer.GetContainer().Get(), *ptrStr); // Ink Pointer ->  debug
+#endif 
+
 	CallStack()->CurrentElement()->SetCurrentPointer(InCurrentPointer);
 }
 
@@ -1202,6 +1205,11 @@ Ink::FPointer Ink::FStoryState::GetDivertedPointer()
 
 void Ink::FStoryState::SetDivertedPointer(Ink::FPointer InDivertedPointer)
 {
+#ifdef TCR_DEBUG_DIVERTS
+	const FString ptrStr = InDivertedPointer.ToString();
+	UE_LOG(InkPlusPlus, Display, TEXT("DIVERT %p %s"), InDivertedPointer.GetContainer().Get(), *ptrStr); // Ink Pointer ->  debug
+#endif 
+
 	DivertedPointer = InDivertedPointer;
 }
 

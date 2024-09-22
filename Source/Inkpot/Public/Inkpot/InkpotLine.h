@@ -26,6 +26,12 @@ public:
 	UFUNCTION(BlueprintPure, Category="Inkpot|Line")
 	UInkpotStory* GetStory() const;
 
+	UFUNCTION(BlueprintPure, Category = "Inkpot|Line")
+	bool IsDirty();
+
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Line")
+	void SetDirty(bool bIsDirty );
+
 private:
 	virtual const TArray<FString> &GetTagsInternal() const;
 
@@ -36,4 +42,6 @@ private:
 	UPROPERTY(VisibleAnywhere, Category="Inkpot|Line")
 	FText Text;
 
+	UPROPERTY(VisibleAnywhere, Category = "Inkpot|Line")
+	bool bIsDirty;
 };

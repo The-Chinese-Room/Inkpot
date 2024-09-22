@@ -1,7 +1,7 @@
 {
   "FileVersion": 1,
   "Version": 1,
-  "VersionName": "1.03.21",
+  "VersionName": "1.10.21",
   "FriendlyName": "Inkpot",
   "Description": "A container for Ink in Unreal.",
   "Category": "Scripting",
@@ -15,23 +15,23 @@
   "IsBetaVersion": false,
   "IsExperimentalVersion": false,
   "Installed": false,
-  "Modules": [
-    {
-      "Name": "Inkpot",
-      "Type": "Runtime",
-      "LoadingPhase": "Default"
-    },
-    {
-      "Name": "InkPlusPlus",
-      "Type": "Runtime",
-      "LoadingPhase": "Default"
-    },
-    {
-      "Name": "InkpotEditor",
-      "Type": "Editor",
-      "LoadingPhase": "Default"
-    }
-  ],
+	"Modules": [
+		{
+			"Name": "Inkpot",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "InkPlusPlus",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "InkpotEditor",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
+		}
+	],
   "Plugins": [
   ]
 }

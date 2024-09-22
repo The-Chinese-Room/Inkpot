@@ -1,4 +1,5 @@
 #include "Test/InkFunctionTests.h"
+#include "Inkpot/InkpotValueLibrary.h"
 
 const FString UInkFunctionTests::FuncName_Message = TEXT("message");
 const FString UInkFunctionTests::FuncName_Multiply = TEXT("multiply");
@@ -7,29 +8,29 @@ const FString UInkFunctionTests::FuncName_TRUE = TEXT("TRUE");
 
 FInkpotValue UInkFunctionTests::Message(const TArray<FInkpotValue> & InValues)
 {
-	FString output = UInkpotLibrary::InkpotArrayValueAsString( InValues, 0 );
-	return UInkpotLibrary::MakeStringInkpotValue( output );
+	FString output = UInkpotValueLibrary::InkpotArrayValueAsString( InValues, 0 );
+	return UInkpotValueLibrary::MakeStringInkpotValue( output );
 }
 
 FInkpotValue UInkFunctionTests::Multiply(const TArray<FInkpotValue> & InValues)
 {
-	float A = UInkpotLibrary::InkpotArrayValueAsFloat( InValues, 0 );
-	float B = UInkpotLibrary::InkpotArrayValueAsFloat( InValues, 1 );
+	float A = UInkpotValueLibrary::InkpotArrayValueAsFloat( InValues, 0 );
+	float B = UInkpotValueLibrary::InkpotArrayValueAsFloat( InValues, 1 );
 	float C =  A * B;
-	return UInkpotLibrary::MakeFloatInkpotValue( C );
+	return UInkpotValueLibrary::MakeFloatInkpotValue( C );
 }
 
 FInkpotValue UInkFunctionTests::Times(const TArray<FInkpotValue> & InValues)
 {
-	int repeat = UInkpotLibrary::InkpotArrayValueAsInt( InValues, 0 );
-	FString msg = UInkpotLibrary::InkpotArrayValueAsString( InValues, 1 );
+	int repeat = UInkpotValueLibrary::InkpotArrayValueAsInt( InValues, 0 );
+	FString msg = UInkpotValueLibrary::InkpotArrayValueAsString( InValues, 1 );
 	FString output;
 	for( int i=0 ; i <repeat ; ++i)
 		output += msg;
-	return UInkpotLibrary::MakeStringInkpotValue( output );
+	return UInkpotValueLibrary::MakeStringInkpotValue( output );
 }
 
 FInkpotValue UInkFunctionTests::TRUE(const TArray<FInkpotValue> & InValues)
 {
-	return UInkpotLibrary::MakeBoolInkpotValue( true );
+	return UInkpotValueLibrary::MakeBoolInkpotValue( true );
 }

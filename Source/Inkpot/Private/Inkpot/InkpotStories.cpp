@@ -21,6 +21,11 @@ void UInkpotStories::InitialiseStoryFactory()
 	const UInkpotSettings *settings = GetDefault<UInkpotSettings>();
 	FSoftClassPath storyFactoryClassName = settings->StoryFactoryClass;
 	UClass* storyFactoryClass = (storyFactoryClassName.IsValid() ? LoadObject<UClass>(NULL, *storyFactoryClassName.ToString() ) : UInkpotStoryFactory::StaticClass() );
+	if (!storyFactoryClass)
+	{
+		INKPOT_ERROR("Inkpot story factory class is not set");
+		return;
+	}
 	StoryFactory = NewObject<UInkpotStoryFactoryBase>(this, storyFactoryClass);
 	StoryFactory->Initialise();
 }
@@ -28,6 +33,7 @@ void UInkpotStories::InitialiseStoryFactory()
 
 void UInkpotStories::Reset()
 {
+	StoryFactory->Reset();
 	NextStoryHandle = 0;
 	Stories.Empty();
 	StoryAssets.Empty();
@@ -36,6 +42,12 @@ void UInkpotStories::Reset()
 
 UInkpotStory* UInkpotStories::BeginStory( UInkpotStoryAsset* InInkpotStoryAsset )
 {
+	if(!IsValid(InInkpotStoryAsset))
+	{
+		INKPOT_ERROR("Invalid Story Asset, could not begin story!");
+		return StoryFactory->BadStory();
+	}
+
 	int32 handle;
 	const int32 *keyptr = StoryAssets.FindKey( InInkpotStoryAsset );
 	if(keyptr)
@@ -83,6 +95,23 @@ UInkpotStory* UInkpotStories::GetStory( int32 InStoryHandle ) const
 		return StoryFactory->BadStory();
 	}
 	return Stories[InStoryHandle];
+}
+
+UInkpotStory* UInkpotStories::GetStory( TSoftObjectPtr<UInkpotStoryAsset>  InStoryAssetPath )
+{
+	FString inStoryAssetPath = InStoryAssetPath.ToString();
+	for (auto pair : StoryAssets)
+	{
+		UInkpotStoryAsset* asset = pair.Value;
+		FString assetPath = asset->GetPathName();
+		if (inStoryAssetPath.Equals(assetPath))
+		{
+			int32 storyID = pair.Key;
+			return GetStory(storyID);
+		}
+	}
+	INKPOT_ERROR("Story '%s' is not running.", *inStoryAssetPath);
+	return StoryFactory->BadStory();
 }
 
 UInkpotStory* UInkpotStories::Reload( UInkpotStoryAsset* InInkpotStoryAsset )

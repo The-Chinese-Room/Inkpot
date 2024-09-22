@@ -56,3 +56,9 @@ TArray<TSharedPtr<Ink::FListDefinition>> Ink::FListDefinitionsOrigin::GetLists()
 	Lists.GenerateValueArray(listOfLists);
 	return listOfLists;
 }
+
+void Ink::FListDefinitionsOrigin::AddListDefinition(TSharedPtr<Ink::FListDefinition> InOrigin)
+{
+	Lists.Add( InOrigin->GetName(), InOrigin );
+}
+

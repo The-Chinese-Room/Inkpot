@@ -20,7 +20,10 @@ public:
 
 	UInkpotStory* BadStory();
 
+	void Reset();
+
 protected:
+	UPROPERTY()
 	UInkpotStory* ABadStory;
 };
 

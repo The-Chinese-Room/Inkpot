@@ -1,15 +1,26 @@
 # Inkpot
-**Inkpot** - An container for **Ink** within the Unreal Engine developed by [The Chinese Room](https://www.thechineseroom.co.uk/).<br><br>
-This is a plugin for Unreal Engine 5.3 or later.<br>
-The latest release is version **1.03.21** of the plugin.</br>
+**Inkpot** - A container for **Ink** within the Unreal Engine developed by [The Chinese Room](https://www.thechineseroom.co.uk/).<br><br>
+This is a plugin for Unreal Engine 5.4 or later.<br>
+This is version **1.10.21** of the plugin.</br>
 The head revision contains work in progress towards the upcoming release.<br>
 
 Inkpot is a wrapper for the wonderful narrative scripting language **Ink** developed by [Inkle Studios](https://www.inklestudios.com/ink/).<br>
 
-For a demo of how this integrates with an Unreal project see [the inkpot demo](https://github.com/The-Chinese-Room/InkpotDemo/).<br>
+For a demo of how this integrates with an Unreal project (& a load more documentation) see [the inkpot demo](https://github.com/The-Chinese-Room/InkpotDemo/).<br>
 
 For general support and chat with other users, check out [Inkle's discord](https://discord.com/invite/inkle#unreal-projects) <br>
 (You'll find Inkpot chat in #unreal-projects)
+
+## Changelog  
+
+### Changes in 1.10.21
+Introducing the Blotter! or Inkpot Debugger, an Unreal editor utility widget that allows the viewing of and setting of Ink variables at runtime.<br>
+Full support for Ink List creation & manipulation in blueprints.<br>
+Added documentation to the headers for most blueprint facing functions, story, values & lists.<br>
+Ink function evaluation now supported from Blueprints.<br> 
+Added variable existence checks. All setter or getter functions from story now report success, plus generic test function IsVariableDefined.<br>
+Fixed crash when calling begin story with a null asset.<br> 
+Fixed crash when calling function with empty variable declarations.<br>
 
 ### Changes in 1.03.21
 Added new abstract factory creation for stories, youclass UInkpotStory can now be subclassed on a per project basis.<br>
@@ -47,7 +58,7 @@ External functions are now implemented, along with functional tests.<br>
 Initial release.<br>
 
 ## Requirements 
-Inkpot works with version 5.3 of Unreal.<br>
+Inkpot works with version 5.4 of Unreal.<br>
 Inkpot includes a C++ port of Ink-engine-runtime version 21, which can be found in the InkPlusPlus module.<br>
 
 ### .Net framework 5.0

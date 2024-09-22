@@ -34,7 +34,6 @@ UInkpotStory* UInkpot::BeginStory( UInkpotStoryAsset* InStory )
 	UInkpotStory* story = Stories->BeginStory( InStory );
 	if(EventOnStoryBegin.IsBound())
 		EventOnStoryBegin.Broadcast( story );
-	story->PostBegin();
 	return story;
 }
 
@@ -96,3 +95,7 @@ void UInkpot::OnStartGameInstance( UGameInstance *InInstance )
 	GameInstance = InInstance;
 }
 
+UInkpotStory* UInkpot::GetStory( TSoftObjectPtr<UInkpotStoryAsset> InkpotStoryAssetPath)
+{
+	return Stories->GetStory(InkpotStoryAssetPath);
+}

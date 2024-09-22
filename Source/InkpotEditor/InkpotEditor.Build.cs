@@ -38,6 +38,12 @@ public class InkpotEditor : ModuleRules
                 "InkPlusPlus",
                 "Inkpot",
                 "Json",
+
+				"Slate",
+				"SlateCore",
+				"UMG",
+
+				"Blutility"
 			}
 		);
 		

@@ -23,15 +23,46 @@ public:
 
 	void Register();
 
+	/**
+	 * Begin a story
+	 * Many stories can run concurrently, generally there will only be one.
+	 *
+	 * @param InkpotStoryAsset - The UAsset created from importing an Ink script. 
+	 * @return The runtime story.
+	 */
 	UFUNCTION(BlueprintCallable, Category=Inkpot )
 	UInkpotStory* BeginStory( UInkpotStoryAsset* InkpotStoryAsset );
 
+	/**
+	 * Get a story
+	 * Story will need to have been started with BeginStory.
+	 *
+	 * @param InkpotStoryAsset - Soft object reference to the story asset. 
+	 * @return The runtime story.
+	 */
+	UFUNCTION(BlueprintCallable, Category = Inkpot)
+	UInkpotStory* GetStory( TSoftObjectPtr<UInkpotStoryAsset> InkpotStoryAsset );
+
+	/**
+	 * End a story
+	 * Story will need to have been started with BeginStory.
+	 *
+	 * @param InkpotStory - The runtime story to stop. 
+	 */
 	UFUNCTION(BlueprintCallable, Category=Inkpot )
 	void EndStory( UInkpotStory* InkpotStory );
 
+	/**
+	 * Delegate for story begin.
+	 * Called when BeginStory successfully starts a story.
+	 */
 	UPROPERTY(BlueprintAssignable, Category="Inkpot", meta=(DisplayName="On Story Begin") )
 	FOnStoryBegin EventOnStoryBegin; 
 
+	/**
+	 * Delegate for end.
+	 * Called when EndStory successfully stops a story.
+	 */
 	UPROPERTY(BlueprintAssignable, Category="Inkpot", meta=(DisplayName="On Story End") )
 	FOnStoryBegin EventOnStoryEnd; 
 
