@@ -16,6 +16,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSwitchFlow, UInkpotStory*, Story
 DECLARE_DYNAMIC_DELEGATE_ThreeParams(FOnInkpotVariableChange, UInkpotStory*, Story, const FString &, Variable, const FInkpotValue &, NewValue );
 DECLARE_DYNAMIC_DELEGATE_RetVal_OneParam(FInkpotValue, FInkpotExternalFunction, const TArray<FInkpotValue> & , Values );
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStoryLoadJSON, UInkpotStory*, Story );
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnLineComplete, UInkpotStory*, Story, const FString&, Context);
 
 // macro for binding functions in your derived story classes
 #define BindInkFunction( NameInk, NameCPP ) \
@@ -29,7 +30,6 @@ UCLASS(BlueprintType)
 class INKPOT_API UInkpotStory : public UObject
 {
 	GENERATED_BODY()
-
 public:
 	virtual void Initialise( TSharedPtr<FInkpotStoryInternal>  InInkpotStory );
 
@@ -472,6 +472,13 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
 	void EvaluateFunction(const FString& FunctionName, const TArray<FInkpotValue>& InValues, FInkpotValue &ReturnValue, FString &CapturedText);
+
+	/**
+	 * NotifyLineCompletetd
+	 * Invokes OnLineCompleted delegate, allows many different systems to co-ordinate when they have finished 
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
+	void NotifyLineCompletetd(const FString& Context);
 	
 	/**
 	 * ToJSON
@@ -614,6 +621,9 @@ protected:
 	UPROPERTY(BlueprintAssignable, Category="Inkpot|Story", meta=(DisplayName="OnStoryLoadJSON") )
 	FOnStoryLoadJSON EventOnStoryLoadJSON;
 
+	UPROPERTY(BlueprintAssignable, Category = "Inkpot|Story", meta = (DisplayName = "OnLineComplete"))
+	FOnLineComplete EventOnLineComplete;
+
 #if WITH_EDITORONLY_DATA 
 	UPROPERTY(BlueprintAssignable, Category = "Inkpot|Story", meta = (DisplayName = "OnDebugRefresh"))
 	FOnStoryContinue EventOnDebugRefresh;
@@ -652,4 +662,3 @@ bool UInkpotStory::GetVariable( const FString& InVariable, Ink::EValueType InTyp
 	return success;
 }
 
- 

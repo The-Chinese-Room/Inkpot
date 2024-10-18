@@ -9,7 +9,13 @@ bool UInkpotBlotter::Initialize()
 {
 	Super::Initialize();
 	BindInkpotStoryBegin();
+	FWorldDelegates::OnPIEEnded.AddUObject(this, &UInkpotBlotter::OnPIEEnd );
 	return true;
+}
+
+void UInkpotBlotter::OnPIEEnd(UGameInstance* InGameInstance)
+{
+	ReceiveOnDebugEnd();
 }
 
 void UInkpotBlotter::BindInkpotStoryBegin()

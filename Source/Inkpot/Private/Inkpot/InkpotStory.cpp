@@ -890,6 +890,12 @@ FOnStoryContinue& UInkpotStory::OnDebugRefresh()
 }
 #endif
 
+void UInkpotStory::NotifyLineCompletetd(const FString& Context)
+{
+	if (!EventOnLineComplete.IsBound())
+		return;
+	EventOnLineComplete.Broadcast(this, Context);
+}
 
 
 
