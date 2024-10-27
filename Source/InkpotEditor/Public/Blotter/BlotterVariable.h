@@ -3,11 +3,14 @@
 #include "CoreMinimal.h"
 #include "EditorUtilityWidget.h"
 #include "ink/Object.h"
+#include "Blotter/BlotterOption.h"
 #include "BlotterVariable.generated.h"
 
+class UBlotterUIEntryVariable;
 class UInkpotStory;
+struct FInkpotList;
 
-UENUM()
+UENUM(BlueprintType)
 enum class EBlotterVariableType : uint8
 {
 	None,
@@ -40,6 +43,7 @@ class INKPOTEDITOR_API UBlotterVariable : public UObject
 	GENERATED_BODY()
 public:
 	void SetStory( UInkpotStory *Story );
+	void SetDisplayWidget(UBlotterUIEntryVariable *DisplayWidget);
 
 	void SetName(const FString& Name);
 
@@ -48,15 +52,24 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Inkpot|Blotter")
 	void SetDisplayValue(const FString& Value);
+	void SetValue( UInkpotStory *Story, const FString &VariableName );
+	void SetEmpty();
 
 	UFUNCTION(BlueprintPure, Category = "Inkpot|Blotter")
 	const FText& GetDisplayValue() const;
 	bool SetVariableFromString(const FString& Value);
 
 	UFUNCTION(BlueprintPure, Category = "Inkpot|Blotter")
-	const FText& GetType() const;
+	const FText& GetTypeName() const;
+
 	void SetType( TSharedPtr<Ink::FObject> InObj );
 	void SetType( EBlotterVariableType InType );
+
+	UFUNCTION(BlueprintPure, Category = "Inkpot|Blotter")
+	EBlotterVariableType GetType() const;
+
+	UFUNCTION(BlueprintPure, Category = "Inkpot|Blotter")
+	bool IsType(EBlotterVariableType Type) const;
 
 	UFUNCTION(BlueprintPure, Category = "Inkpot|Blotter")
 	int32 GetIndex() const;
@@ -69,9 +82,21 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Inkpot|Blotter")
 	bool IsReadOnly() const;
 
+	UFUNCTION(BlueprintPure, Category = "Inkpot|Blotter")
+	void GetListOptions( TArray<UBlotterOption*> &ReturnValue, bool &bSuccess );
+	void SetListOption( UBlotterOption* Option );
+
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Blotter")
+	bool SetOptionsOpen(bool bIsOptionsOpen );
+
+	UFUNCTION(BlueprintPure, Category = "Inkpot|Blotter")
+	bool IsOptionsOpen() const;
+
 protected:
 	EBlotterVariableType GetTypeFromObject(TSharedPtr<Ink::FObject> InObj);
 	FText GetTypeText(EBlotterVariableType InType);
+	void EnableDebugRefresh( bool bInRefresh);
+	FString GetListAsDisplayString(const FInkpotList &InValue);
 
 private:
 	UPROPERTY(Transient)
@@ -91,4 +116,10 @@ private:
 
 	UPROPERTY(Transient)
 	uint32	Index;
+
+	UPROPERTY(Transient)
+	bool bOptionsOpen {false};
+
+	UPROPERTY(Transient)
+	UBlotterUIEntryVariable *DisplayWidget {nullptr};
 };

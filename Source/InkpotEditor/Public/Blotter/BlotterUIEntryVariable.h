@@ -20,7 +20,10 @@ public:
 
 	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;
 
+	void Refresh();
+
 private:
+	UPROPERTY(Transient)
 	UBlotterVariable* BlotterVariable;
 };
 

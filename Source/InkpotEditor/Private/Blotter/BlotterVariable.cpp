@@ -1,11 +1,20 @@
 #include "Blotter/BlotterVariable.h"
+#include "Blotter/InkpotBlotter.h"
+#include "Blotter/BlotterUIEntryVariable.h"
 #include "Inkpot/Inkpot.h"
 #include "Inkpot/InkpotStory.h"
+#include "Inkpot/InkpotListLibrary.h"
+#include "Inkpot/InkpotValueLibrary.h"
 #include "Inkpot/InkpotListLibrary.h"
 
 void UBlotterVariable::SetStory( UInkpotStory *InStory )
 {
 	Story = InStory;
+}
+
+void UBlotterVariable::SetDisplayWidget(UBlotterUIEntryVariable *InDisplayWidget)
+{
+	DisplayWidget = InDisplayWidget;
 }
 
 void UBlotterVariable::SetName(const FString& InName)
@@ -34,7 +43,7 @@ void UBlotterVariable::SetType(EBlotterVariableType InType)
 	TypeText = GetTypeText(Type);
 }
 
-const FText& UBlotterVariable::GetType() const
+const FText& UBlotterVariable::GetTypeName() const
 {
 	return TypeText;
 }
@@ -200,5 +209,127 @@ bool UBlotterVariable::SetVariableFromString(const FString& InValue)
 	return bSuccess;
 }
  
+ EBlotterVariableType UBlotterVariable::GetType() const
+ {
+	 return Type;
+ }
+
+bool UBlotterVariable::IsType(EBlotterVariableType InType) const
+{
+	return Type == InType;
+}
+
+void UBlotterVariable::GetListOptions( TArray<UBlotterOption*> &ReturnValue, bool &bSuccess )
+{
+	ReturnValue.Reset();
+	bSuccess = false;
+	if(!IsType(EBlotterVariableType::ValueList))
+		return;
+
+	FInkpotList list;
+	Story->GetList( Name.ToString(), list, bSuccess );
+	if(!bSuccess)
+		return;
+
+	FInkpotList possible = UInkpotListLibrary::All(list);
+
+	TArray<FString> keys;
+	possible.ToStringArray(keys, true);
+
+	ReturnValue.Reserve(keys.Num());
+	for( auto key : keys )
+	{
+		UBlotterOption *option = NewObject<UBlotterOption>(this);
+		bool bIsSet = UInkpotListLibrary::ContainsItem(list, key);
+		option->Set( key, bIsSet );
+		ReturnValue.Add( option );
+	}
+}
+
+void UBlotterVariable::SetListOption( UBlotterOption* InOption )
+{
+	if(!IsType(EBlotterVariableType::ValueList))
+		return;
+
+	bool bSuccess;
+	FInkpotList list;
+	Story->GetList( Name.ToString(), list, bSuccess );
+	if(!bSuccess)
+		return;
+
+	FInkpotList option = UInkpotListLibrary::MakeInkpotList(Story, FString(), InOption->GetText().ToString() );
+	if(InOption->IsSelected())
+		list = UInkpotListLibrary::Union(list, option);
+	else
+		list = UInkpotListLibrary::Without(list, option);
+
+	EnableDebugRefresh( false );
+	Story->SetList( Name.ToString(), list, bSuccess );
+	FString newDisplay = GetListAsDisplayString( list );
+	SetDisplayValue( newDisplay );
+	if(IsValid(DisplayWidget))
+		DisplayWidget->Refresh();
+	EnableDebugRefresh( true );
+}
+
+bool UBlotterVariable::SetOptionsOpen(bool bInIsOptionsOpen)
+{
+	bOptionsOpen = bInIsOptionsOpen;
+	return bOptionsOpen;
+}
+
+bool UBlotterVariable::IsOptionsOpen() const
+{
+	return bOptionsOpen;
+}
+
+void UBlotterVariable::EnableDebugRefresh( bool bInRefresh)
+{
+	UInkpotBlotter *blotter = Cast<UInkpotBlotter>( GetOuter() );
+	if(!blotter)
+		return;
+	blotter->EnableDebugRefresh( bInRefresh );
+}
+
+FString UBlotterVariable::GetListAsDisplayString(const FInkpotList &InList)
+{
+	FString rval;
+	UInkpotListLibrary::ToString( InList, rval );
+	FString origin = Name.ToString() + TEXT(".");
+	rval.ReplaceInline( *origin, TEXT("") );
+	return rval;
+}
+
+void UBlotterVariable::SetValue( UInkpotStory *InStory, const FString &InVariableName )
+{
+	FInkpotValue value;
+	bool bSuccess;
+
+	InStory->GetValue(InVariableName, value, bSuccess );
+	if(!bSuccess)
+		return;
+
+	TSharedPtr<Ink::FObject> obj = InStory->GetVariable( InVariableName );
+	SetType(obj);
+	SetStory(InStory);
+	SetName(InVariableName);
+
+	FString displayvalue;
+	if(IsType(EBlotterVariableType::ValueList))
+		displayvalue = GetListAsDisplayString( UInkpotValueLibrary::InkpotValueAsList( value ) );
+	else
+		displayvalue = obj->ToString();
+
+	SetDisplayValue(displayvalue);
+}
+
+void UBlotterVariable::SetEmpty()
+{
+	SetStory(nullptr);
+	SetName(TEXT("[EMPTY]"));
+	SetDisplayValue(TEXT(""));
+	SetType(EBlotterVariableType::None);
+	SetIndex(0);
+}
 
 
