@@ -32,14 +32,7 @@ void UInkpotBlotter::OnStoryBegin(UInkpotStory *InStory)
 
 void UInkpotBlotter::OnDebugRefresh(UInkpotStory* InStory)
 {
-	if( !bDoOnDebugRefresh )
-		return;
 	ReceiveOnDebugRefresh(InStory);
-}
-
-void UInkpotBlotter::EnableDebugRefresh(bool bInDoOnDebugRefresh)
-{
-	bDoOnDebugRefresh = bInDoOnDebugRefresh;
 }
 
 TArray<UBlotterVariable*> UInkpotBlotter::GetVariables(UInkpotStory* Story)
