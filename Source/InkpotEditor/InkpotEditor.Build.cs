@@ -42,8 +42,8 @@ public class InkpotEditor : ModuleRules
 				"Slate",
 				"SlateCore",
 				"UMG",
-
-				"Blutility"
+                "UMGEditor",
+                "Blutility"
 			}
 		);
 		
