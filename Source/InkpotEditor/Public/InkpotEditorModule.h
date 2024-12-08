@@ -16,6 +16,16 @@ public:
 
 private:
 	void InitAssetCategory();
+	void InitMenuOptions();
+
+	UFUNCTION()
+	void AddMenu( FMenuBarBuilder& MenuBuilder );
+
+	UFUNCTION()
+	void FillMenu( FMenuBuilder& MenuBuilder );
+
+	UFUNCTION()
+	static void OpenBlotter();
 
 private:
 	EAssetTypeCategories::Type InkpotAssetCategory;

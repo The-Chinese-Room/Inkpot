@@ -13,14 +13,18 @@ class INKPOTEDITOR_API UBlotterUIEntryVariable : public UEditorUtilityWidget, pu
 
 public:
 	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnVariableUpdate"))
-	void ReceiveOnVariableUpdate(const UBlotterVariable* Variable);
+	void ReceiveOnVariableUpdate();
 
 	UFUNCTION(BlueprintCallable)
 	void SetVariableFromText( const FText& Value );
 
 	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;
 
-private:
+	UFUNCTION(BlueprintCallable)
+	void Refresh();
+
+protected:
+	UPROPERTY(Transient, BluePrintReadOnly )
 	UBlotterVariable* BlotterVariable;
 };
 

@@ -41,8 +41,12 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Inkpot|Blotter", meta = (DisplayName = "OnDebugRefresh"))
 	void ReceiveOnDebugRefresh(UInkpotStory* Story);
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "Inkpot|Blotter", meta = (DisplayName = "OnDebugEnd"))
+	void ReceiveOnDebugEnd();
+
 protected:
 	TArray<UBlotterString*> MakeDisplayStrings( const TArray<FString> &InStrings );
+	void OnPIEEnd(UGameInstance* InGameInstance);
 
 protected:
 	void BindInkpotStoryBegin();

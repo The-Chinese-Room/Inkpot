@@ -4,18 +4,25 @@
 void UBlotterUIEntryVariable::NativeOnListItemObjectSet(UObject* InListItemObject)
 {
 	BlotterVariable = Cast<UBlotterVariable>(InListItemObject);
-	if (!BlotterVariable)
+	if(!IsValid(BlotterVariable))
 		return;
-	ReceiveOnVariableUpdate( BlotterVariable );
-
+	BlotterVariable->SetDisplayWidget( this );
+	ReceiveOnVariableUpdate();
 }
 
 void UBlotterUIEntryVariable::SetVariableFromText(const FText& Value)
 {
 	if(!IsValid(BlotterVariable))
 		return;
-
 	bool bSuccess = BlotterVariable->SetVariableFromString( Value.ToString() );
 	if(!bSuccess)
-		ReceiveOnVariableUpdate( BlotterVariable );
+		ReceiveOnVariableUpdate();
+}
+
+void UBlotterUIEntryVariable::Refresh()
+{
+	if(!IsValid(BlotterVariable))
+		return;
+	BlotterVariable->Refresh();
+	ReceiveOnVariableUpdate();
 }

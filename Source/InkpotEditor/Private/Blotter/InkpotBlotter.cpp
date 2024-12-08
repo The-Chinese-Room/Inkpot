@@ -9,7 +9,13 @@ bool UInkpotBlotter::Initialize()
 {
 	Super::Initialize();
 	BindInkpotStoryBegin();
+	FWorldDelegates::OnPIEEnded.AddUObject(this, &UInkpotBlotter::OnPIEEnd );
 	return true;
+}
+
+void UInkpotBlotter::OnPIEEnd(UGameInstance* InGameInstance)
+{
+	ReceiveOnDebugEnd();
 }
 
 void UInkpotBlotter::BindInkpotStoryBegin()
@@ -39,49 +45,16 @@ TArray<UBlotterVariable*> UInkpotBlotter::GetVariables(UInkpotStory* Story)
 		for (int32 i = 0; i < num; ++i)
 		{
 			UBlotterVariable* bv = NewObject<UBlotterVariable>(this);
-
 			const FString& key = keys[i];
-			FInkpotValue value;
-			bool bSuccess;
-
-			Story->GetValue(key, value, bSuccess );
-			if(!bSuccess)
-				continue;
-
-			TSharedPtr<Ink::FObject> obj = Story->GetVariable(key);
-
-			FString displayvalue;
-			if((*value)->HasSubtype<Ink::FInkList>())
-			{
-				FInkpotList list = UInkpotValueLibrary::InkpotValueAsList( value );
-				UInkpotListLibrary::ToString( list, displayvalue );
-				FString origin = key + TEXT(".");
-				displayvalue.ReplaceInline( *origin, TEXT("") );
-			}
-			else
-			{
-				displayvalue = obj->ToString();
-			}
-
-			bv->SetStory(Story);
-			bv->SetName(key);
-			bv->SetDisplayValue(displayvalue);
-			bv->SetType(obj);
+			bv->SetValue( Story, key );
 			bv->SetIndex(i);
-
 			variables.Add(  bv );
 		}
 	}
 	else
 	{
 		UBlotterVariable* bv = NewObject<UBlotterVariable>(this);
-
-		bv->SetStory(nullptr);
-		bv->SetName(TEXT("[EMPTY]"));
-		bv->SetDisplayValue(TEXT(""));
-		bv->SetType(EBlotterVariableType::None);
-		bv->SetIndex(0);
-
+		bv->SetEmpty();
 		variables.Add(bv);
 	}
 	return variables; 
@@ -95,14 +68,14 @@ TArray<UBlotterString*> UInkpotBlotter::MakeDisplayStrings(const TArray<FString>
 		for (auto& string : InStrings)
 		{
 			UBlotterString* displayString = NewObject<UBlotterString>(this);
-			displayString->Set(string);
+			displayString->SetText(string);
 			displayStrings.Add(displayString);
 		}
 	}
 	else
 	{
 		UBlotterString* displayString = NewObject<UBlotterString>(this);
-		displayString->Set(TEXT("[EMPTY]"));
+		displayString->SetText(TEXT("[EMPTY]"));
 		displayStrings.Add(displayString);
 	}
 	return displayStrings;
@@ -182,12 +155,7 @@ TArray<UBlotterVariable*> UInkpotBlotter::GetOrigins(UInkpotStory* Story)
 	if(index == 0)
 	{
 		UBlotterVariable* bv = NewObject<UBlotterVariable>(this);
-
-		bv->SetName(TEXT("[EMPTY]"));
-		bv->SetDisplayValue(TEXT(""));
-		bv->SetType(EBlotterVariableType::None);
-		bv->SetIndex(0);
-
+		bv->SetEmpty();
 		origins.Add(bv);
 	}
 
