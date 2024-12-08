@@ -68,14 +68,14 @@ TArray<UBlotterString*> UInkpotBlotter::MakeDisplayStrings(const TArray<FString>
 		for (auto& string : InStrings)
 		{
 			UBlotterString* displayString = NewObject<UBlotterString>(this);
-			displayString->Set(string);
+			displayString->SetText(string);
 			displayStrings.Add(displayString);
 		}
 	}
 	else
 	{
 		UBlotterString* displayString = NewObject<UBlotterString>(this);
-		displayString->Set(TEXT("[EMPTY]"));
+		displayString->SetText(TEXT("[EMPTY]"));
 		displayStrings.Add(displayString);
 	}
 	return displayStrings;
