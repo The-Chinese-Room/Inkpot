@@ -78,6 +78,12 @@ void UInkpotStory::ChoosePathString( const FString &InPath, const TArray<FInkpot
 	ChoosePathStringInternal( InPath, InValues );
 }
 
+int UInkpotStory::VisitCountAtPathString( const FString &Path )
+{
+	int count = StoryInternal->GetStoryState()->VisitCountAtPathString(Path);
+	return count;
+}
+
 TSharedPtr<Ink::FListDefinition> UInkpotStory::GetListOrigin(const FString& InOriginName, const FString& InItemName)
 {
 	TSharedPtr<Ink::FListDefinitionsOrigin> definitions = StoryInternal->GetListDefinitions();

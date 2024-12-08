@@ -238,6 +238,15 @@ public:
 	void ChoosePathString( const FString &Path, const TArray<FInkpotValue> &Values );
 
 	/**
+	 * VisitCountAtPathString
+	 * Returns the number of times the content at the given path has bee visited 
+	 *
+	 * @returns Visit Count.
+	 */
+	UFUNCTION(BlueprintPure, Category="Inkpot|Story")
+	int VisitCountAtPathString( const FString &Path );
+
+	/**
 	 * SetValue
 	 * Sets the value of a variable in the story.
 	 *
