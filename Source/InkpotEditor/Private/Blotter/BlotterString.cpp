@@ -1,7 +1,7 @@
 #include "Blotter/BlotterString.h"
 
 
-void UBlotterString::Set(const FString& InText)
+void UBlotterString::SetText(const FString& InText)
 {
 	Text = FText::FromString( InText ); 
 }

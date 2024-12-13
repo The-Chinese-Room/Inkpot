@@ -32,14 +32,7 @@ void UInkpotBlotter::OnStoryBegin(UInkpotStory *InStory)
 
 void UInkpotBlotter::OnDebugRefresh(UInkpotStory* InStory)
 {
-	if( !bDoOnDebugRefresh )
-		return;
 	ReceiveOnDebugRefresh(InStory);
-}
-
-void UInkpotBlotter::EnableDebugRefresh(bool bInDoOnDebugRefresh)
-{
-	bDoOnDebugRefresh = bInDoOnDebugRefresh;
 }
 
 TArray<UBlotterVariable*> UInkpotBlotter::GetVariables(UInkpotStory* Story)
@@ -75,14 +68,14 @@ TArray<UBlotterString*> UInkpotBlotter::MakeDisplayStrings(const TArray<FString>
 		for (auto& string : InStrings)
 		{
 			UBlotterString* displayString = NewObject<UBlotterString>(this);
-			displayString->Set(string);
+			displayString->SetText(string);
 			displayStrings.Add(displayString);
 		}
 	}
 	else
 	{
 		UBlotterString* displayString = NewObject<UBlotterString>(this);
-		displayString->Set(TEXT("[EMPTY]"));
+		displayString->SetText(TEXT("[EMPTY]"));
 		displayStrings.Add(displayString);
 	}
 	return displayStrings;

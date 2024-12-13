@@ -92,10 +92,11 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Inkpot|Blotter")
 	bool IsOptionsOpen() const;
 
+	void Refresh();
+
 protected:
 	EBlotterVariableType GetTypeFromObject(TSharedPtr<Ink::FObject> InObj);
 	FText GetTypeText(EBlotterVariableType InType);
-	void EnableDebugRefresh( bool bInRefresh);
 	FString GetListAsDisplayString(const FInkpotList &InValue);
 
 private:

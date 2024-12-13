@@ -1,7 +1,7 @@
 # Inkpot
 **Inkpot** - A container for **Ink** within the Unreal Engine developed by [The Chinese Room](https://www.thechineseroom.co.uk/).<br><br>
 This is a plugin for Unreal Engine 5.4 or later.<br>
-This is version **1.10.21** of the plugin.</br>
+This is version **1.11.21** of the plugin.</br>
 The head revision contains work in progress towards the upcoming release.<br>
 
 Inkpot is a wrapper for the wonderful narrative scripting language **Ink** developed by [Inkle Studios](https://www.inklestudios.com/ink/).<br>
@@ -13,6 +13,16 @@ For general support and chat with other users, check out [Inkle's discord](https
 
 ## Changelog  
 
+### Changes in 1.11.21
+Added tools menu section for inkpot, for easier launching of the blotter.<br>
+Blotter QoL, list value update in blotter now more streamlined, items now have check box entries.<br>
+Exposed VisitCountAtPathString to Inkpot Story.<br>
+Added library functions to test the type of an Inkpot value.<br>
+Added delegate to allow notify when a line has finished being displayed.<br>
+Fixed bad plugin declarations, no more dependency warnings.<br>
+Refined blotter update, list values are now updated rather than being replaced for each update.<br>
+Set is now SetText on blotter strings.<br>
+
 ### Changes in 1.10.21
 Introducing the Blotter! or Inkpot Debugger, an Unreal editor utility widget that allows the viewing of and setting of Ink variables at runtime.<br>
 Full support for Ink List creation & manipulation in blueprints.<br>
@@ -23,7 +33,7 @@ Fixed crash when calling begin story with a null asset.<br>
 Fixed crash when calling function with empty variable declarations.<br>
 
 ### Changes in 1.03.21
-Added new abstract factory creation for stories, youclass UInkpotStory can now be subclassed on a per project basis.<br>
+Added new abstract factory creation for stories, class UInkpotStory can now be subclassed on a per project basis.<br>
 Switched settings back to regular UDeveloperSettings as backed by CVAR version did not seem to work.<br>
 Fixed for 5.4 compilation error, template instantiation context error in InkPlusPlusTest.cpp(738).<br>
 Fixed compiler warnings in 5.4.<br>
