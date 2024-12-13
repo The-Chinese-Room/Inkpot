@@ -16,7 +16,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSwitchFlow, UInkpotStory*, Story
 DECLARE_DYNAMIC_DELEGATE_ThreeParams(FOnInkpotVariableChange, UInkpotStory*, Story, const FString &, Variable, const FInkpotValue &, NewValue );
 DECLARE_DYNAMIC_DELEGATE_RetVal_OneParam(FInkpotValue, FInkpotExternalFunction, const TArray<FInkpotValue> & , Values );
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStoryLoadJSON, UInkpotStory*, Story );
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnLineComplete, UInkpotStory*, Story, const FString&, Context);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams( FOnLineComplete, UInkpotStory*, Story, const FString&, Context, bool, bSuccess );
 
 // macro for binding functions in your derived story classes
 #define BindInkFunction( NameInk, NameCPP ) \
@@ -478,7 +478,7 @@ public:
 	 * Invokes OnLineCompleted delegate, allows many different systems to co-ordinate when they have finished 
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
-	void NotifyLineCompletetd(const FString& Context);
+	void NotifyLineCompletetd(const FString& Context, bool bSuccess);
 	
 	/**
 	 * ToJSON
