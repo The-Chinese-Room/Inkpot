@@ -35,18 +35,28 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Inkpot|Blotter")
 	TArray<UBlotterVariable*> GetVariables(UInkpotStory* Story);
 
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Blotter")
+	void FilterVariables( const TArray<UBlotterVariable*> &Variables, const FString &Filter, TArray<UBlotterVariable*> &ReturnValue );
+
 	UFUNCTION(BlueprintPure, Category = "Inkpot|Blotter")
 	TArray<UBlotterVariable*> GetOrigins(UInkpotStory* Story);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Inkpot|Blotter", meta = (DisplayName = "OnDebugRefresh"))
-	void ReceiveOnDebugRefresh(UInkpotStory* Story);
+	void ReceiveOnDebugRefresh(UInkpotStory* Story, bool bBuild );
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Inkpot|Blotter", meta = (DisplayName = "OnDebugEnd"))
 	void ReceiveOnDebugEnd();
 
+	void Refresh(UInkpotStory* InStory);
+
 protected:
 	TArray<UBlotterString*> MakeDisplayStrings( const TArray<FString> &InStrings );
-	void OnPIEEnd(UGameInstance* InGameInstance);
+
+	UFUNCTION()
+	void OnPIEStart(bool bStandard);
+
+	UFUNCTION()
+	void OnPIEEnd(bool bStandard);
 
 protected:
 	void BindInkpotStoryBegin();

@@ -55,7 +55,17 @@ bool FInkpotList::ValidateOrigin( UInkpotStory *InStory ) const
 	// create a new origins array if non exists
 	TSharedPtr<TArray<TSharedPtr<Ink::FListDefinition>> >&origins = list.GetOrigins();
 	if( !origins.IsValid() )
+	{
 		origins = MakeShared<TArray<TSharedPtr<Ink::FListDefinition>>>();
+		TSharedPtr<TArray<FString>> names = list.GetOriginNames();
+		for( const FString &name : *names )
+		{
+			TSharedPtr<Ink::FListDefinition> origin = InStory->GetListOrigin( name, FString() );
+			if ( !origin.IsValid() )
+				return false;
+			origins->AddUnique( origin );
+		}
+	}
 
 	for( auto &pair : list )
 	{
