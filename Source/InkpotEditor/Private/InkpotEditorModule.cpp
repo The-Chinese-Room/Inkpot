@@ -62,36 +62,57 @@ void FInkpotEditorModule::AddMenu(FMenuBarBuilder& MenuBuilder)
 
 void FInkpotEditorModule::FillMenu(FMenuBuilder& MenuBuilder) 
 {
-	FUIAction Action( FExecuteAction::CreateStatic(&FInkpotEditorModule::OpenBlotter) );
-
 	MenuBuilder.BeginSection(FName(TEXT("Inkpot")), LOCTEXT("InkpotLocMenuKey", "Inkpot") );
 
+	;
 	MenuBuilder.AddMenuEntry(
 		LOCTEXT( "InkpotLocBlotterKey", "Blotter" ),
 		LOCTEXT( "InkpotLocBlotterTip", "Opens the blotter for debugging the current story." ),
 		FSlateIcon(),
-		Action
+		FUIAction( FExecuteAction::CreateStatic(&FInkpotEditorModule::OpenBlotter) )
 	);
+
+	;
+	MenuBuilder.AddMenuEntry(
+		LOCTEXT( "InkpotLocOutlinerKey", "Outliner" ),
+		LOCTEXT( "InkpotLocOutlinerTip", "Opens the outliner for current story overview." ),
+		FSlateIcon(),
+		FUIAction( FExecuteAction::CreateStatic(&FInkpotEditorModule::OpenOutliner) )
+	);
+
 }
 
-void FInkpotEditorModule::OpenBlotter()
+void FInkpotEditorModule::OpenEditorUtilityWidget( const FSoftObjectPath &InWidgetPath )
 {
-	const FSoftObjectPath widgetAssetPath(TEXT("/Inkpot/Inkpot/InkpotDebug.InkpotDebug"));
-	UObject* widgetAssetLoaded = widgetAssetPath.TryLoad();
+	UObject* widgetAssetLoaded = InWidgetPath.TryLoad();
 	if (widgetAssetLoaded == nullptr) 
 	{
-		INKPOT_WARN("Missing Expected widget class, cannot open blotter.");
+		INKPOT_WARN("Missing Expected widget class, cannot open EditorUtilityWidget.");
 		return;
 	}
 	UEditorUtilityWidgetBlueprint* widget = Cast<UEditorUtilityWidgetBlueprint>(widgetAssetLoaded);
 	if (widget == nullptr) 
 	{
-		INKPOT_WARN("Blotter widget is not an UEditorUtilityWidgetBlueprint, cannot open blotter.");
+		INKPOT_WARN("Widget is not an UEditorUtilityWidgetBlueprint, cannot open EditorUtilityWidget.");
 		return;
 	}
 	UEditorUtilitySubsystem* EditorUtilitySubsystem = GEditor->GetEditorSubsystem<UEditorUtilitySubsystem>();
 	EditorUtilitySubsystem->SpawnAndRegisterTab(widget);
 }
+
+
+void FInkpotEditorModule::OpenBlotter()
+{
+	FSoftObjectPath path( TEXT("/Inkpot/Inkpot/InkpotDebug.InkpotDebug") ); 
+	OpenEditorUtilityWidget( path );
+}
+
+void FInkpotEditorModule::OpenOutliner()
+{
+	FSoftObjectPath path( TEXT("/Inkpot/Inkpot/InkpotOutliner.InkpotOutliner") ); 
+	OpenEditorUtilityWidget( path );
+}
+
 
 IMPLEMENT_MODULE(FInkpotEditorModule, InkpotEditor)
 #undef LOCTEXT_NAMESPACE

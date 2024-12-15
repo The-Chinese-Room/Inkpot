@@ -201,10 +201,10 @@ void UInkpotBlotter::FilterVariables( const TArray<UBlotterVariable*> &InVariabl
 		ReturnValue.Add( variable );
 	}
 
+	ReturnValue.Sort();
+
 	for( int32 i=0 ; i<ReturnValue.Num() ; ++i )
 		ReturnValue[i]->SetIndex( i );
-
-	ReturnValue.Sort();
 }
 
 
