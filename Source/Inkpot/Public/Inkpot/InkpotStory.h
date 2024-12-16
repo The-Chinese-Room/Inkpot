@@ -16,7 +16,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSwitchFlow, UInkpotStory*, Story
 DECLARE_DYNAMIC_DELEGATE_ThreeParams(FOnInkpotVariableChange, UInkpotStory*, Story, const FString &, Variable, const FInkpotValue &, NewValue );
 DECLARE_DYNAMIC_DELEGATE_RetVal_OneParam(FInkpotValue, FInkpotExternalFunction, const TArray<FInkpotValue> & , Values );
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStoryLoadJSON, UInkpotStory*, Story );
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnLineComplete, UInkpotStory*, Story, const FString&, Context);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams( FOnLineComplete, UInkpotStory*, Story, const FName&, Context, bool, bSuccess );
 
 // macro for binding functions in your derived story classes
 #define BindInkFunction( NameInk, NameCPP ) \
@@ -474,11 +474,29 @@ public:
 	void EvaluateFunction(const FString& FunctionName, const TArray<FInkpotValue>& InValues, FInkpotValue &ReturnValue, FString &CapturedText);
 
 	/**
-	 * NotifyLineCompletetd
-	 * Invokes OnLineCompleted delegate, allows many different systems to co-ordinate when they have finished 
+	 * NotifyLineRenderBegin
+	 * Marks the rendering of a line as having started for the given context
+	 * context could be subtitles, audio, animation etc
+	 * Continue & canContinue will be ignored if and 'line render' context is in flight
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
-	void NotifyLineCompletetd(const FString& Context);
+	void NotifyLineRenderBegin(FName Context);
+
+	/**
+	 * NotifyLineRenderEnd
+	 * Invokes OnLineCompleted delegate, allows many different systems to co-ordinate when they have finished rendering the line
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
+	void NotifyLineRenderEnd(FName Context, bool bSuccess);
+
+
+	/**
+	 * IsLineRendering
+	 * returns whether the line is still rendering wrt to NotifyLineRenderBegin, NotifyLineRenderEnd calls 
+	 */
+	UFUNCTION(BlueprintPure, Category = "Inkpot|Story")
+	bool IsLineRendering() const;
+
 	
 	/**
 	 * ToJSON
@@ -635,6 +653,9 @@ private:
 
 	UPROPERTY(Transient)
 	bool bIsInFunctionEvaluation{ false };
+
+	UPROPERTY(Transient)
+	TSet<FName> LineRenderContextsInFlight;
 };
 
 
