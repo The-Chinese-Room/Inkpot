@@ -899,12 +899,26 @@ FOnStoryContinue& UInkpotStory::OnDebugRefresh()
 }
 #endif
 
-void UInkpotStory::NotifyLineCompletetd(const FString& InContext, bool bInSuccess )
+void UInkpotStory::NotifyLineRenderBegin(FName InContext)
 {
-	if (!EventOnLineComplete.IsBound())
-		return;
-	EventOnLineComplete.Broadcast(this, InContext, bInSuccess);
+	LineRenderContextsInFlight.Add( InContext );
 }
 
+void UInkpotStory::NotifyLineRenderEnd(FName InContext, bool bInSuccess)
+{
+	if (!LineRenderContextsInFlight.Contains(InContext))
+	{
+		INKPOT_ERROR("Could not find context for end of line render. '%s'", *InContext.ToString() );
+		return;
+	}
 
+	LineRenderContextsInFlight.Remove(InContext);
 
+	if (EventOnLineComplete.IsBound())
+		EventOnLineComplete.Broadcast(this, InContext, bInSuccess);
+}
+
+bool UInkpotStory::IsLineRendering() const
+{
+	return LineRenderContextsInFlight.Num() > 0;
+}
