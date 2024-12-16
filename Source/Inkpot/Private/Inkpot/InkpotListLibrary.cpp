@@ -10,6 +10,8 @@ void UInkpotListLibrary::ToString(const FInkpotList &InList, FString &ReturnValu
 FInkpotList UInkpotListLibrary::MakeInkpotListFromStringArray(UInkpotStory *InStory,FString InOrigin, TArray<FString> InValues)
 {
 	Ink::FInkList list;
+	list.SetInitialOriginName(InOrigin);
+
 	int32 count = 0;
 	for( const FString &value : InValues )
 	{
@@ -40,7 +42,6 @@ FInkpotList UInkpotListLibrary::MakeInkpotList(UInkpotStory *InStory, FString In
 	InValue.ParseIntoArray( items, TEXT( "," ), true );
 	for(FString &item : items )
 		item.TrimStartAndEndInline();
-
 	FInkpotList list = MakeInkpotListFromStringArray(InStory, InOrigin, items );
 	return list;
 }

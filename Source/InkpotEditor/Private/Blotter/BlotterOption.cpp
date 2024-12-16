@@ -3,7 +3,7 @@
 
 void UBlotterOption::Set(const FString& Name, bool bInIsSelected )
 {
-	Super::Set(Name);
+	Super::SetText(Name);
 	bIsSelected = bInIsSelected;
 }
 
