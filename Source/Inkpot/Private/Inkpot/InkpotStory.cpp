@@ -78,6 +78,12 @@ void UInkpotStory::ChoosePathString( const FString &InPath, const TArray<FInkpot
 	ChoosePathStringInternal( InPath, InValues );
 }
 
+int UInkpotStory::VisitCountAtPathString( const FString &Path )
+{
+	int count = StoryInternal->GetStoryState()->VisitCountAtPathString(Path);
+	return count;
+}
+
 TSharedPtr<Ink::FListDefinition> UInkpotStory::GetListOrigin(const FString& InOriginName, const FString& InItemName)
 {
 	TSharedPtr<Ink::FListDefinitionsOrigin> definitions = StoryInternal->GetListDefinitions();
@@ -89,11 +95,14 @@ TSharedPtr<Ink::FListDefinition> UInkpotStory::GetListOrigin(const FString& InOr
 		return nullptr;
 	}
 
-	bool gotItem = origin->ContainsItemWithName(InItemName);
-	if (!gotItem)
+	if(InItemName.Len())
 	{
-		INKPOT_ERROR("Failed to find entry '%s' in List definition '%s'", *InItemName, *InOriginName);
-		return nullptr;
+		bool gotItem = origin->ContainsItemWithName(InItemName);
+		if (!gotItem)
+		{
+			INKPOT_ERROR("Failed to find entry '%s' in List definition '%s'", *InItemName, *InOriginName);
+			return nullptr;
+		}
 	}
 	return origin;
 }
