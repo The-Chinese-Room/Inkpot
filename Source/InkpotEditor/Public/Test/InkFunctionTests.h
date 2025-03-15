@@ -24,7 +24,7 @@ public:
 	static const FString FuncName_Times;
 
 	UFUNCTION()
-	FInkpotValue TRUE(const TArray<FInkpotValue> & InValues);
-	static const FString FuncName_TRUE;
+	FInkpotValue BoolTrue(const TArray<FInkpotValue>& InValues);
+	static const FString FuncName_BoolTrue;
 };
 

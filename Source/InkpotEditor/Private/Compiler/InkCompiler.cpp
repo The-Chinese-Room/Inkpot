@@ -118,7 +118,7 @@ namespace InkCompiler
 	void ParseInklecateOutput(const FString& InklecateOutput, TArray<FString>& Errors, TArray<FString>& Warnings, bool& bCompileSuccess, bool& bExportSuccess)
 	{
 		FString toParse = TEXT("[") + InklecateOutput + TEXT("]");
-		toParse = toParse.Replace(_T("}"), _T("},"));
+		toParse = toParse.Replace(TEXT("}"), TEXT("},"));
 
 		TSharedRef< TJsonReader<> > Reader = TJsonReaderFactory<>::Create(toParse);
 
