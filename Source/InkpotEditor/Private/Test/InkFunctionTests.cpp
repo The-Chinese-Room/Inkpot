@@ -4,7 +4,7 @@
 const FString UInkFunctionTests::FuncName_Message = TEXT("message");
 const FString UInkFunctionTests::FuncName_Multiply = TEXT("multiply");
 const FString UInkFunctionTests::FuncName_Times = TEXT("times");
-const FString UInkFunctionTests::FuncName_TRUE = TEXT("TRUE");
+const FString UInkFunctionTests::FuncName_BoolTrue = TEXT("TRUE");
 
 FInkpotValue UInkFunctionTests::Message(const TArray<FInkpotValue> & InValues)
 {
@@ -30,7 +30,7 @@ FInkpotValue UInkFunctionTests::Times(const TArray<FInkpotValue> & InValues)
 	return UInkpotValueLibrary::MakeStringInkpotValue( output );
 }
 
-FInkpotValue UInkFunctionTests::TRUE(const TArray<FInkpotValue> & InValues)
+FInkpotValue UInkFunctionTests::BoolTrue(const TArray<FInkpotValue>& InValues)
 {
 	return UInkpotValueLibrary::MakeBoolInkpotValue( true );
 }
