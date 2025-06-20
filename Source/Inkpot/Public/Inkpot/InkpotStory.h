@@ -52,7 +52,7 @@ public:
 	FString ContinueMaximally();
 
 	/**
-	 * ContinueMaximallyAtMath
+	 * ContinueMaximallyAtPath
 	 * Executes story script until choice or no more content, from a specified point in the story.
 	 *
 	 * @param Path - The knot and\or the stitch to start the story at, 
