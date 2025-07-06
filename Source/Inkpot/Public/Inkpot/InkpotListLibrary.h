@@ -4,9 +4,12 @@
 #include "UObject/ObjectMacros.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Inkpot/InkpotList.h"
+#include "GameplayTags.h"
 #include "InkpotListLibrary.generated.h"
 
 class UInkpotStory;
+
+#define INKORIGIN_GAMEPLAYTAG_PREFIX TEXT("InkOrigin.")
 
 UCLASS(meta=(BlueprintThreadSafe, ScriptName="InkpotListLibrary"), MinimalAPI)
 class UInkpotListLibrary : public UBlueprintFunctionLibrary
@@ -54,6 +57,48 @@ public:
 	 */
 	UFUNCTION(BlueprintPure, Category="Inkpot|List")
 	static INKPOT_API FInkpotList MakeInkpotListFromStringArray(UInkpotStory *Story, FString Origin,  TArray<FString> Values);
+
+	/**
+	 * MakeInkpotListFromGameplayTag
+	 * Creates an Inkpot List from a gameplay tag.
+	 * 
+	 * @param Story - The story in which the origin is defined.
+	 * @param Tag - A single gameplay tag, tags need to be generated and added to the project.  
+	 * @returns A new Inkpotlist. 
+	 */
+	UFUNCTION(BlueprintPure, Category="Inkpot|List", meta=(Categories = "InkOrigin"))
+	static INKPOT_API FInkpotList MakeInkpotListFromGameplayTag(UInkpotStory *Story, FGameplayTag Tag);
+
+	/**
+	 * ToGameplayTag
+	 * Creates a gameplay tag from an inkpot list.
+	 * 
+	 * @param Value - The list to convert.
+	 * @param ReturnValue - A single gameplay tag, tags need to be generated and added to the project.  
+	 */
+	UFUNCTION(BlueprintPure, Category="Inkpot|List")
+	static INKPOT_API void ToGameplayTag(const FInkpotList &Value, FGameplayTag &ReturnValue);
+
+	/**
+	 * MakeInkpotListFromGameplayTags
+	 * Creates an Inkpot List from a gameplay tag collection.
+	 * 
+	 * @param Story - The story in which the origin is defined.
+	 * @param Tags - A gameplay tag container, tags need to be generated and added to the project.  
+	 * @returns A new Inkpotlist. 
+	 */
+	UFUNCTION(BlueprintPure, Category="Inkpot|List", meta=(Categories = "InkOrigin"))
+	static INKPOT_API FInkpotList MakeInkpotListFromGameplayTags(UInkpotStory *Story, FGameplayTagContainer Tags);
+
+	/**
+	 * ToGameplayTag
+	 * Creates a gameplay tag from an inkpot list.
+	 * 
+	 * @param Value - The list to convert.
+	 * @param ReturnValue - A gameplay tag container, tags need to be generated and added to the project.  
+	 */
+	UFUNCTION(BlueprintPure, Category="Inkpot|List")
+	static INKPOT_API void ToGameplayTags(const FInkpotList &Value, FGameplayTagContainer &ReturnValue);
 
 	/**
 	 * ToStringArray ( Inkpot List )
@@ -137,6 +182,17 @@ public:
 	 */
 	UFUNCTION(BlueprintPure, meta=(DisplayName = "Contains Item", CompactNodeTitle = "?"), Category="Inkpot|List")
 	static INKPOT_API bool ContainsItem(const FInkpotList &Source, const FString &ItemName);
+
+	/**
+	 * ContainsTag
+	 * Returns true if the list contains an item matching the given Gameplay Tag.
+	 *
+	 * @param Source - InkpotList to test.
+	 * @param Tag - GammeplayTag, item name.
+	 * @returns true if Source contains Tag, false otherwise.
+	 */
+	UFUNCTION(BlueprintPure, meta=(DisplayName = "Contains Tag", CompactNodeTitle = "?", Categories = "InkOrigin"), Category="Inkpot|List")
+	static INKPOT_API bool ContainsTag(const FInkpotList &Source, FGameplayTag Tag);
 
 	/**
 	 * GreaterThan

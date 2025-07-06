@@ -8,6 +8,7 @@
 #include "EditorUtilityWidgetBlueprint.h"
 #include "EditorUtilitySubsystem.h"
 #include "Interfaces/IPluginManager.h"
+#include "GameplayTags/InkpotTagMenu.h"
 
 #define LOCTEXT_NAMESPACE "FInkEditorModule"
 
@@ -15,10 +16,12 @@ void FInkpotEditorModule::StartupModule()
 {
 	InitAssetCategory();
 	InitMenuOptions();
+	UInkpotTagMenu::RegisterMenuExtensions(this);
 }
 
 void FInkpotEditorModule::ShutdownModule()
 {
+	UInkpotTagMenu::UnregisterMenuExtensions(this);
 }
 
 void FInkpotEditorModule::InitAssetCategory()

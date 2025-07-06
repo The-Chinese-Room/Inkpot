@@ -5,7 +5,6 @@
 #include "Inkpot/InkpotStory.h"
 #include "Inkpot/InkpotListLibrary.h"
 #include "Inkpot/InkpotValueLibrary.h"
-#include "Inkpot/InkpotListLibrary.h"
 
 void UBlotterVariable::SetStory( UInkpotStory *InStory )
 {

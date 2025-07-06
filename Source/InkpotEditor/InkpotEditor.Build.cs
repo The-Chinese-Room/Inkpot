@@ -43,9 +43,12 @@ public class InkpotEditor : ModuleRules
 				"SlateCore",
 				"UMG",
                 "UMGEditor",
-                "Blutility"
-			}
-		);
+                "Blutility",
+                "ContentBrowser",
+                "ToolMenus",
+                "GameplayTags"
+            }
+        );
 		
 		DynamicallyLoadedModuleNames.AddRange(
 			new string[]
