@@ -483,6 +483,19 @@ public:
 	void EvaluateFunction(const FString& FunctionName, const TArray<FInkpotValue>& InValues, FInkpotValue &ReturnValue, FString &CapturedText);
 
 	/**
+	 * EvalFunction
+	 * Evaluates a function defined in Ink script from Blueprint or C++.
+	 * Identical to EvaluateFunction, but with no InValues
+	 *
+	 * @param FunctionName - Name of the function to call in the script.
+	 * @param ReturnValue - The to return from the function.
+	 * @param CapturedText - Any text that the function may generated in the normal ink output way
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
+	void EvalFunction(const FString& FunctionName, FInkpotValue& ReturnValue, FString& CapturedText);
+
+
+	/**
 	 * NotifyLineRenderBegin
 	 * Marks the rendering of a line as having started for the given context
 	 * context could be subtitles, audio, animation etc

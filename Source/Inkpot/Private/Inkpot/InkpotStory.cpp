@@ -785,6 +785,12 @@ void UInkpotStory::EvaluateFunction(const FString& FunctionName, const TArray<FI
 	OutReturnValue = returnValue;
 }
 
+void UInkpotStory::EvalFunction(const FString& FunctionName, FInkpotValue& OutReturnValue, FString& CapturedText)
+{
+	TArray<TSharedPtr<Ink::FValueType>> values;
+	TSharedPtr<Ink::FValueType> returnValue = StoryInternal->EvaluateFunction(FunctionName, CapturedText, values);
+	OutReturnValue = returnValue;
+}
 FOnStoryContinue& UInkpotStory::OnContinue()
 {
 	return EventOnContinue;
