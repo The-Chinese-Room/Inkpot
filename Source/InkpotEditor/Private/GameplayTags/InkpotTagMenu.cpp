@@ -6,7 +6,6 @@
 #include "AssetRegistry/AssetRegistryModule.h"
 
 #include "Asset/InkpotStoryAsset.h"
-#include "GameplayTags/InkpotTagTable.h"
 #include "Inkpot/Inkpot.h"
 #include "Inkpot/InkpotStory.h"
 #include "Inkpot/InkpotValueLibrary.h"
@@ -82,7 +81,7 @@ void UInkpotTagMenu::CreateOrUpdateInkpotTagAssetFromMenu(UToolMenu* Menu, TArra
 	}
 }
 
-bool UInkpotTagMenu::CopyTagsFromStoryToTable( UInkpotStoryAsset *InStoryAsset, UInkpotTagTable *TagTable)
+bool UInkpotTagMenu::CopyTagsFromStoryToTable( UInkpotStoryAsset *InStoryAsset, UDataTable *TagTable)
 {
 	UInkpot *inkpot = GEngine->GetEngineSubsystem<UInkpot>();
 	UInkpotStory *story = inkpot->BeginStory(InStoryAsset);
@@ -156,7 +155,7 @@ UPackage* UInkpotTagMenu::CreateTagTableAsset(const FAssetData &InAssetData)
 
 	if ( !Asset )
 	{
-		UClass* AssetClass = UInkpotTagTable::StaticClass();
+		UClass* AssetClass = UDataTable::StaticClass();
 		const EObjectFlags Flags = RF_Public | RF_Standalone | RF_Transactional;
 		Asset = NewObject<UObject>(Package, AssetClass, FName(*AssetName), Flags);
 	}
@@ -167,7 +166,7 @@ UPackage* UInkpotTagMenu::CreateTagTableAsset(const FAssetData &InAssetData)
 			FAssetRegistryModule::AssetCreated(Asset);
 
 		UInkpotStoryAsset* storyAsset = Cast<UInkpotStoryAsset>( InAssetData.GetAsset() );
-		UInkpotTagTable* tableAsset = Cast<UInkpotTagTable>(Asset);
+		UDataTable* tableAsset = Cast<UDataTable>(Asset);
 		const bool bSuccess = CopyTagsFromStoryToTable( storyAsset, tableAsset );
 
 		if ( PreviousAsset )
@@ -183,25 +182,14 @@ UPackage* UInkpotTagMenu::CreateTagTableAsset(const FAssetData &InAssetData)
 		}
 	}
 
-	// Save the file
-	//if ( Package && Parameters.bSaveOnExportEnded )
-	//{
-	//FEditorFileUtils::PromptForCheckoutAndSave({ Package }, /*bCheckDirty=*/false, true);
-	//}
-
+	Package->MarkPackageDirty();
 	return Package;
 }
 
 void UInkpotTagMenu::CreateTagTableAssets(const TArray<FAssetData> &InSourceAssets )
 {
-	TArray<UPackage*> PackagesToSave;
 	for( const FAssetData &assetData : InSourceAssets )
-	{
 		UPackage* package = CreateTagTableAsset( assetData );
-		PackagesToSave.Add(package);
-	}
-
-	FEditorFileUtils::PromptForCheckoutAndSave(PackagesToSave, false, true);
 }
 
 #undef LOCTEXT_NAMESPACE
