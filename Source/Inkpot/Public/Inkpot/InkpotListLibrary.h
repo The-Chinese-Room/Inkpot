@@ -9,7 +9,9 @@
 
 class UInkpotStory;
 
-#define INKORIGIN_GAMEPLAYTAG_PREFIX TEXT("InkOrigin.")
+#define INK_ORIGIN_GAMEPLAYTAG_PREFIX TEXT("Ink.Origin.")
+#define INK_PATH_GAMEPLAYTAG_PREFIX TEXT("Ink.Path.")
+#define INK_VARIABLE_GAMEPLAYTAG_PREFIX TEXT("Ink.Variable.")
 
 UCLASS(meta=(BlueprintThreadSafe, ScriptName="InkpotListLibrary"), MinimalAPI)
 class UInkpotListLibrary : public UBlueprintFunctionLibrary
@@ -66,7 +68,7 @@ public:
 	 * @param Tag - A single gameplay tag, tags need to be generated and added to the project.  
 	 * @returns A new Inkpotlist. 
 	 */
-	UFUNCTION(BlueprintPure, Category="Inkpot|List", meta=(Categories = "InkOrigin"))
+	UFUNCTION(BlueprintPure, Category="Inkpot|List", meta=(Categories = "Ink.Origin"))
 	static INKPOT_API FInkpotList MakeInkpotListFromGameplayTag(UInkpotStory *Story, FGameplayTag Tag);
 
 	/**
@@ -87,7 +89,7 @@ public:
 	 * @param Tags - A gameplay tag container, tags need to be generated and added to the project.  
 	 * @returns A new Inkpotlist. 
 	 */
-	UFUNCTION(BlueprintPure, Category="Inkpot|List", meta=(Categories = "InkOrigin"))
+	UFUNCTION(BlueprintPure, Category="Inkpot|List", meta=(Categories = "Ink.Origin"))
 	static INKPOT_API FInkpotList MakeInkpotListFromGameplayTags(UInkpotStory *Story, FGameplayTagContainer Tags);
 
 	/**
@@ -191,7 +193,7 @@ public:
 	 * @param Tag - GammeplayTag, item name.
 	 * @returns true if Source contains Tag, false otherwise.
 	 */
-	UFUNCTION(BlueprintPure, meta=(DisplayName = "Contains Tag", CompactNodeTitle = "?", Categories = "InkOrigin"), Category="Inkpot|List")
+	UFUNCTION(BlueprintPure, meta=(DisplayName = "Contains Tag", CompactNodeTitle = "?", Categories = "Ink.Origin"), Category="Inkpot|List")
 	static INKPOT_API bool ContainsTag(const FInkpotList &Source, FGameplayTag Tag);
 
 	/**

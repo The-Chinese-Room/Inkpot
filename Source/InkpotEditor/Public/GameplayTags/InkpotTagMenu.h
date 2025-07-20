@@ -3,9 +3,6 @@
 #include "Coreminimal.h"
 #include "InkpotTagMenu.generated.h"
 
-class UInkpotStoryAsset;
-class UDataTable;
-
 UCLASS()
 class UInkpotTagMenu : public UObject 
 {
@@ -19,6 +16,5 @@ public:
 
 private:
 	static void CreateTagTableAssets(const TArray<FAssetData>& SourceAssets);
-	static bool CopyTagsFromStoryToTable(UInkpotStoryAsset* StoryAsset, UDataTable* TagTable);
 	static UPackage* CreateTagTableAsset(const FAssetData& AssetData);
 };

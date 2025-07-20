@@ -54,7 +54,7 @@ void UInkpotListLibrary::ToStringArray(const FInkpotList &InList, TArray<FString
 FInkpotList UInkpotListLibrary::MakeInkpotListFromGameplayTag(UInkpotStory *InStory, FGameplayTag InTag)
 {
 	FString value = InTag.ToString();
-	value.RemoveFromStart(INKORIGIN_GAMEPLAYTAG_PREFIX);
+	value.RemoveFromStart(INK_ORIGIN_GAMEPLAYTAG_PREFIX);
 	return MakeInkpotList(InStory, FString(), value);
 }
 
@@ -63,7 +63,7 @@ void UInkpotListLibrary::ToGameplayTag(const FInkpotList &Value, FGameplayTag &R
 	Ink::FInkList &list = Value.GetList();
 	for( auto &pair : list )
 	{
-		FString sTag = FString::Printf(TEXT("%s%s"),INKORIGIN_GAMEPLAYTAG_PREFIX, *pair.Key.GetFullName() );
+		FString sTag = FString::Printf(TEXT("%s%s"),INK_ORIGIN_GAMEPLAYTAG_PREFIX, *pair.Key.GetFullName() );
 		ReturnValue = FGameplayTag::RequestGameplayTag(FName(sTag));
 		break;
 	}
@@ -78,7 +78,7 @@ FInkpotList UInkpotListLibrary::MakeInkpotListFromGameplayTags(UInkpotStory *InS
 	for(const FGameplayTag& tag : tags )
 	{
 		FString sTag = tag.ToString();
-		sTag.RemoveFromStart(INKORIGIN_GAMEPLAYTAG_PREFIX);
+		sTag.RemoveFromStart(INK_ORIGIN_GAMEPLAYTAG_PREFIX);
 		sTags.Add( sTag );
 	}
 
@@ -90,7 +90,7 @@ void UInkpotListLibrary::ToGameplayTags(const FInkpotList &Value, FGameplayTagCo
 	Ink::FInkList &list = Value.GetList();
 	for( auto &pair : list )
 	{
-		FString sTag = FString::Printf(TEXT("%s%s"),INKORIGIN_GAMEPLAYTAG_PREFIX, *pair.Key.GetFullName() );
+		FString sTag = FString::Printf(TEXT("%s%s"),INK_ORIGIN_GAMEPLAYTAG_PREFIX, *pair.Key.GetFullName() );
 		FGameplayTag tag = FGameplayTag::RequestGameplayTag(FName(sTag));
 		ReturnValue.AddTag( tag );
 	}
@@ -163,7 +163,7 @@ bool UInkpotListLibrary::ContainsItem(const FInkpotList &Source, const FString &
 bool UInkpotListLibrary::ContainsTag(const FInkpotList &Source, FGameplayTag InTag)
 {
 	FString sTag = InTag.ToString();
-	sTag.RemoveFromStart(INKORIGIN_GAMEPLAYTAG_PREFIX);
+	sTag.RemoveFromStart(INK_ORIGIN_GAMEPLAYTAG_PREFIX);
 	return ContainsItem(Source, sTag);
 }
 

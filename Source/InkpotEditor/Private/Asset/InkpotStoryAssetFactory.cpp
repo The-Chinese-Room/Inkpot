@@ -4,8 +4,10 @@
 #include "Compiler/InkCompiler.h"
 #include "Logging/MessageLog.h"
 #include "EditorFramework/AssetImportData.h"
+#include "GameplayTags/InkpotTagUtility.h"
 #include "Inkpot/Inkpot.h"
 #include "Inkpot/InkpotStory.h"
+#include "Settings/InkpotPreferences.h"
 
 #define LOCTEXT_NAMESPACE "InkpotStoryAssetFactory"
 
@@ -37,7 +39,7 @@ UObject* UInkpotStoryAssetFactory::FactoryCreateFile( UClass* InClass, UObject* 
 		newObject->SetSource( inkStory );
 		newObject->SetCompiledJSON( inkJSON );
 		newObject->UpdateAssetInfo(InFullFilePath);
-
+		GenerateTAGs( InParent, newObject );
 		//DumpStrings(newObject);
 	}
 
@@ -47,6 +49,22 @@ UObject* UInkpotStoryAssetFactory::FactoryCreateFile( UClass* InClass, UObject* 
 	GEditor->GetEditorSubsystem<UImportSubsystem>()->BroadcastAssetPostImport( this, newObject );
 
 	return newObject;
+}
+
+void UInkpotStoryAssetFactory::GenerateTAGs( UObject* InParent, UInkpotStoryAsset *InStoryAsset ) const
+{
+	const UInkpotPreferences *settings = GetDefault<UInkpotPreferences>();
+	if (!settings->bAutogenerateGameplayTags)
+		return;
+
+	UPackage *package = Cast<UPackage>(InParent);
+	if (!package)
+		return;
+
+	FString name = FPaths::GetCleanFilename(package->GetName() );
+	FString path = FPaths::GetPath( package->GetPathName() );
+
+	UInkpotTagUtility::CreateTagTableAsset(name, path, InStoryAsset);
 }
 
 void UInkpotStoryAssetFactory::DumpStrings(UInkpotStoryAsset* InStoryAsset) const
