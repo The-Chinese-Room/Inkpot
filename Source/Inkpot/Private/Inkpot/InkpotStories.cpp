@@ -1,5 +1,6 @@
 #include "Inkpot/InkpotStories.h"
 #include "Inkpot/InkpotStoryInternal.h"
+#include "Inkpot/InkpotStoryFactory.h"
 #include "Settings/InkpotSettings.h"
 #include "Asset/InkpotStoryAsset.h"
 #include "Ink/Choice.h"
