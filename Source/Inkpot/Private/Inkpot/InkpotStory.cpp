@@ -443,7 +443,7 @@ void UInkpotStory::OnMakeChoiceInternal(TSharedPtr<Ink::FChoice> InChoice)
 	if(!EventOnContinue.IsBound())
 		return;
 	int32 key = InChoice->GetIndex();
-	UInkpotChoice ** choicePtr = Choices.FindByPredicate( [key]( UInkpotChoice *pChoice ) { return *pChoice == key; } );
+	TObjectPtr<UInkpotChoice>* choicePtr = Choices.FindByPredicate([key](TObjectPtr<UInkpotChoice> pChoice) { return *pChoice == key; });
 	if(!choicePtr)
 		return;
 	DumpDebug( *choicePtr );

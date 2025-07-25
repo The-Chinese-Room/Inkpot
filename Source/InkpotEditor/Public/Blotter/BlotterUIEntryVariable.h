@@ -25,7 +25,7 @@ public:
 
 protected:
 	UPROPERTY(Transient, BluePrintReadOnly )
-	UBlotterVariable* BlotterVariable;
+	TObjectPtr<UBlotterVariable> BlotterVariable;
 };
 
 

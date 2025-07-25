@@ -101,7 +101,7 @@ protected:
 
 private:
 	UPROPERTY(Transient)
-	UInkpotStory* Story;
+	TObjectPtr<UInkpotStory> Story;
 
 	UPROPERTY(Transient)
 	FText	Name;
@@ -122,5 +122,5 @@ private:
 	bool bOptionsOpen {false};
 
 	UPROPERTY(Transient)
-	UBlotterUIEntryVariable *DisplayWidget {nullptr};
+	TObjectPtr<UBlotterUIEntryVariable> DisplayWidget {nullptr};
 };
