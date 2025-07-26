@@ -910,7 +910,7 @@ protected:
 
 private:
 	UPROPERTY(Transient)
-	TArray<UInkpotChoice*> Choices;
+	TArray<TObjectPtr<UInkpotChoice>> Choices;
 
 	UPROPERTY(Transient)
 	bool bIsInFunctionEvaluation{ false };
