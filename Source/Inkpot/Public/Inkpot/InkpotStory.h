@@ -16,7 +16,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSwitchFlow, UInkpotStory*, Story
 DECLARE_DYNAMIC_DELEGATE_ThreeParams(FOnInkpotVariableChange, UInkpotStory*, Story, const FString &, Variable, const FInkpotValue &, NewValue );
 DECLARE_DYNAMIC_DELEGATE_RetVal_OneParam(FInkpotValue, FInkpotExternalFunction, const TArray<FInkpotValue> & , Values );
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStoryLoadJSON, UInkpotStory*, Story );
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnLineComplete, UInkpotStory*, Story, const FString&, Context);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams( FOnLineComplete, UInkpotStory*, Story, const FName&, Context, bool, bSuccess );
 
 // macro for binding functions in your derived story classes
 #define BindInkFunction( NameInk, NameCPP ) \
@@ -52,7 +52,7 @@ public:
 	FString ContinueMaximally();
 
 	/**
-	 * ContinueMaximallyAtMath
+	 * ContinueMaximallyAtPath
 	 * Executes story script until choice or no more content, from a specified point in the story.
 	 *
 	 * @param Path - The knot and\or the stitch to start the story at, 
@@ -60,6 +60,17 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
 	FString ContinueMaximallyAtPath(const FString &Path );
+
+	/**
+	 * ContinueMaximallyAtPathGT
+	 * ( GameplayTag version of ContinueMaximallyAtPath ) 
+	 * Executes story script until choice or no more content, from a specified point in the story.
+	 *
+	 * @param Path - The knot and\or the stitch to start the story at, 
+	 * @returns The collated lines of text up to the point of termination.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story", meta = (Categories  = "Ink.Path"))
+	FString ContinueMaximallyAtPathGT(FGameplayTag Path );
 
 	/**
 	 * CanContinue
@@ -219,6 +230,17 @@ public:
 	TArray<FString> TagsForContentAtPath( const FString &Path );
 
 	/**
+	 * TagsForContentAtPathGT
+	 * ( GameplayTag version of TagsForContentAtPath ) 
+	 * Gets a tags that are set at the top of the knot and\or stitch passed in.
+	 *
+	 * @param Path - Knot and\or stitch of where to look for the tags.
+	 * @returns Array of tags.
+	 */
+	UFUNCTION(BlueprintCallable, Category="Inkpot|Story", meta = (Categories  = "Ink.Path"))
+	TArray<FString> TagsForContentAtPathGT( FGameplayTag Path );
+
+	/**
 	 * ChoosePath
 	 * Choose a new point of execution for the current flow.
 	 *
@@ -226,6 +248,16 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
 	void ChoosePath( const FString &Path );
+	
+	/**
+	 * ChoosePathGT
+	 * ( GameplayTag version of ChoosePath ) 
+	 * Choose a new point of execution for the current flow.
+	 *
+	 * @param Path - Knot and\or stitch of where to start.
+	 */
+	UFUNCTION(BlueprintCallable, Category="Inkpot|Story", meta = (Categories  = "Ink.Path"))
+	void ChoosePathGT( FGameplayTag Path );
 
 	/**
 	 * ChoosePathString
@@ -238,6 +270,17 @@ public:
 	void ChoosePathString( const FString &Path, const TArray<FInkpotValue> &Values );
 
 	/**
+	 * ChoosePathStringGT
+	 * ( GameplayTag version of ChoosePathString ) 
+	 * Choose a new point of execution for the current flow. Passing paramters to the story.
+	 *
+	 * @param Path - Knot and\or stitch of where to start.
+	 * @param Values - Array of values to pass to the knot\stitch.
+	 */
+	UFUNCTION(BlueprintCallable, Category="Inkpot|Story", meta = (Categories  = "Ink.Path"))
+	void ChoosePathStringGT( FGameplayTag Path, const TArray<FInkpotValue> &Values );
+	
+	/**
 	 * VisitCountAtPathString
 	 * Returns the number of times the content at the given path has bee visited 
 	 *
@@ -247,15 +290,36 @@ public:
 	int VisitCountAtPathString( const FString &Path );
 
 	/**
+	 * VisitCountAtPathStringGT
+	 * ( GameplayTag version of VisitCountAtPathString ) 
+	 * Returns the number of times the content at the given path has bee visited 
+	 *
+	 * @returns Visit Count.
+	 */
+	UFUNCTION(BlueprintPure, Category="Inkpot|Story", meta = (Categories  = "Ink.Path"))
+	int VisitCountAtPathStringGT( FGameplayTag Path );
+
+	/**
 	 * SetValue
 	 * Sets the value of a variable in the story.
 	 *
 	 * @param Variable - Name of the variable to set.
 	 * @param Value - The value to set the variable to.
-	 * @param bSuccess - Returns if the operation was a succes. False typically means the variable does not exist.
+	 * @param bSuccess - Returns if the operation was a success. False typically means the variable does not exist.
 	 */
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
 	void SetValue(const FString &Variable, const FInkpotValue Value, bool &Success );
+
+	/**
+	 * SetValueGT
+	 * ( GameplayTag version of SetValue ) 
+	 * Sets the value of a variable in the story.
+	 *
+	 * @param Variable - Name of the variable to set.
+	 * @param Value - The value to set the variable to.
+	 */
+	UFUNCTION(BlueprintCallable, Category="Inkpot|Story", meta = (Categories  = "Ink.Variable"))
+	void SetValueGT(FGameplayTag Variable, const FInkpotValue Value );
 
 	/**
 	 * GetValue
@@ -269,6 +333,17 @@ public:
 	void GetValue(const FString &Variable, FInkpotValue &ReturnValue, bool &bSuccess );
 
 	/**
+	 * GetValueGT
+	 * ( GameplayTag version of GetValue ) 
+	 * Gets the value of a variable in the story.
+	 *
+	 * @param Variable - Name of the variable to get.
+	 * @param ReturnValue - The value of the variable.
+	 */
+	UFUNCTION(BlueprintCallable, Category="Inkpot|Story", meta = (Categories  = "Ink.Variable"))
+	void GetValueGT(FGameplayTag Variable, FInkpotValue &ReturnValue );
+	
+	/**
 	 * SetBool
 	 * Sets the value of a boolean variable in the story.
 	 *
@@ -279,6 +354,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
 	void SetBool(const FString &Variable, bool bValue, bool &bSuccess );
 
+	/**
+	 * SetBoolGT
+	 * ( GameplayTag version of SetBool ) 
+	 * Sets the value of a boolean variable in the story.
+	 *
+	 * @param Variable - Name of the variable to set.
+	 * @param Value - The value to set the variable to.
+	 */
+	UFUNCTION(BlueprintCallable, Category="Inkpot|Story", meta = (Categories  = "Ink.Variable"))
+	void SetBoolGT(FGameplayTag Variable, bool bValue );
+	
 	/**
 	 * GetBool
 	 * Gets the value of a boolean variable in the story.
@@ -291,26 +377,60 @@ public:
 	void GetBool(const FString &Variable, bool &ReturnValue, bool &bSuccess );
 
 	/**
+	 * GetBoolGT
+	 * ( GameplayTag version of GetBool ) 
+	 * Gets the value of a boolean variable in the story.
+	 *
+	 * @param Variable - Name of the variable to get.
+	 * @param ReturnValue - The value of the variable.
+	 */
+	UFUNCTION(BlueprintPure, Category="Inkpot|Story", meta = (Categories  = "Ink.Variable"))
+	void GetBoolGT(FGameplayTag Variable, bool &ReturnValue);
+	
+	/**
 	 * SetInt
 	 * Sets the value of an integer variable in the story.
 	 *
 	 * @param Variable - Name of the variable to set.
 	 * @param Value - The value to set the variable to.
-	 * @param bSuccess - Returns if the operation was a succes. False typically means the variable does not exist.
+	 * @param bSuccess - Returns if the operation was a success. False typically means the variable does not exist.
 	 */
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
 	void SetInt(const FString &Variable, int32 Value, bool &bSuccess );
 
+	/**
+	 * SetIntGT
+	 * ( GameplayTag version of SetInt ) 
+	 * Sets the value of an integer variable in the story.
+	 *
+	 * @param Variable - Name of the variable to set.
+	 * @param Value - The value to set the variable to.
+	 * @param bSuccess - Returns if the operation was a success. False typically means the variable does not exist.
+	 */
+	UFUNCTION(BlueprintCallable, Category="Inkpot|Story", meta = (Categories  = "Ink.Variable"))
+	void SetIntGT(FGameplayTag Variable, int32 Value );
+	
 	/**
 	 * GetInt
 	 * Gets the value of an Integer variable in the story.
 	 *
 	 * @param Variable - Name of the variable to get.
 	 * @param ReturnValue - The value of the variable.
-	 * @param bSuccess - Returns if the operation was a succes. False typically means the variable does not exist.
+	 * @param bSuccess - Returns if the operation was a success. False typically means the variable does not exist.
 	 */
 	UFUNCTION(BlueprintPure, Category="Inkpot|Story")
 	void GetInt(const FString &Variable, int32 &ReturnValue, bool &bSuccess );
+
+	/**
+	 * GetIntGT
+	 * ( GameplayTag version of GetInt ) 
+	 * Gets the value of an Integer variable in the story.
+	 *
+	 * @param Variable - Name of the variable to get.
+	 * @param ReturnValue - The value of the variable.
+	 */
+	UFUNCTION(BlueprintPure, Category="Inkpot|Story", meta = (Categories  = "Ink.Variable"))
+	void GetIntGT(FGameplayTag Variable, int32 &ReturnValue );
 
 	/**
 	 * SetFloat
@@ -318,11 +438,22 @@ public:
 	 *
 	 * @param Variable - Name of the variable to set.
 	 * @param Value - The value to set the variable to.
-	 * @param bSuccess - Returns if the operation was a succes. False typically means the variable does not exist.
+	 * @param bSuccess - Returns if the operation was a success. False typically means the variable does not exist.
 	 */
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
 	void SetFloat( const FString& Variable, float Value, bool &bSuccess );
 
+	/**
+	 * SetFloatGT
+	 * ( GameplayTag version of SetFloat ) 
+	 * Sets the value of a floating point variable in the story.
+	 *
+	 * @param Variable - Name of the variable to set.
+	 * @param Value - The value to set the variable to.
+	 */
+	UFUNCTION(BlueprintCallable, Category="Inkpot|Story", meta = (Categories  = "Ink.Variable"))
+	void SetFloatGT( FGameplayTag Variable, float Value );
+	
 	/**
 	 * GetFloat
 	 * Gets the value of a floating variable in the story.
@@ -335,6 +466,17 @@ public:
 	void GetFloat( const FString& Variable, float &ReturnValue, bool &bSuccess );
 
 	/**
+	 * GetFloatGT
+	 * ( GameplayTag version of GetFloat ) 
+	 * Gets the value of a floating variable in the story.
+	 *
+	 * @param Variable - Name of the variable to get.
+	 * @param ReturnValue - The value of the variable.
+	 */
+	UFUNCTION(BlueprintPure, Category="Inkpot|Story", meta = (Categories  = "Ink.Variable"))
+	void GetFloatGT( FGameplayTag Variable, float &ReturnValue );
+	
+	/**
 	 * SetString
 	 * Sets the value of a character string in the story.
 	 *
@@ -344,6 +486,17 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
 	void SetString( const FString& Variable, const FString& Value, bool &bSuccess );
+
+	/**
+	 * SetStringGT
+	 * ( GameplayTag version of SetString ) 
+	 * Sets the value of a character string in the story.
+	 *
+	 * @param Variable - Name of the variable to set.
+	 * @param Value - The value to set the variable to.
+	 */
+	UFUNCTION(BlueprintCallable, Category="Inkpot|Story", meta = (Categories  = "Ink.Variable"))
+	void SetStringGT( FGameplayTag Variable, const FString& Value);
 
 	/**
 	 * GetString
@@ -357,6 +510,17 @@ public:
 	void GetString( const FString& Variable, FString &ReturnValue, bool &bSuccess );
 
 	/**
+	 * GetStringGT
+	 * ( GameplayTag version of GetString ) 
+	 * Gets the value of a character string in the story.
+	 *
+	 * @param Variable - Name of the variable to get.
+	 * @param ReturnValue - The value of the variable.
+	 */
+	UFUNCTION(BlueprintPure, Category="Inkpot|Story")
+	void GetStringGT( FGameplayTag Variable, FString &ReturnValue);
+	
+	/**
 	 * SetList
 	 * Sets the value of an Ink List in the story.
 	 *
@@ -364,8 +528,19 @@ public:
 	 * @param Value - The value to set the variable to.
 	 * @param bSuccess - Returns if the operation was a succes. False typically means the variable does not exist.
 	 */
-	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
+	UFUNCTION(BlueprintCallable, Category="Inkpot|Story", meta = (Categories  = "Ink.Variable"))
 	void SetList( const FString& Variable, const FInkpotList &Value, bool &bSuccess );
+
+	/**
+	 * SetListGT
+	 * ( GameplayTag version of SetList ) 
+	 * Sets the value of an Ink List in the story.
+	 *
+	 * @param Variable - Name of the variable to set.
+	 * @param Value - The value to set the variable to.
+	 */
+	UFUNCTION(BlueprintCallable, Category="Inkpot|Story", meta = (Categories  = "Ink.Variable"))
+	void SetListGT( const FGameplayTag& Variable, const FInkpotList &Value );
 
 	/**
 	 * GetList
@@ -379,6 +554,17 @@ public:
 	void GetList( const FString& Variable, FInkpotList &ReturnValue, bool &bSuccess );
 
 	/**
+	 * GetListGT
+	 * ( GameplayTag version of GetList ) 
+	 * Gets the value of an Ink List in the story.
+	 *
+	 * @param Variable - Name of the variable to get.
+	 * @param ReturnValue - The value of the variable.
+	 */
+	UFUNCTION(BlueprintPure, Category="Inkpot|Story", meta = (Categories  = "Ink.Variable"))
+	void GetListGT( FGameplayTag Variable, FInkpotList &ReturnValue );
+
+	/**
 	 * SetEmpty
 	 * Clears the value of a variable in the story.
 	 *
@@ -389,6 +575,16 @@ public:
 	void SetEmpty( const FString& Variable, bool &bSuccess );
 
 	/**
+	 * SetEmptyGT
+	 * ( GameplayTag version of SetEmpty ) 
+	 * Clears the value of a variable in the story.
+	 *
+	 * @param Variable - Name of the variable to clear.
+	 */
+	UFUNCTION(BlueprintCallable, Category="Inkpot|Story", meta = (Categories  = "Ink.Variable"))
+	void SetEmptyGT( FGameplayTag Variable);
+	
+	/**
 	 * IsVariableDefined
 	 * Checks if a variable exists in the story.
 	 *
@@ -397,6 +593,17 @@ public:
 	 */
 	UFUNCTION(BlueprintPure, Category="Inkpot|Story")
 	bool IsVariableDefined( const FString& Variable );
+
+	/**
+	 * IsVariableDefinedGT
+	 * ( GameplayTag version of IsVariableDefined ) 
+	 * Checks if a variable exists in the story.
+	 *
+	 * @param Variable - Name of the variable to clear.
+	 * @returns True if the variable exists, false otherwise.
+	 */
+	UFUNCTION(BlueprintPure, Category="Inkpot|Story", meta = (Categories  = "Ink.Variable"))
+	bool IsVariableDefinedGT( FGameplayTag Variable );
 
 	/**
 	 * SetOnVariableChange
@@ -409,6 +616,17 @@ public:
 	void SetOnVariableChange( UPARAM(DisplayName="Event") FOnInkpotVariableChange Delegate, const FString &Variable );
 
 	/**
+	 * SetOnVariableChangeGT
+	 * ( GameplayTag version of SetOnVariableChange ) 
+	 * Binds a delegate to when the value of the stated variable changes.
+	 *
+	 * @param Delegate - The delegate to call when the variable changes.
+	 * @param Variable - The name of the variable to watch.
+	 */
+	UFUNCTION(BlueprintCallable, Category="Inkpot|Story", meta = (Categories  = "Ink.Variable"))
+	void SetOnVariableChangeGT( UPARAM(DisplayName="Event") FOnInkpotVariableChange Delegate, FGameplayTag Variable );
+
+	/**
 	 * ClearVariableChange
 	 * Clears delegate binding created by SetOnVariableChange.
 	 *
@@ -417,6 +635,17 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Meta = (DefaultToSelf = "Owner", ExpandBoolAsExecs = "ReturnValue"), Category="Inkpot|Story")
 	bool ClearVariableChange( const UObject* Owner, const FString &Variable );
+
+	/**
+	 * ClearVariableChangeGT
+	 * ( GameplayTag version of ClearVariableChange ) 
+	 * Clears delegate binding created by SetOnVariableChange.
+	 *
+	 * @param Owner - Object that initially called SetOnVariableChange
+	 * @param Variable - The name of the variable.
+	 */
+	UFUNCTION(BlueprintCallable, Meta = (DefaultToSelf = "Owner", ExpandBoolAsExecs = "ReturnValue", Categories  = "Ink.Variable"), Category="Inkpot|Story")
+	bool ClearVariableChangeGT( const UObject* Owner, FGameplayTag Variable );
 	
 	/**
 	 * ClearAllVariableObservers
@@ -426,6 +655,16 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
 	void ClearAllVariableObservers( const FString &Variable );
+
+	/**
+	 * ClearAllVariableObserversGT
+	 * ( GameplayTag version of ClearAllVariableObservers ) 
+	 * Clears all delegate bindings for the named variable.
+	 *
+	 * @param Variable - The name of the variable.
+	 */
+	UFUNCTION(BlueprintCallable, Category="Inkpot|Story", meta = (Categories  = "Ink.Variable"))
+	void ClearAllVariableObserversGT( FGameplayTag Variable );
 
 	/**
 	 * GetNamedContent
@@ -483,11 +722,42 @@ public:
 	void EvaluateFunction(const FString& FunctionName, const TArray<FInkpotValue>& InValues, FInkpotValue &ReturnValue, FString &CapturedText);
 
 	/**
-	 * NotifyLineCompletetd
-	 * Invokes OnLineCompleted delegate, allows many different systems to co-ordinate when they have finished 
+	 * EvalFunction
+	 * Evaluates a function defined in Ink script from Blueprint or C++.
+	 * Identical to EvaluateFunction, but with no InValues
+	 *
+	 * @param FunctionName - Name of the function to call in the script.
+	 * @param ReturnValue - The to return from the function.
+	 * @param CapturedText - Any text that the function may generated in the normal ink output way
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
-	void NotifyLineCompletetd(const FString& Context);
+	void EvalFunction(const FString& FunctionName, FInkpotValue& ReturnValue, FString& CapturedText);
+
+
+	/**
+	 * NotifyLineRenderBegin
+	 * Marks the rendering of a line as having started for the given context
+	 * context could be subtitles, audio, animation etc
+	 * Continue & canContinue will be ignored if and 'line render' context is in flight
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
+	void NotifyLineRenderBegin(FName Context);
+
+	/**
+	 * NotifyLineRenderEnd
+	 * Invokes OnLineCompleted delegate, allows many different systems to co-ordinate when they have finished rendering the line
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
+	void NotifyLineRenderEnd(FName Context, bool bSuccess);
+
+
+	/**
+	 * IsLineRendering
+	 * returns whether the line is still rendering wrt to NotifyLineRenderBegin, NotifyLineRenderEnd calls 
+	 */
+	UFUNCTION(BlueprintPure, Category = "Inkpot|Story")
+	bool IsLineRendering() const;
+
 	
 	/**
 	 * ToJSON
@@ -644,6 +914,9 @@ private:
 
 	UPROPERTY(Transient)
 	bool bIsInFunctionEvaluation{ false };
+
+	UPROPERTY(Transient)
+	TSet<FName> LineRenderContextsInFlight;
 };
 
 

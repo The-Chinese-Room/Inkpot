@@ -92,7 +92,15 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Inkpot|Blotter")
 	bool IsOptionsOpen() const;
 
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Blotter")
+	void SetPinned(bool bIsPinned );
+
+	UFUNCTION(BlueprintPure, Category = "Inkpot|Blotter")
+	bool IsPinned() const;
+
 	void Refresh();
+
+	bool operator < (const UBlotterVariable& RHS);
 
 protected:
 	EBlotterVariableType GetTypeFromObject(TSharedPtr<Ink::FObject> InObj);
@@ -120,6 +128,9 @@ private:
 
 	UPROPERTY(Transient)
 	bool bOptionsOpen {false};
+
+  UPROPERTY(Transient)
+	bool bPinned {false};
 
 	UPROPERTY(Transient)
 	TObjectPtr<UBlotterUIEntryVariable> DisplayWidget {nullptr};

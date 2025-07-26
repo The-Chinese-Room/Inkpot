@@ -28,7 +28,8 @@ public class Inkpot : ModuleRules
                 "InkPlusPlus",
 
                 "DeveloperSettings",
-			}
+                "GameplayTags"
+            }
         );
 		
 		PrivateDependencyModuleNames.AddRange(

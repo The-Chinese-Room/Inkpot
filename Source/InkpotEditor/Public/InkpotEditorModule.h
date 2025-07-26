@@ -27,6 +27,11 @@ private:
 	UFUNCTION()
 	static void OpenBlotter();
 
+	UFUNCTION()
+	static void OpenOutliner();
+
+	static void OpenEditorUtilityWidget( const FSoftObjectPath &WidgetPath );
+
 private:
 	EAssetTypeCategories::Type InkpotAssetCategory;
 };

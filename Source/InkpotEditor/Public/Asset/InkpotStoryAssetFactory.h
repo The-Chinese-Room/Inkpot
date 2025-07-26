@@ -28,4 +28,5 @@ class INKPOTEDITOR_API UInkpotStoryAssetFactory : public UFactory, public FReimp
 private:
 	bool LoadAndCompileStory(const FString& InFilename, FString& OutStory, FString& OutCompiledStory) const;
 	void DumpStrings(UInkpotStoryAsset *InStoryAsset) const;
+	void GenerateTAGs( UObject* InParent, UInkpotStoryAsset *InStoryAsset ) const;
 };

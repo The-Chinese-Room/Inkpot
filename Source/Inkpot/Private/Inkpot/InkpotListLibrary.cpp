@@ -7,9 +7,11 @@ void UInkpotListLibrary::ToString(const FInkpotList &InList, FString &ReturnValu
 	InList.ToString( ReturnValue, bInUseOrigin );
 }
 
-FInkpotList UInkpotListLibrary::MakeInkpotListFromStringArray(UInkpotStory *InStory,FString InOrigin, TArray<FString> InValues)
+FInkpotList UInkpotListLibrary::MakeInkpotListFromStringArray(UInkpotStory *InStory, FString InOrigin, TArray<FString> InValues)
 {
 	Ink::FInkList list;
+	list.SetInitialOriginName(InOrigin);
+
 	int32 count = 0;
 	for( const FString &value : InValues )
 	{
@@ -40,7 +42,6 @@ FInkpotList UInkpotListLibrary::MakeInkpotList(UInkpotStory *InStory, FString In
 	InValue.ParseIntoArray( items, TEXT( "," ), true );
 	for(FString &item : items )
 		item.TrimStartAndEndInline();
-
 	FInkpotList list = MakeInkpotListFromStringArray(InStory, InOrigin, items );
 	return list;
 }
@@ -48,6 +49,51 @@ FInkpotList UInkpotListLibrary::MakeInkpotList(UInkpotStory *InStory, FString In
 void UInkpotListLibrary::ToStringArray(const FInkpotList &InList, TArray<FString> &ReturnValue, bool bUseOrigin )
 {
 	InList.ToStringArray( ReturnValue, bUseOrigin );
+}
+
+FInkpotList UInkpotListLibrary::MakeInkpotListFromGameplayTag(UInkpotStory *InStory, FGameplayTag InTag)
+{
+	FString value = InTag.ToString();
+	value.RemoveFromStart(INK_ORIGIN_GAMEPLAYTAG_PREFIX);
+	return MakeInkpotList(InStory, FString(), value);
+}
+
+void UInkpotListLibrary::ToGameplayTag(const FInkpotList &Value, FGameplayTag &ReturnValue)
+{
+	Ink::FInkList &list = Value.GetList();
+	for( auto &pair : list )
+	{
+		FString sTag = FString::Printf(TEXT("%s%s"),INK_ORIGIN_GAMEPLAYTAG_PREFIX, *pair.Key.GetFullName() );
+		ReturnValue = FGameplayTag::RequestGameplayTag(FName(sTag));
+		break;
+	}
+}
+
+FInkpotList UInkpotListLibrary::MakeInkpotListFromGameplayTags(UInkpotStory *InStory, FGameplayTagContainer InTags)
+{
+	const TArray<FGameplayTag>&  tags = InTags.GetGameplayTagArray();
+	bool first = true;
+
+	TArray<FString> sTags;
+	for(const FGameplayTag& tag : tags )
+	{
+		FString sTag = tag.ToString();
+		sTag.RemoveFromStart(INK_ORIGIN_GAMEPLAYTAG_PREFIX);
+		sTags.Add( sTag );
+	}
+
+	return MakeInkpotListFromStringArray( InStory, FString(), sTags );
+}
+
+void UInkpotListLibrary::ToGameplayTags(const FInkpotList &Value, FGameplayTagContainer &ReturnValue)
+{
+	Ink::FInkList &list = Value.GetList();
+	for( auto &pair : list )
+	{
+		FString sTag = FString::Printf(TEXT("%s%s"),INK_ORIGIN_GAMEPLAYTAG_PREFIX, *pair.Key.GetFullName() );
+		FGameplayTag tag = FGameplayTag::RequestGameplayTag(FName(sTag));
+		ReturnValue.AddTag( tag );
+	}
 }
 
 FInkpotList UInkpotListLibrary::Union(const FInkpotList &A, const FInkpotList &B)
@@ -112,6 +158,13 @@ bool UInkpotListLibrary::ContainsItem(const FInkpotList &Source, const FString &
 	bool rval = listSource.ContainsItemNamed( itemName );
 
 	return rval;
+}
+
+bool UInkpotListLibrary::ContainsTag(const FInkpotList &Source, FGameplayTag InTag)
+{
+	FString sTag = InTag.ToString();
+	sTag.RemoveFromStart(INK_ORIGIN_GAMEPLAYTAG_PREFIX);
+	return ContainsItem(Source, sTag);
 }
 
 bool UInkpotListLibrary::GreaterThan(const FInkpotList &A, const FInkpotList &B)
