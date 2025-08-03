@@ -99,3 +99,8 @@ UInkpotStory* UInkpot::GetStory( TSoftObjectPtr<UInkpotStoryAsset> InkpotStoryAs
 {
 	return Stories->GetStory(InkpotStoryAssetPath);
 }
+
+TArray<UInkpotStory*> UInkpot::GetStories()
+{
+	return Stories->GetStories();
+}

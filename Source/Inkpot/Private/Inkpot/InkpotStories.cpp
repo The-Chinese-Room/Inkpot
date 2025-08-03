@@ -147,3 +147,10 @@ void UInkpotStories::Replay( UInkpotStory* InStory, bool bInResetState )
 
 	(*history)->Replay( bInResetState );
 }
+
+TArray<UInkpotStory*> UInkpotStories::GetStories()
+{
+	TArray<UInkpotStory*> stories;
+	Stories.GenerateValueArray(stories);;
+	return stories;
+}

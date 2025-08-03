@@ -12,8 +12,7 @@ bool UInkpotOutliner::Initialize()
 
 void UInkpotOutliner::BindInkpotStoryBegin()
 {
-	UInkpot* inkpot = GEngine->GetEngineSubsystem<UInkpot>();
-	inkpot->EventOnStoryBegin.AddDynamic(this, &UInkpotOutliner::OnStoryBegin);
+	INKPOT_BIND_TO_STORY_BEGIN(this, &UInkpotOutliner::OnStoryBegin);
 }
 
 void UInkpotOutliner::OnStoryBegin(UInkpotStory* InStory)

@@ -28,6 +28,8 @@ public:
 
 	UInkpotStory* GetStory( TSoftObjectPtr<UInkpotStoryAsset> InkpotStoryAssetPath );
 
+	TArray<UInkpotStory*> GetStories();
+
 private:
 	UInkpotStory* GetStory( int32 InStoryHandle ) const;
 	void EndStory(int32 InStoryHandle);

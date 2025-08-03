@@ -10,16 +10,14 @@ void UInkpotWatch::BeginPlay()
 
 void UInkpotWatch::BindOnBeginStory()
 {
-	UInkpot* inkpot = GEngine->GetEngineSubsystem<UInkpot>();
-	check(inkpot);
-	inkpot->EventOnStoryBegin.AddDynamic( this, &UInkpotWatch::OnBeginStory );
+	INKPOT_BIND_TO_STORY_BEGIN(this, &UInkpotWatch::OnBeginStory);
 }
 
 void UInkpotWatch::OnBeginStory( UInkpotStory* InStory )
 {
 	FOnInkpotVariableChange delegate;
-	delegate.BindDynamic(this, &UInkpotWatch::OnVariableChange );
-	InStory->SetOnVariableChange( delegate, VariableWatch );
+	delegate.BindDynamic(this, &UInkpotWatch::OnVariableChange);
+	InStory->SetOnVariableChange(delegate, VariableWatch);
 }
 
 void UInkpotWatch::OnVariableChange( UInkpotStory* InStory, const FString & InVariable, const FInkpotValue & InNewValue )
