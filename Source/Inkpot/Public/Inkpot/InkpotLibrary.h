@@ -8,7 +8,7 @@
 class UInkpotStory;
 
 UCLASS(meta = (BlueprintThreadSafe, ScriptName = "InkpotLibrary"))
-class  UInkpotLibrary : public UBlueprintFunctionLibrary
+class UInkpotLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 public:

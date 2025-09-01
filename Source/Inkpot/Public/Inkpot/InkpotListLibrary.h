@@ -4,14 +4,9 @@
 #include "UObject/ObjectMacros.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Inkpot/InkpotList.h"
-#include "GameplayTags.h"
 #include "InkpotListLibrary.generated.h"
 
 class UInkpotStory;
-
-#define INK_ORIGIN_GAMEPLAYTAG_PREFIX TEXT("Ink.Origin.")
-#define INK_PATH_GAMEPLAYTAG_PREFIX TEXT("Ink.Path.")
-#define INK_VARIABLE_GAMEPLAYTAG_PREFIX TEXT("Ink.Variable.")
 
 UCLASS(meta=(BlueprintThreadSafe, ScriptName="InkpotListLibrary"), MinimalAPI)
 class UInkpotListLibrary : public UBlueprintFunctionLibrary

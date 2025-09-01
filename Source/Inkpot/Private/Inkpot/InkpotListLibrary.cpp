@@ -1,4 +1,5 @@
 #include "Inkpot/InkpotListLibrary.h"
+#include "Inkpot/InkpotGameplayTagLibrary.h"
 #include "Inkpot/InkpotStory.h"
 #include "Utility/InkpotLog.h"
 

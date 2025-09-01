@@ -1,4 +1,5 @@
 #include "GameplayTags/InkpotTagUtility.h"
+#include "Inkpot/InkpotGameplayTagLibrary.h"
 #include "Engine/World.h"
 #include "Misc/ScopedSlowTask.h"
 #include "AssetRegistry/AssetRegistryModule.h"
