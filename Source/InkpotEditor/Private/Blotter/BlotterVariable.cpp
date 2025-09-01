@@ -220,6 +220,9 @@ bool UBlotterVariable::IsType(EBlotterVariableType InType) const
 
 void UBlotterVariable::GetListOptions( TArray<UBlotterOption*> &ReturnValue, bool &bSuccess )
 {
+	if(!IsValid(Story))
+		return;
+
 	ReturnValue.Reset();
 	bSuccess = false;
 	if(!IsType(EBlotterVariableType::ValueList))
@@ -294,6 +297,9 @@ void UBlotterVariable::SetValue( UInkpotStory *InStory, const FString &InVariabl
 
 void UBlotterVariable::Refresh()
 {
+	if(!IsValid(Story))
+		return;
+
 	FInkpotValue value;
 	bool bSuccess;
 
