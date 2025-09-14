@@ -1,7 +1,7 @@
 # Inkpot
 **Inkpot** - A container for **Ink** within the Unreal Engine developed by [The Chinese Room](https://www.thechineseroom.co.uk/).<br><br>
-This is a plugin for Unreal Engine 5.4 or later.<br>
-This is version **1.11.21** of the plugin.</br>
+This is a plugin for Unreal Engine 5.6 or later.<br>
+This is version **1.20.21** of the plugin.</br>
 The head revision contains work in progress towards the upcoming release.<br>
 
 Inkpot is a wrapper for the wonderful narrative scripting language **Ink** developed by [Inkle Studios](https://www.inklestudios.com/ink/).<br>
@@ -13,12 +13,24 @@ For general support and chat with other users, check out [Inkle's discord](https
 
 ## Changelog  
 
+### Changes in 1.20.21
+Variables can now be filtered in the blotter view.<br>
+Variables can now be pinned in the blotter view.<br>
+List entries can now be set in drop down menu in blotter view.<br>
+New outliner tool, only shows story structure at the moment.<br>
+Simplified version of Evaluate function, Eval, for when you have no parameters.<br>
+Inkpot settings now split between project settings and editor preferences. <br>
+Story factory class support, allowing projects to define their own subclass of the Inkpot story.<br>
+Gameplay tag support, to streamline workflows in Blueprints. Gameplay tags can now be used instead of strings for variables and paths etc. <br>
+Fixed late binding notification, which caused a few timing bugs especially for the Inkpot watch component.<br>
+
 ### Changes in 1.11.21
 Added tools menu section for inkpot, for easier launching of the blotter.<br>
 Blotter QoL, list value update in blotter now more streamlined, items now have check box entries.<br>
 Exposed VisitCountAtPathString to Inkpot Story.<br>
 Added library functions to test the type of an Inkpot value.<br>
 Added delegate to allow notify when a line has finished being displayed.<br>
+Line render notification, for when multiple systems are rendering your line of text.<br>
 Fixed bad plugin declarations, no more dependency warnings.<br>
 Refined blotter update, list values are now updated rather than being replaced for each update.<br>
 Set is now SetText on blotter strings.<br>
@@ -68,7 +80,7 @@ External functions are now implemented, along with functional tests.<br>
 Initial release.<br>
 
 ## Requirements 
-Inkpot works with version 5.4 of Unreal.<br>
+Inkpot works with version 5.6 of Unreal.<br>
 Inkpot includes a C++ port of Ink-engine-runtime version 21, which can be found in the InkPlusPlus module.<br>
 
 ### .Net framework 5.0
@@ -102,7 +114,7 @@ https://github.com/The-Chinese-Room/InkpotDemo
 Make sure you have **Visual Studio 2022** installed.<br>
 
 * If you get this error _VisualStudioUnsupported x64 must be installed in order to build this target_.<br> 
-For Unreal Engine 5.4, you need to be on v17.8 of the MSCV v143 toolchain. See here for more details.<br>
+For Unreal Engine 5.6, you need to be on v17.8 of the MSCV v143 toolchain. See here for more details.<br>
 https://forums.unrealengine.com/t/visualstudiounsupported-x64-must-be-installed-trying-to-update-a-project-from-5-3-2-to-5-4-1/1835116/5
 
 ### My Ink files will not import.
