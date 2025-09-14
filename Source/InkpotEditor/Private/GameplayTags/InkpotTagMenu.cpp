@@ -78,7 +78,6 @@ void UInkpotTagMenu::CreateOrUpdateInkpotTagAssetFromMenu(UToolMenu* Menu, TArra
 UPackage* UInkpotTagMenu::CreateTagTableAsset(const FAssetData &InAssetData)
 {
 	FString AssetName = InAssetData.AssetName.ToString() ;
-	AssetName.Append(TEXT("_TAGS"));
 	FString AssetPath =  InAssetData.PackagePath.ToString();
 	UInkpotStoryAsset* storyAsset = Cast<UInkpotStoryAsset>( InAssetData.GetAsset() );
 	
