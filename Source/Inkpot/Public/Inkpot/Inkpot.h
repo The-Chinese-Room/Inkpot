@@ -64,7 +64,9 @@ public:
 	 * Called when EndStory successfully stops a story.
 	 */
 	UPROPERTY(BlueprintAssignable, Category="Inkpot", meta=(DisplayName="On Story End") )
-	FOnStoryBegin EventOnStoryEnd; 
+	FOnStoryBegin EventOnStoryEnd;
+
+	TArray<UInkpotStory*> GetStories();
 
 private:
 	void BindPostImport();
@@ -80,3 +82,22 @@ private:
 	UPROPERTY()
 	TWeakObjectPtr<UGameInstance> GameInstance{ nullptr };
 };
+
+
+// macro for binding to Story Begin Delegate, allows binding post story begin as will call method for each valid story already started
+#define INKPOT_BIND_TO_STORY_BEGIN( object_ptr, class_method ) \
+{ \
+	UInkpot * inkpot = GEngine->GetEngineSubsystem<UInkpot>(); \
+	for( UInkpotStory* story : inkpot->GetStories() ) \
+		(object_ptr->*class_method)( story ); \
+	inkpot->EventOnStoryBegin.AddDynamic(object_ptr, class_method); \
+}
+
+// macro for binding to Story End Delegate, allows binding post story begin as will call method for each valid story already started
+#define INKPOT_BIND_TO_STORY_END( object_ptr, class_method ) \
+{ \
+	UInkpot * inkpot = GEngine->GetEngineSubsystem<UInkpot>(); \
+	for( UInkpotStory* story : inkpot->GetStories() ) \
+		(object_ptr->*class_method)( story ); \
+	inkpot->EventOnStoryEnd.AddDynamic(object_ptr, class_method); \
+}

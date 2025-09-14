@@ -5,7 +5,6 @@
 #include "Inkpot/InkpotStory.h"
 #include "Inkpot/InkpotListLibrary.h"
 #include "Inkpot/InkpotValueLibrary.h"
-#include "Inkpot/InkpotListLibrary.h"
 
 void UBlotterVariable::SetStory( UInkpotStory *InStory )
 {
@@ -86,26 +85,26 @@ FText UBlotterVariable::GetTypeText(EBlotterVariableType InType)
 	{
 	default:
 	case EBlotterVariableType::None:						return FText::FromString(TEXT("None"));
-	case EBlotterVariableType::ChoicePoint:					return FText::FromString(TEXT("Choice Point"));
+	case EBlotterVariableType::ChoicePoint:					return FText::FromString(TEXT("Choice"));
 	case EBlotterVariableType::Container:					return FText::FromString(TEXT("Container"));
 	case EBlotterVariableType::ControlCommand:				return FText::FromString(TEXT("Control Command"));
 	case EBlotterVariableType::Divert:						return FText::FromString(TEXT("Divert"));
 	case EBlotterVariableType::Glue:						return FText::FromString(TEXT("Glue"));
 	case EBlotterVariableType::NativeFunctionCall:			return FText::FromString(TEXT("Native Function Call"));
 	case EBlotterVariableType::Tag:							return FText::FromString(TEXT("Tag"));
-	case EBlotterVariableType::ValueBool:					return FText::FromString(TEXT("Bool Value"));
-	case EBlotterVariableType::ValueDivertTarget:			return FText::FromString(TEXT("Divert Target Value"));
-	case EBlotterVariableType::ValueFloat:					return FText::FromString(TEXT("Float Value"));
-	case EBlotterVariableType::ValueInt:					return FText::FromString(TEXT("Int Value"));
-	case EBlotterVariableType::ValueList:					return FText::FromString(TEXT("List Value"));
-	case EBlotterVariableType::ValueString:					return FText::FromString(TEXT("String Value"));
-	case EBlotterVariableType::ValueVariablePointer:		return FText::FromString(TEXT("Variable Pointer Value"));
+	case EBlotterVariableType::ValueBool:					return FText::FromString(TEXT("Bool"));
+	case EBlotterVariableType::ValueDivertTarget:			return FText::FromString(TEXT("Divert"));
+	case EBlotterVariableType::ValueFloat:					return FText::FromString(TEXT("Float"));
+	case EBlotterVariableType::ValueInt:					return FText::FromString(TEXT("Int"));
+	case EBlotterVariableType::ValueList:					return FText::FromString(TEXT("List"));
+	case EBlotterVariableType::ValueString:					return FText::FromString(TEXT("String"));
+	case EBlotterVariableType::ValueVariablePointer:		return FText::FromString(TEXT("VarPtr"));
 	case EBlotterVariableType::Value:						return FText::FromString(TEXT("Value"));
 	case EBlotterVariableType::VariableAssignment:			return FText::FromString(TEXT("Variable Assignment"));
 	case EBlotterVariableType::VariableReference:			return FText::FromString(TEXT("Variable Reference"));
 	case EBlotterVariableType::Void:						return FText::FromString(TEXT("Void"));
 	case EBlotterVariableType::Object:						return FText::FromString(TEXT("Object"));
-	case EBlotterVariableType::ListOrigin:					return FText::FromString(TEXT("List Origin"));
+	case EBlotterVariableType::ListOrigin:					return FText::FromString(TEXT("Origin"));
 	}
 }
 
@@ -194,7 +193,7 @@ bool UBlotterVariable::SetVariableFromString(const FString& InValue)
 
 	case EBlotterVariableType::ValueList:			
 		{
-			FInkpotList list = UInkpotListLibrary::MakeInkpotList(Story, Name.ToString(), InValue);
+			FInkpotList list = UInkpotListLibrary::MakeInkpotList( Story, Name.ToString(), InValue );
 			Story->SetList( Name.ToString(), list, bSuccess );
 		}
 		break;
@@ -221,6 +220,9 @@ bool UBlotterVariable::IsType(EBlotterVariableType InType) const
 
 void UBlotterVariable::GetListOptions( TArray<UBlotterOption*> &ReturnValue, bool &bSuccess )
 {
+	if(!IsValid(Story))
+		return;
+
 	ReturnValue.Reset();
 	bSuccess = false;
 	if(!IsType(EBlotterVariableType::ValueList))
@@ -295,6 +297,9 @@ void UBlotterVariable::SetValue( UInkpotStory *InStory, const FString &InVariabl
 
 void UBlotterVariable::Refresh()
 {
+	if(!IsValid(Story))
+		return;
+
 	FInkpotValue value;
 	bool bSuccess;
 
@@ -325,4 +330,21 @@ void UBlotterVariable::SetEmpty()
 	SetIndex(0);
 }
 
+void UBlotterVariable::SetPinned(bool bInIsPinned )
+{
+	bPinned = bInIsPinned;
+	UInkpotBlotter *blotter = Cast<UInkpotBlotter>( GetOuter() );
+	blotter->Refresh( Story );
+}
 
+bool UBlotterVariable::IsPinned() const
+{
+	return bPinned;
+}
+
+bool UBlotterVariable::operator < (const UBlotterVariable& RHS)
+{
+	if( bPinned != RHS.bPinned )
+		return bPinned;
+	return Name.CompareTo( RHS.Name, ETextComparisonLevel::Primary ) < 0;
+}

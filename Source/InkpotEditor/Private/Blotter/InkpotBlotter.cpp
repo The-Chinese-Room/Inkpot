@@ -9,30 +9,39 @@ bool UInkpotBlotter::Initialize()
 {
 	Super::Initialize();
 	BindInkpotStoryBegin();
-	FWorldDelegates::OnPIEEnded.AddUObject(this, &UInkpotBlotter::OnPIEEnd );
+	FEditorDelegates::StartPIE.AddUObject(this, &UInkpotBlotter::OnPIEStart );
+	FEditorDelegates::EndPIE.AddUObject(this, &UInkpotBlotter::OnPIEEnd );
 	return true;
 }
 
-void UInkpotBlotter::OnPIEEnd(UGameInstance* InGameInstance)
+void UInkpotBlotter::OnPIEStart(bool)
+{
+}
+
+void UInkpotBlotter::OnPIEEnd(bool)
 {
 	ReceiveOnDebugEnd();
 }
 
 void UInkpotBlotter::BindInkpotStoryBegin()
 {
-	UInkpot* inkpot = GEngine->GetEngineSubsystem<UInkpot>();
-	inkpot->EventOnStoryBegin.AddDynamic(this, &UInkpotBlotter::OnStoryBegin);
+	INKPOT_BIND_TO_STORY_BEGIN(this, &UInkpotBlotter::OnStoryBegin)
 }
 
 void UInkpotBlotter::OnStoryBegin(UInkpotStory *InStory)
 {
 	InStory->OnDebugRefresh().AddDynamic(this, &UInkpotBlotter::OnDebugRefresh);
-	ReceiveOnDebugRefresh(InStory);
+	ReceiveOnDebugRefresh(InStory, true );
 }
 
 void UInkpotBlotter::OnDebugRefresh(UInkpotStory* InStory)
 {
-	ReceiveOnDebugRefresh(InStory);
+	ReceiveOnDebugRefresh(InStory, false );
+}
+
+void UInkpotBlotter::Refresh(UInkpotStory* InStory)
+{
+	ReceiveOnDebugRefresh(InStory, false );
 }
 
 TArray<UBlotterVariable*> UInkpotBlotter::GetVariables(UInkpotStory* Story)
@@ -162,5 +171,39 @@ TArray<UBlotterVariable*> UInkpotBlotter::GetOrigins(UInkpotStory* Story)
 	return origins;
 }
 
+void UInkpotBlotter::FilterVariables( const TArray<UBlotterVariable*> &InVariables, const FString &InFilter, TArray<UBlotterVariable*> &ReturnValue )
+{
+	ReturnValue.Empty();
+	ReturnValue.Reserve( InVariables.Num() );
+
+	TArray<FString> tokens; 
+	InFilter.ParseIntoArray(tokens,TEXT(" "));
+	for( UBlotterVariable *variable : InVariables )
+	{
+		if(!variable->IsPinned())
+		{
+			const FString name = variable->GetName().ToString();
+			if(tokens.Num())
+			{
+				int start = 0;
+				for( const FString &token : tokens )
+				{
+					start = name.Find( token, ESearchCase::IgnoreCase, ESearchDir::FromStart, start );
+					if( start == INDEX_NONE )
+						break;
+					++start;
+				}
+				if( start == INDEX_NONE )
+					continue;
+			}
+		}
+		ReturnValue.Add( variable );
+	}
+
+	ReturnValue.Sort();
+
+	for( int32 i=0 ; i<ReturnValue.Num() ; ++i )
+		ReturnValue[i]->SetIndex( i );
+}
 
 

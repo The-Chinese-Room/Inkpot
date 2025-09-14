@@ -1,5 +1,6 @@
 #include "Inkpot/InkpotStories.h"
 #include "Inkpot/InkpotStoryInternal.h"
+#include "Inkpot/InkpotStoryFactory.h"
 #include "Settings/InkpotSettings.h"
 #include "Asset/InkpotStoryAsset.h"
 #include "Ink/Choice.h"
@@ -145,4 +146,11 @@ void UInkpotStories::Replay( UInkpotStory* InStory, bool bInResetState )
 		return;
 
 	(*history)->Replay( bInResetState );
+}
+
+TArray<UInkpotStory*> UInkpotStories::GetStories()
+{
+	TArray<UInkpotStory*> stories;
+	Stories.GenerateValueArray(stories);;
+	return stories;
 }

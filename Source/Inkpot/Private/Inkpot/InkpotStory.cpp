@@ -9,7 +9,7 @@
 #include "Ink/Path.h"
 #include "Ink/Inklist.h"
 #include "Utility/InkpotLog.h"
-
+#include "Inkpot/InkpotGameplayTagLibrary.h"
 
 void UInkpotStory::Initialise( TSharedPtr<FInkpotStoryInternal>  InInkpotStory )
 {
@@ -63,9 +63,19 @@ TArray<FString> UInkpotStory::TagsForContentAtPath( const FString &InPath)
 	return StoryInternal->TagsForContentAtPath( InPath );
 }
 
+TArray<FString> UInkpotStory::TagsForContentAtPathGT(FGameplayTag InPath )
+{
+	return TagsForContentAtPath( UInkpotGameplayTagLibrary::PathTagToString(InPath) );
+}
+
 void UInkpotStory::ChoosePath( const FString &InPath )
 {
 	ChoosePathInternal(InPath);
+}
+
+void UInkpotStory::ChoosePathGT(FGameplayTag InPath )
+{
+	ChoosePath( UInkpotGameplayTagLibrary::PathTagToString(InPath) );
 }
 
 void UInkpotStory::ChoosePathInternal( const FString &InPath )
@@ -78,10 +88,20 @@ void UInkpotStory::ChoosePathString( const FString &InPath, const TArray<FInkpot
 	ChoosePathStringInternal( InPath, InValues );
 }
 
+void UInkpotStory::ChoosePathStringGT(FGameplayTag InPath, const TArray<FInkpotValue> &InValues )
+{
+	ChoosePathString( UInkpotGameplayTagLibrary::PathTagToString(InPath), InValues );
+}
+
 int UInkpotStory::VisitCountAtPathString( const FString &Path )
 {
 	int count = StoryInternal->GetStoryState()->VisitCountAtPathString(Path);
 	return count;
+}
+
+int UInkpotStory::VisitCountAtPathStringGT(FGameplayTag InPath )
+{
+	return VisitCountAtPathString( UInkpotGameplayTagLibrary::PathTagToString(InPath) );
 }
 
 TSharedPtr<Ink::FListDefinition> UInkpotStory::GetListOrigin(const FString& InOriginName, const FString& InItemName)
@@ -95,11 +115,14 @@ TSharedPtr<Ink::FListDefinition> UInkpotStory::GetListOrigin(const FString& InOr
 		return nullptr;
 	}
 
-	bool gotItem = origin->ContainsItemWithName(InItemName);
-	if (!gotItem)
+	if(InItemName.Len())
 	{
-		INKPOT_ERROR("Failed to find entry '%s' in List definition '%s'", *InItemName, *InOriginName);
-		return nullptr;
+		bool gotItem = origin->ContainsItemWithName(InItemName);
+		if (!gotItem)
+		{
+			INKPOT_ERROR("Failed to find entry '%s' in List definition '%s'", *InItemName, *InOriginName);
+			return nullptr;
+		}
 	}
 	return origin;
 }
@@ -163,6 +186,11 @@ FString UInkpotStory::ContinueMaximallyAtPath(const FString& InPath)
 	if (CanContinue())
 		ret = ContinueMaximally();
 	return ret;
+}
+
+FString UInkpotStory::ContinueMaximallyAtPathGT(FGameplayTag InPath )
+{
+	return ContinueMaximallyAtPath( UInkpotGameplayTagLibrary::PathTagToString(InPath) );
 }
 
 bool UInkpotStory::CanContinue()
@@ -288,6 +316,12 @@ void UInkpotStory::SetValue(const FString &InVariable, FInkpotValue InValue, boo
 	OutSuccess = variableState->SetVariable( InVariable, Ink::FValue::Create(**InValue) );
 }
 
+void UInkpotStory::SetValueGT(FGameplayTag InVariable, FInkpotValue InValue )
+{
+	TSharedPtr<Ink::FVariableState> variableState = StoryInternal->GetVariablesState();
+	variableState->SetVariable( UInkpotGameplayTagLibrary::VariableTagToString(InVariable), Ink::FValue::Create(**InValue) );
+}
+
 void UInkpotStory::GetValue(const FString &InVariable, FInkpotValue &OutReturnValue, bool &OutSuccess )
 {
 	TSharedPtr<Ink::FVariableState> variableState = StoryInternal->GetVariablesState();
@@ -307,15 +341,32 @@ void UInkpotStory::GetValue(const FString &InVariable, FInkpotValue &OutReturnVa
 	OutReturnValue = FInkpotValue(value);
 }
 
+void UInkpotStory::GetValueGT(FGameplayTag InVariable, FInkpotValue &OutReturnValue )
+{
+	bool tmp;
+	GetValue( UInkpotGameplayTagLibrary::VariableTagToString(InVariable), OutReturnValue, tmp);
+}
+
 void UInkpotStory::SetBool(const FString &InVariable, bool bInValue, bool &OutSuccess )
 {
 	TSharedPtr<Ink::FVariableState> variableState = StoryInternal->GetVariablesState();
 	OutSuccess = variableState->SetVariable( InVariable, MakeShared<Ink::FValueBool>( bInValue ) );
 }
 
+void UInkpotStory::SetBoolGT(FGameplayTag InVariable, bool bInValue)
+{
+	TSharedPtr<Ink::FVariableState> variableState = StoryInternal->GetVariablesState();
+	variableState->SetVariable( UInkpotGameplayTagLibrary::VariableTagToString(InVariable), MakeShared<Ink::FValueBool>( bInValue ) );
+}
+
 void UInkpotStory::GetBool(const FString &InVariable, bool &OutReturnValue, bool &OutSuccess )
 {
 	OutSuccess = GetVariable<bool, Ink::FValueBool>(InVariable, Ink::EValueType::Bool, OutReturnValue );
+}
+
+void UInkpotStory::GetBoolGT(FGameplayTag InVariable, bool &OutReturnValue)
+{
+	GetVariable<bool, Ink::FValueBool>( UInkpotGameplayTagLibrary::VariableTagToString(InVariable), Ink::EValueType::Bool, OutReturnValue );
 }
 
 void UInkpotStory::SetInt(const FString &InVariable, int32 InValue, bool &OutSuccess )
@@ -324,9 +375,20 @@ void UInkpotStory::SetInt(const FString &InVariable, int32 InValue, bool &OutSuc
 	OutSuccess = variableState->SetVariable( InVariable, MakeShared<Ink::FValueInt>( InValue ) );
 }
 
+void UInkpotStory::SetIntGT(FGameplayTag InVariable, int32 InValue )
+{
+	TSharedPtr<Ink::FVariableState> variableState = StoryInternal->GetVariablesState();
+	variableState->SetVariable( UInkpotGameplayTagLibrary::VariableTagToString(InVariable), MakeShared<Ink::FValueInt>( InValue ) );
+}
+
 void UInkpotStory::GetInt(const FString &InVariable, int32 &OutValue ,  bool &OutSuccess )
 {
 	OutSuccess = GetVariable<int32, Ink::FValueInt>(InVariable, Ink::EValueType::Int, OutValue );
+}
+
+void UInkpotStory::GetIntGT(FGameplayTag InVariable, int32 &OutValue)
+{
+	GetVariable<int32, Ink::FValueInt>( UInkpotGameplayTagLibrary::VariableTagToString(InVariable), Ink::EValueType::Int, OutValue );
 }
 
 void UInkpotStory::SetFloat(const FString &InVariable, float InValue, bool &OutSuccess )
@@ -335,9 +397,20 @@ void UInkpotStory::SetFloat(const FString &InVariable, float InValue, bool &OutS
 	OutSuccess = variableState->SetVariable( InVariable, MakeShared<Ink::FValueFloat>(InValue));
 }
 
+void UInkpotStory::SetFloatGT(FGameplayTag InVariable, float InValue)
+{
+	TSharedPtr<Ink::FVariableState> variableState = StoryInternal->GetVariablesState();
+	variableState->SetVariable( UInkpotGameplayTagLibrary::VariableTagToString(InVariable), MakeShared<Ink::FValueFloat>(InValue));
+}
+
 void UInkpotStory::GetFloat(const FString &InVariable, float &OutReturnValue, bool &OutSuccess )
 {
 	OutSuccess = GetVariable<float, Ink::FValueFloat>(InVariable, Ink::EValueType::Float, OutReturnValue );
+}
+
+void UInkpotStory::GetFloatGT(FGameplayTag InVariable, float &OutReturnValue)
+{
+	GetVariable<float, Ink::FValueFloat>( UInkpotGameplayTagLibrary::VariableTagToString(InVariable), Ink::EValueType::Float, OutReturnValue );
 }
 
 void UInkpotStory::SetString(const FString &InVariable, const FString &InValue, bool &OutSuccess )
@@ -346,9 +419,20 @@ void UInkpotStory::SetString(const FString &InVariable, const FString &InValue, 
 	OutSuccess = variableState->SetVariable( InVariable, MakeShared<Ink::FValueString>(InValue) );
 }
 
+void UInkpotStory::SetStringGT(FGameplayTag InVariable, const FString &InValue)
+{
+	TSharedPtr<Ink::FVariableState> variableState = StoryInternal->GetVariablesState();
+	variableState->SetVariable( UInkpotGameplayTagLibrary::VariableTagToString(InVariable), MakeShared<Ink::FValueString>(InValue) );
+}
+
 void UInkpotStory::GetString( const FString& InVariable, FString &OutReturnValue, bool &OutSuccess )
 {
 	OutSuccess = GetVariable<FString, Ink::FValueString>(InVariable, Ink::EValueType::String, OutReturnValue );
+}
+
+void UInkpotStory::GetStringGT( FGameplayTag InVariable, FString &OutReturnValue)
+{
+	GetVariable<FString, Ink::FValueString>(UInkpotGameplayTagLibrary::VariableTagToString(InVariable), Ink::EValueType::String, OutReturnValue );
 }
 
 void UInkpotStory::SetEmpty(const FString &InVariable, bool &OutSuccess )
@@ -357,11 +441,22 @@ void UInkpotStory::SetEmpty(const FString &InVariable, bool &OutSuccess )
 	OutSuccess  = variableState->SetVariable( InVariable, MakeShared<Ink::FValue>() );
 }
 
+void UInkpotStory::SetEmptyGT(FGameplayTag InVariable)
+{
+	TSharedPtr<Ink::FVariableState> variableState = StoryInternal->GetVariablesState();
+	variableState->SetVariable( UInkpotGameplayTagLibrary::VariableTagToString(InVariable), MakeShared<Ink::FValue>() );
+}
+
 bool UInkpotStory::IsVariableDefined( const FString& InVariable )
 {
 	TSharedPtr<Ink::FVariableState> variableState = StoryInternal->GetVariablesState();
 	TSharedPtr<Ink::FObject> variable = variableState->GetVariable(  InVariable );
 	return variable.IsValid();
+}
+
+bool UInkpotStory::IsVariableDefinedGT( FGameplayTag InVariable )
+{
+	return IsVariableDefined( UInkpotGameplayTagLibrary::VariableTagToString(InVariable) );
 }
 
 int32 UInkpotStory::GetVariableKeys( TArray<FString> &OutKeys )
@@ -392,6 +487,11 @@ void UInkpotStory::SetOnVariableChange( FOnInkpotVariableChange InDelegate, cons
 	StoryInternal->ObserveVariable( InVariable, observer );
 }
 
+void UInkpotStory::SetOnVariableChangeGT( FOnInkpotVariableChange InDelegate, FGameplayTag InVariable )
+{
+	SetOnVariableChange( InDelegate, UInkpotGameplayTagLibrary::VariableTagToString(InVariable) );
+}
+
 bool UInkpotStory::ClearVariableChange( const UObject* Owner, const FString &Variable )
 {
 	if (!Owner || !VariableObservers.Contains(Variable))
@@ -412,6 +512,11 @@ bool UInkpotStory::ClearVariableChange( const UObject* Owner, const FString &Var
 	return bRemovedAtLeastOneEntry;
 }
 
+bool UInkpotStory::ClearVariableChangeGT( const UObject* Owner, FGameplayTag Variable )
+{
+	return ClearVariableChange(Owner,UInkpotGameplayTagLibrary::VariableTagToString(Variable) );
+}
+
 void UInkpotStory::ClearAllVariableObservers( const FString& Variable )
 {
 	if (!VariableObservers.Contains(Variable))
@@ -423,6 +528,11 @@ void UInkpotStory::ClearAllVariableObservers( const FString& Variable )
 	}
 
 	VariableObservers.Remove(Variable);
+}
+
+void UInkpotStory::ClearAllVariableObserversGT( FGameplayTag Variable )
+{
+	ClearAllVariableObservers(UInkpotGameplayTagLibrary::VariableTagToString(Variable));
 }
 
 void UInkpotStory::OnContinueInternal()
@@ -782,6 +892,12 @@ void UInkpotStory::EvaluateFunction(const FString& FunctionName, const TArray<FI
 	OutReturnValue = returnValue;
 }
 
+void UInkpotStory::EvalFunction(const FString& FunctionName, FInkpotValue& OutReturnValue, FString& CapturedText)
+{
+	TArray<TSharedPtr<Ink::FValueType>> values;
+	TSharedPtr<Ink::FValueType> returnValue = StoryInternal->EvaluateFunction(FunctionName, CapturedText, values);
+	OutReturnValue = returnValue;
+}
 FOnStoryContinue& UInkpotStory::OnContinue()
 {
 	return EventOnContinue;
@@ -845,6 +961,13 @@ void UInkpotStory::SetList( const FString& InVariable, const FInkpotList &InValu
 		SetValue( InVariable, *InValue, bOutSuccess );
 }
 
+void UInkpotStory::SetListGT( const FGameplayTag& InVariable, const FInkpotList &InValue)
+{
+	bool bOutSuccess = InValue.ValidateOrigin( this );
+	if( bOutSuccess )
+		SetValueGT( InVariable, *InValue );
+}
+
 void UInkpotStory::GetList( const FString& InVariable, FInkpotList &ReturnValue, bool &bOutSuccess )
 {
 	FInkpotValue value;
@@ -858,6 +981,14 @@ void UInkpotStory::GetList( const FString& InVariable, FInkpotList &ReturnValue,
 		INKPOT_ERROR("Variable '%s' is not a list type.", *InVariable );
 		bOutSuccess = false;
 	}
+}
+
+void UInkpotStory::GetListGT( FGameplayTag InVariable, FInkpotList &ReturnValue )
+{
+	FInkpotValue value;
+	GetValueGT( InVariable,  value);
+	if( (*value)->HasSubtype<Ink::FInkList>() )
+		ReturnValue = *value; // copy ref 
 }
 
 int UInkpotStory::GetStorySeed() const
@@ -896,12 +1027,26 @@ FOnStoryContinue& UInkpotStory::OnDebugRefresh()
 }
 #endif
 
-void UInkpotStory::NotifyLineCompletetd(const FString& Context)
+void UInkpotStory::NotifyLineRenderBegin(FName InContext)
 {
-	if (!EventOnLineComplete.IsBound())
-		return;
-	EventOnLineComplete.Broadcast(this, Context);
+	LineRenderContextsInFlight.Add( InContext );
 }
 
+void UInkpotStory::NotifyLineRenderEnd(FName InContext, bool bInSuccess)
+{
+	if (!LineRenderContextsInFlight.Contains(InContext))
+	{
+		INKPOT_ERROR("Could not find context for end of line render. '%s'", *InContext.ToString() );
+		return;
+	}
 
+	LineRenderContextsInFlight.Remove(InContext);
 
+	if (EventOnLineComplete.IsBound())
+		EventOnLineComplete.Broadcast(this, InContext, bInSuccess);
+}
+
+bool UInkpotStory::IsLineRendering() const
+{
+	return LineRenderContextsInFlight.Num() > 0;
+}
