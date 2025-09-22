@@ -22,7 +22,11 @@ namespace InkCompiler
 
 	FString GetInkleCatePath()
 	{
+	#if PLATFORM_WINDOWS
 		return GetPluginPath() + TEXT( "/ThirdParty/InkCommandLine/inklecate.exe" );
+	#elif PLATFORM_MAC
+		return GetPluginPath() + TEXT( "/ThirdParty/InkCommandLine/inklecate" );
+	#endif
 	}
 
 	FString GetScratchDirectory()
