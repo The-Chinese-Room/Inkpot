@@ -12,10 +12,18 @@ namespace Ink
 
 	using FValueType = TUnion<int32, float, bool, FString, TSharedPtr<FPath>, FInkList>;
 
+	// fix for compiler error C2665 
+	//	having the cdecl declaration (INKPLUSPLUS_API) stops the template from finding the right argument types leading to the compiler error C2665 
+	//	however FInkList needs to be declared as INKPLUSPLUS_API so that it can be found from other modules
+	//  solution then is to derive FInkList from an intermediate class that does not have INKPLUSPLUS_API
+	class FInkListBaseMap : public TMap<Ink::FInkListItem, int32>
+	{
+	};
+
 	/*	The InkList is the underlying type that's used to store an instance of a
 		list in ink. It's not used for the *definition* of the list, but for a list
 		value that's stored in a variable. Somewhat confusingly, it's backed by a Unreal Dictionary	*/
-	class INKPLUSPLUS_API FInkList final : public TMap<Ink::FInkListItem, int32>
+	class INKPLUSPLUS_API FInkList final : public FInkListBaseMap
 	{
 	public:
 		FInkList();

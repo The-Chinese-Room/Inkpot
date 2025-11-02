@@ -1,7 +1,7 @@
 # Inkpot
 **Inkpot** - A container for **Ink** within the Unreal Engine developed by [The Chinese Room](https://www.thechineseroom.co.uk/).<br><br>
 This is a plugin for Unreal Engine 5.6 or later.<br>
-This is version **1.20.21** of the plugin.</br>
+This is version **1.21.21** of the plugin.</br>
 The head revision contains work in progress towards the upcoming release.<br>
 
 Inkpot is a wrapper for the wonderful narrative scripting language **Ink** developed by [Inkle Studios](https://www.inklestudios.com/ink/).<br>
@@ -12,6 +12,11 @@ For general support and chat with other users, check out [Inkle's discord](https
 (You'll find Inkpot chat in #unreal-projects)
 
 ## Changelog  
+
+### Changes in 1.21.21
+Module loading phase now set to PreDefault to resolve some blueprint function resolution errors.
+Fixed compilation errors on latest MSVC tool chain 14.44.35207.
+Fixed bad test condition parsing that was falsely failing some InkCPP unit tests.
 
 ### Changes in 1.20.21
 Variables can now be filtered in the blotter view.<br>
