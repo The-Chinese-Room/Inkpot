@@ -150,12 +150,17 @@ static bool ExecuteChooseChoice(UInkpotStory* Story, const FString& ChoiceLine)
 	return false;
 }
 
-static int32 ParseValueInt( const TCHAR *stream, const TCHAR *match )
+static int32 ParseValueInt(const TCHAR* stream, const TCHAR* match)
 {
 	int32 value = 0;
-	const TCHAR* foundInStream = FCString::Strifind( stream, match, false );
-	if(foundInStream)
-		FParse::Value( foundInStream, TEXT( ":" ), value );
+	const TCHAR* foundInStream = FCString::Strifind(stream, match, false);
+	if (foundInStream)
+	{
+		--foundInStream; // step back one to include the leading quotation mark (") - FParse seems to now need these to be in matched pairs
+		bool succesfullyParsed = FParse::Value(foundInStream, TEXT(":"), value);;
+		if(!succesfullyParsed)
+			INKPOT_ERROR("Failed to parse int value");
+	}
 	return value;
 }
 
