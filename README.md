@@ -14,9 +14,9 @@ For general support and chat with other users, check out [Inkle's discord](https
 ## Changelog  
 
 ### Changes in 1.21.21
-Module loading phase now set to PreDefault to resolve some blueprint function resolution errors.
-Fixed compilation errors on latest MSVC tool chain 14.44.35207.
-Fixed bad test condition parsing that was falsely failing some InkCPP unit tests.
+Module loading phase now set to PreDefault to resolve some blueprint function resolution errors.<br>
+Fixed compilation errors on latest MSVC tool chain 14.44.35207.<br>
+Fixed bad test condition parsing that was falsely failing some InkCPP unit tests.<br>
 
 ### Changes in 1.20.21
 Variables can now be filtered in the blotter view.<br>
