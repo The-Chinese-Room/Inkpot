@@ -11,7 +11,7 @@ Ink::FInkList::FInkList()
 }
 
 Ink::FInkList::FInkList(const Ink::FInkList& InOtherInkList)
-	: TMap<Ink::FInkListItem, int32>(InOtherInkList)
+: FInkListBaseMap(InOtherInkList)
 {
 	TSharedPtr<TArray<FString>> otherOriginNames = InOtherInkList.GetOriginNames();
 	if(otherOriginNames.IsValid())
