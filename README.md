@@ -18,7 +18,7 @@ For general support and chat with other users, check out [Inkle's discord](https
 Module loading phase now set to PreDefault to resolve some blueprint function resolution errors.<br>
 Fixed compilation errors on latest MSVC tool chain 14.44.35207.<br>
 Fixed bad test condition parsing that was falsely failing some InkCPP unit tests.<br>
-Merged support for Mac builds ( see [pull request](https://github.com/The-Chinese-Room/Inkpot/pull/118#issue-3442796120)<br>
+Merged support for Mac builds ( see [pull request](https://github.com/The-Chinese-Room/Inkpot/pull/118#issue-3442796120) )<br>
 
 ### Changes in 1.20.21
 Variables can now be filtered in the blotter view.<br>
