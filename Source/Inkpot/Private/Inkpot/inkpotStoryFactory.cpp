@@ -4,7 +4,7 @@
 #include "Asset/InkpotStoryAsset.h"
 #include "Utility/InkpotLog.h"
 
-static FString BadInkJSON{ TEXT("{\"inkVersion\":20,\"root\":[[\"^This is BAD Ink. If you see this your Ink did not import correctly.\",\"\n\",\"end\",[\"done\",{\"#n\":\"g-0\"}],null],\"done\",null],\"listDefs\":{}}") };
+static FString BadInkJSON{ TEXT("{\"inkVersion\":21,\"root\":[[\"^This is BAD Ink. If you see this your Ink did not import correctly.\",\"\n\",\"end\",[\"done\",{\"#n\":\"g-0\"}],null],\"done\",null],\"listDefs\":{}}") };
 
 void UInkpotStoryFactoryBase::Initialise()
 {
