@@ -15,7 +15,7 @@ public:
 	void ResetContent( TSharedPtr<FInkpotStoryInternal> InStory );
 
 public:
-	static const int32 BadStoryHandle {-1};
+	static constexpr int32 BadStoryHandle {-1};
 
 protected:
 	int32	StoryID;
