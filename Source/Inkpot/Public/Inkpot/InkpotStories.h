@@ -39,14 +39,14 @@ private:
 	int32 NextStoryHandle{0};
 
 	UPROPERTY(Transient)
-	TMap<int32, UInkpotStory*> Stories;
+	TMap<int32, TObjectPtr<UInkpotStory>> Stories;
 
 	UPROPERTY(Transient)
-	TMap<int32, UInkpotStoryAsset*> StoryAssets;
+	TMap<int32, TObjectPtr<UInkpotStoryAsset>> StoryAssets;
 
 	UPROPERTY(Transient)
-	TMap<int32, UInkpotStoryHistory*> StoryHistories;
+	TMap<int32, TObjectPtr<UInkpotStoryHistory>> StoryHistories;
 
 	UPROPERTY(Transient)
-	UInkpotStoryFactoryBase *StoryFactory;
+	TObjectPtr<UInkpotStoryFactoryBase> StoryFactory;
 };

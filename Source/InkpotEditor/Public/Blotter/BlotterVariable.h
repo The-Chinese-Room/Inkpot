@@ -109,7 +109,7 @@ protected:
 
 private:
 	UPROPERTY(Transient)
-	UInkpotStory* Story;
+	TObjectPtr<UInkpotStory> Story;
 
 	UPROPERTY(Transient)
 	FText	Name;
@@ -129,9 +129,9 @@ private:
 	UPROPERTY(Transient)
 	bool bOptionsOpen {false};
 
-	UPROPERTY(Transient)
+  UPROPERTY(Transient)
 	bool bPinned {false};
 
 	UPROPERTY(Transient)
-	UBlotterUIEntryVariable *DisplayWidget {nullptr};
+	TObjectPtr<UBlotterUIEntryVariable> DisplayWidget {nullptr};
 };
