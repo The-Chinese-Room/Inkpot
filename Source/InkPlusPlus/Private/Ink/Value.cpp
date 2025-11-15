@@ -423,7 +423,7 @@ Ink::FValueList::FValueList(Ink::FInkListItem InItem, int32 InSingleValue)
 
 bool Ink::FValueList::IsTruthy() const
 {
-	return false;
+	return !Value.IsEmpty();
 }
 
 Ink::FValueType Ink::FValueList::GetValueObject() const
