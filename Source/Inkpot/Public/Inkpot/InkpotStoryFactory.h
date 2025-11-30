@@ -24,7 +24,7 @@ public:
 
 protected:
 	UPROPERTY()
-	UInkpotStory* ABadStory;
+	TObjectPtr<UInkpotStory> ABadStory;
 };
 
 
