@@ -122,7 +122,7 @@ UInkpotStory* UInkpotStories::Reload( UInkpotStoryAsset* InInkpotStoryAsset )
 		return nullptr;
 	int32 handle = *keyptr;
 
-	UInkpotStory **storyInProgressPtr = Stories.Find( handle );
+	TObjectPtr<UInkpotStory>* storyInProgressPtr = Stories.Find( handle );
 	if(!storyInProgressPtr)
 		return nullptr;
 
@@ -130,7 +130,7 @@ UInkpotStory* UInkpotStories::Reload( UInkpotStoryAsset* InInkpotStoryAsset )
 	if(!storyInternal->IsValidStory())
 		return nullptr;
 
-	UInkpotStory *story = *storyInProgressPtr;
+	UInkpotStory *story = storyInProgressPtr->Get();
 	story->ResetContent( storyInternal );
 	return story;
 }
@@ -141,11 +141,11 @@ void UInkpotStories::Replay( UInkpotStory* InStory, bool bInResetState )
 		return;
 
 	int index = InStory->GetID();
-	UInkpotStoryHistory **history = StoryHistories.Find( index );
+	TObjectPtr<UInkpotStoryHistory>* history = StoryHistories.Find( index );
 	if(!history)
 		return;
 
-	(*history)->Replay( bInResetState );
+	history->Get()->Replay( bInResetState );
 }
 
 TArray<UInkpotStory*> UInkpotStories::GetStories()
