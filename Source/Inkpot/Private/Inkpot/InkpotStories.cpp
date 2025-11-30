@@ -151,6 +151,8 @@ void UInkpotStories::Replay( UInkpotStory* InStory, bool bInResetState )
 TArray<UInkpotStory*> UInkpotStories::GetStories()
 {
 	TArray<UInkpotStory*> stories;
-	Stories.GenerateValueArray(stories);;
+	stories.Reserve(Stories.Num());
+	for (auto pair : Stories)
+		stories.Add( pair.Value.Get() );
 	return stories;
 }

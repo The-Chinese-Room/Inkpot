@@ -23,7 +23,7 @@ public:
 
 protected:
 	UPROPERTY(VisibleAnywhere)
-	TArray<UBlotterContainer*> Children;
+	TArray<TObjectPtr<UBlotterContainer>> Children;
 
 	UPROPERTY(VisibleAnywhere)
 	int32 Level; 
