@@ -64,7 +64,7 @@ void UInkpotStoryAssetFactory::GenerateTAGs( UObject* InParent, UInkpotStoryAsse
 	FString name = FPaths::GetCleanFilename(package->GetName() );
 	FString path = FPaths::GetPath( package->GetPathName() );
 
-	UInkpotTagUtility::CreateTagTableAsset(name, path, InStoryAsset);
+	UInkpotTagUtility::CreateTagTable(name, path, InStoryAsset);
 }
 
 void UInkpotStoryAssetFactory::DumpStrings(UInkpotStoryAsset* InStoryAsset) const

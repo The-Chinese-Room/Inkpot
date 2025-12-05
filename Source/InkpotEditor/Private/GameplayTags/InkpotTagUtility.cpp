@@ -3,6 +3,8 @@
 #include "Engine/World.h"
 #include "Misc/ScopedSlowTask.h"
 #include "AssetRegistry/AssetRegistryModule.h"
+#include "GameplayTagsSettings.h"
+#include "GameplayTagsModule.h"
 
 #include "Asset/InkpotStoryAsset.h"
 #include "Inkpot/Inkpot.h"
@@ -187,4 +189,25 @@ UPackage* UInkpotTagUtility::CreateTagTableAsset(const FString &InName, const FS
 	Package->MarkPackageDirty();
 	return Package;
 }
+
+void UInkpotTagUtility::AddTableAssetToGameplayTagTableList(UPackage* Package)
+{
+	FString packagePath{ Package->GetPathName() };
+	FName path{ *packagePath };
+	FName name{ *FPaths::GetBaseFilename(packagePath) };
+	FSoftObjectPath objpath( path, name, FString() );
+
+	UGameplayTagsSettings* Settings = GetMutableDefault<UGameplayTagsSettings>();
+	Settings->GameplayTagTableList.AddUnique( objpath );
+
+	IGameplayTagsModule::OnTagSettingsChanged.Broadcast();
+}
+
+UPackage* UInkpotTagUtility::CreateTagTable(const FString& InName, const FString& InPath, UInkpotStoryAsset* InAsset)
+{
+	UPackage *package = CreateTagTableAsset(InName, InPath, InAsset);
+	AddTableAssetToGameplayTagTableList( package );
+	return package;;
+}
+
 

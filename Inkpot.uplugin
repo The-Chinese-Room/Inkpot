@@ -1,7 +1,7 @@
 {
   "FileVersion": 1,
   "Version": 1,
-  "VersionName": "1.23.21",
+  "VersionName": "1.24.21",
   "FriendlyName": "Inkpot",
   "Description": "A container for Ink in Unreal.",
   "Category": "Scripting",

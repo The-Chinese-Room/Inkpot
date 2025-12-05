@@ -1,7 +1,7 @@
 # Inkpot
 **Inkpot** - A container for **Ink** within the Unreal Engine developed by [The Chinese Room](https://www.thechineseroom.co.uk/).<br><br>
 This is a plugin for Unreal Engine 5.6 or later.<br>
-This is version **1.23.21** of the plugin.</br>
+This is version **1.24.21** of the plugin.</br>
 The head revision contains work in progress towards the upcoming release.<br>
 
 Inkpot is a wrapper for the wonderful narrative scripting language **Ink** developed by [Inkle Studios](https://www.inklestudios.com/ink/).<br>
@@ -13,6 +13,10 @@ For general support and chat with other users, check out [Inkle's discord](https
 (You'll find Inkpot chat in #unreal-projects)
 
 ## Changelog  
+
+### Changes in 1.24.21
+Creating gameplay tags now automatically adds the gameplay tag table to the project settings.<br>
+Reimporting Ink source will now update gameplay tags.<br>
 
 ### Changes in 1.23.21
 Fixed compilation errors when target cs has TargetRules.NativePointerMemberBehaviorOverride set to PointerMemberBehavior.Disallow (LyraStarterGame)<br>

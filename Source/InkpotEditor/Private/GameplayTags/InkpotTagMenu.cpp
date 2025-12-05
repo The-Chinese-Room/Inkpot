@@ -81,7 +81,7 @@ UPackage* UInkpotTagMenu::CreateTagTableAsset(const FAssetData &InAssetData)
 	FString AssetPath =  InAssetData.PackagePath.ToString();
 	UInkpotStoryAsset* storyAsset = Cast<UInkpotStoryAsset>( InAssetData.GetAsset() );
 	
-	return UInkpotTagUtility::CreateTagTableAsset(AssetName, AssetPath, storyAsset);
+	return UInkpotTagUtility::CreateTagTable(AssetName, AssetPath, storyAsset);
 }
 
 void UInkpotTagMenu::CreateTagTableAssets(const TArray<FAssetData> &InSourceAssets )
