@@ -257,10 +257,28 @@ void UInkpotStory::ChooseChoiceIndex( int32 InChoiceIndex )
 
 bool UInkpotStory::SwitchFlow( const FString &InFlowName )
 {
-	bool isFlowAlive = IsFlowAlive( InFlowName );
+	bool bIsNewFlow = !IsFlowAlive( InFlowName );
 	StoryInternal->SwitchFlow( InFlowName );
 	OnFlowChangeInternal();
-	return !isFlowAlive; 
+	return bIsNewFlow;
+}
+
+bool UInkpotStory::SwitchFlowToPath(const FString& InFlowName, const FString& InPath, bool bInRestart)
+{
+	bool bIsNewFlow = SwitchFlow(InFlowName);
+	if (bIsNewFlow || bInRestart)
+	{
+		ChoosePath(InPath);
+		if (CanContinueInternal())
+			ContinueInternal();
+	}
+	return bIsNewFlow;
+}
+
+bool UInkpotStory::SwitchFlowToPathGT(const FString& InFlowName, FGameplayTag InPath, bool bInRestart)
+{
+	FString path = UInkpotGameplayTagLibrary::PathTagToString(InPath);
+	return SwitchFlowToPath(InFlowName, path, bInRestart);
 }
 
 void UInkpotStory::RemoveFlow(const FString& InFlowName)
