@@ -164,6 +164,20 @@ FString UInkpotStory::Continue()
 	return ContinueInternal();
 }
 
+FString UInkpotStory::ContinueIfYouCan(bool& Continued)
+{
+	if (CanContinue())
+	{
+		Continued = true;
+		return ContinueInternal();
+	}
+	else
+	{
+		Continued = false;
+		return FString();
+	}
+}
+
 FString UInkpotStory::ContinueInternal()
 {
 	return StoryInternal->Continue();

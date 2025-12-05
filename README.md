@@ -17,6 +17,7 @@ For general support and chat with other users, check out [Inkle's discord](https
 ### Changes in 1.24.21
 Creating gameplay tags now automatically adds the gameplay tag table to the project settings.<br>
 Reimporting Ink source will now update gameplay tags.<br>
+Added ContinueIfYouCan, combines CanContinue and Continue to simplify blueprint code .<br>
 
 ### Changes in 1.23.21
 Fixed compilation errors when target cs has TargetRules.NativePointerMemberBehaviorOverride set to PointerMemberBehavior.Disallow (LyraStarterGame)<br>

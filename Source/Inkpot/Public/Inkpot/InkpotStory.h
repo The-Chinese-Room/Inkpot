@@ -43,6 +43,16 @@ public:
 	FString Continue();
 
 	/**
+	 * ContinueIfYouCan
+	 * If the story can continue, thie executes story script until choices or a newline are encountered.
+	 *
+	 * @param Continued - returns if the story continued or not
+	 * @returns The current line of text for the story.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
+	FString ContinueIfYouCan( bool &Continued );
+
+	/**
 	 * ContinueMaximally
 	 * Executes story script until choice or no more content.
 	 *
