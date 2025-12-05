@@ -195,7 +195,9 @@ void UInkpotTagUtility::AddTableAssetToGameplayTagTableList(UPackage* Package)
 	FString packagePath{ Package->GetPathName() };
 	FName path{ *packagePath };
 	FName name{ *FPaths::GetBaseFilename(packagePath) };
-	FSoftObjectPath objpath( path, name, FString() );
+
+	FTopLevelAssetPath assetPath(path, name);
+	FSoftObjectPath objpath(assetPath, FString());
 
 	UGameplayTagsSettings* Settings = GetMutableDefault<UGameplayTagsSettings>();
 	Settings->GameplayTagTableList.AddUnique( objpath );
