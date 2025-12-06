@@ -63,8 +63,8 @@ public:
 	 * @param Tag - A single gameplay tag, tags need to be generated and added to the project.  
 	 * @returns A new Inkpotlist. 
 	 */
-	UFUNCTION(BlueprintPure, Category="Inkpot|List", meta=(Categories = "Ink.Origin"))
-	static INKPOT_API FInkpotList MakeInkpotListFromGameplayTag(UInkpotStory *Story, FGameplayTag Tag);
+	UFUNCTION(BlueprintPure, Category="Inkpot|List")
+	static INKPOT_API FInkpotList MakeInkpotListFromGameplayTag(UInkpotStory *Story, UPARAM(meta = (Categories = "Ink.Origin")) FGameplayTag Tag);
 
 	/**
 	 * ToGameplayTag
@@ -84,8 +84,8 @@ public:
 	 * @param Tags - A gameplay tag container, tags need to be generated and added to the project.  
 	 * @returns A new Inkpotlist. 
 	 */
-	UFUNCTION(BlueprintPure, Category="Inkpot|List", meta=(Categories = "Ink.Origin"))
-	static INKPOT_API FInkpotList MakeInkpotListFromGameplayTags(UInkpotStory *Story, FGameplayTagContainer Tags);
+	UFUNCTION(BlueprintPure, Category="Inkpot|List")
+	static INKPOT_API FInkpotList MakeInkpotListFromGameplayTags(UInkpotStory *Story, UPARAM(meta = (Categories = "Ink.Origin")) FGameplayTagContainer Tags);
 
 	/**
 	 * ToGameplayTag
@@ -107,6 +107,29 @@ public:
 	 */
 	UFUNCTION(BlueprintPure, Category="Inkpot|List")
 	static INKPOT_API void ToStringArray(const FInkpotList &Value, TArray<FString> &ReturnValue, bool bUseOrigin = true );
+
+	/**
+	 * AddItem
+	 * Adds an item to the passed in List.
+	 *
+	 * @param A - InkpotList.
+	 * @param B - String
+	 * @returns reference to A.
+	 */
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "AddItem", CompactNodeTitle = "+"), Category = "Inkpot|List")
+	static INKPOT_API FInkpotList & AddItem(UPARAM(ref) FInkpotList &A, const FString &Item );
+
+	/**
+	 * AddItemGT 
+	 * ( GameplayTag version of AddItem )
+	 * Adds an item to the passed in List.
+	 *
+	 * @param A - InkpotList.
+	 * @param B - Gameplay Tag 
+	 * @returns reference to A.
+	 */
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "AddItemGT", CompactNodeTitle = "+"), Category = "Inkpot|List")
+	static INKPOT_API FInkpotList& AddItemGT(UPARAM(ref) FInkpotList& A, UPARAM(meta = (Categories = "Ink.Origin")) FGameplayTag Item);
 
 	/**
 	 * Union
@@ -188,8 +211,8 @@ public:
 	 * @param Tag - GammeplayTag, item name.
 	 * @returns true if Source contains Tag, false otherwise.
 	 */
-	UFUNCTION(BlueprintPure, meta=(DisplayName = "Contains Tag", CompactNodeTitle = "?", Categories = "Ink.Origin"), Category="Inkpot|List")
-	static INKPOT_API bool ContainsTag(const FInkpotList &Source, FGameplayTag Tag);
+	UFUNCTION(BlueprintPure, meta=(DisplayName = "Contains Item GT", CompactNodeTitle = "?"), Category="Inkpot|List")
+	static INKPOT_API bool ContainsItemGT(const FInkpotList &Source, UPARAM(meta = (Categories = "Ink.Origin")) FGameplayTag Tag);
 
 	/**
 	 * GreaterThan
