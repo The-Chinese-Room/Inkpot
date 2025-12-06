@@ -15,11 +15,11 @@ For general support and chat with other users, check out [Inkle's discord](https
 ## Changelog  
 
 ### Changes in 1.24.21
-Creating gameplay tags now automatically adds the gameplay tag table to the project settings.<br>
-Reimporting Ink source will now update gameplay tags & save to ini file.<br>
+Gameplay tag tables now automatically created on ink source import. Conditional on bAutogenerateGameplayTags.<br>
+Gameplay tag tables automatically added to gameplay tags list with generated & save to ini file. Conditional on bAutoUpdateGameplayTagsList<br>
 Added ContinueIfYouCan, combines CanContinue and Continue to simplify blueprint code.<br>
-Added SwitchFlowToPath reimplemented in the story class from the demo, added GameplayTag variant.<br>
-InpotList library now has fucntions to add individual items to lists, AddItem & AddItemGT.<br>
+Added SwitchFlowToPath reimplemented in the story class from the demo, added GameplayTag variant, SwitchFlowToPathGT.<br>
+InpotList library now has functions to add individual items to lists, AddItem & AddItemGT.<br>
 
 ### Changes in 1.23.21
 Fixed compilation errors when target cs has TargetRules.NativePointerMemberBehaviorOverride set to PointerMemberBehavior.Disallow (LyraStarterGame)<br>

@@ -27,4 +27,7 @@ private:
 	static bool CopyPathTagsToTable(TSharedPtr<Ink::FContainer> InSource, const FString &InRootName, UDataTable* InTagTable, int &OutRowID);
 
 	static bool CopyVariableTagsToTable(UInkpotStory* StoryAsset, UDataTable* TagTable, int &RowID);
+
+	static void ForceSettingsSave();
+	static void RefreshEditor();
 };

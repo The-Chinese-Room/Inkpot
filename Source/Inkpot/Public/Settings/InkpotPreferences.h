@@ -16,6 +16,13 @@ public:
 	*/
 	UPROPERTY(Config, EditAnywhere, Category = "Import")
 	bool bAutogenerateGameplayTags{ false };
+
+	/*
+	Automatically update the GameplayTagTableList setting of teh Project GameplayTags section.
+	(Tag files need to be added to this list before they can be used by any of the gamplay tag functionality of Inpot )
+	*/
+	UPROPERTY(Config, EditAnywhere, Category = "Import", meta = (EditCondition = "bAutogenerateGameplayTags") )
+	bool bAutoUpdateGameplayTagsList{ false };
 	
 	/* 
 	Show Inkpot debug log or not.
