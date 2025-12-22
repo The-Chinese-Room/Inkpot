@@ -20,6 +20,7 @@ Gameplay tag tables automatically added to gameplay tags list with generated & s
 Added ContinueIfYouCan, combines CanContinue and Continue to simplify blueprint code.<br>
 Added SwitchFlowToPath reimplemented in the story class from the demo, added GameplayTag variant, SwitchFlowToPathGT.<br>
 InpotList library now has functions to add individual items to lists, AddItem & AddItemGT.<br>
+Implemented scriptable import pipeline, Ink source import can now be fully customised.<br>
 
 ### Changes in 1.23.21
 Fixed compilation errors when target cs has TargetRules.NativePointerMemberBehaviorOverride set to PointerMemberBehavior.Disallow (LyraStarterGame)<br>

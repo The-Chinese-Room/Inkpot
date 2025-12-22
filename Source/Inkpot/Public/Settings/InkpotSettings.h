@@ -17,6 +17,12 @@ public:
 	UPROPERTY(config, noclear, EditAnywhere, Category = "Setup", meta = (MetaClass = "/Script/Inkpot.InkpotStoryFactoryBase"))
 	FSoftClassPath StoryFactoryClass {"/Script/Inkpot.InkpotStoryFactory"};
 
+	/*
+	Custom import, a editor utility object to manage ink script import pipeline
+	*/
+	UPROPERTY(config, EditAnywhere, Category = "Setup", meta = (MetaClass = "/Script/InkpotEditor.InkpotImportPipeline"))
+	FSoftClassPath CustomImportClass;
+
 	virtual FName GetCategoryName() const override;
 #if WITH_EDITOR
 	virtual FText GetSectionText() const override;
