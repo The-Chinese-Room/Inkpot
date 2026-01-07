@@ -53,11 +53,16 @@ void UInkpotImportPipelineLibrary::GenerateTAGs(UInkpotStoryAsset* InStoryAsset,
 
 	const UInkpotPreferences* settings = GetDefault<UInkpotPreferences>();
 	if (!settings->bAutogenerateGameplayTags)
+	{
+		bSuccess = true;
 		return;
+	}
 
 	UPackage* package = InStoryAsset->GetPackage();
 	if (!package)
+	{
 		return;
+	}
 
 	FString name = FPaths::GetCleanFilename(package->GetName());
 	FString path = FPaths::GetPath(package->GetPathName());
