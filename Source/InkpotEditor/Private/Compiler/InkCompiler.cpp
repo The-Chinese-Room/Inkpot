@@ -1,46 +1,22 @@
 #include "Compiler/InkCompiler.h"
-
-#include <HAL/FileManagerGeneric.h>
 #include "Misc/FileHelper.h"
 #include "Utility/InkpotLog.h"
 #include "Serialization/JsonSerializer.h"
-#include "Interfaces/IPluginManager.h"
-
+#include "ImportPipeline/InkpotImportPipelineLibrary.h"
 
 namespace InkCompiler
 {
-	FString GetPluginPath()
-	{
-		FString path = FPaths::ProjectPluginsDir() + TEXT( "Inkpot/" );
-		IPluginManager &pluginManager =  IPluginManager::Get();
-		TSharedPtr<IPlugin> inkpotPlugin = pluginManager.FindPlugin("Inkpot");
-		if(inkpotPlugin)
-			path = inkpotPlugin->GetBaseDir();
-		path = FPaths::ConvertRelativePathToFull( path );
-		return path;
-	}
-
 	FString GetInkleCatePath()
 	{
-	#if PLATFORM_WINDOWS
-		return GetPluginPath() + TEXT( "/ThirdParty/InkCommandLine/windows/inklecate.exe" );
-	#elif PLATFORM_MAC
-		return GetPluginPath() + TEXT( "/ThirdParty/InkCommandLine/mac/inklecate" );
-	#elif PLATFORM_LINUX
-		return GetPluginPath() + TEXT( "/ThirdParty/InkCommandLine/linux/inklecate" );
-	#else
-		return TEXT( "" );
-	#endif
-	}
-
-	FString GetScratchDirectory()
-	{
-		return GetPluginPath() + TEXT( "/Intermediate/InkCommandLine/" );
-	}
-
-	FString GetScratchFileName()
-	{
-		return GetScratchDirectory() + TEXT( "InkFileTemp.ink" );
+#if PLATFORM_WINDOWS
+		return UInkpotImportPipelineLibrary::GetPluginPath() + TEXT("/ThirdParty/InkCommandLine/windows/inklecate.exe");
+#elif PLATFORM_MAC
+		return UInkpotImportPipelineLibrary::GetPluginPath() + TEXT("/ThirdParty/InkCommandLine/mac/inklecate");
+#elif PLATFORM_LINUX
+		return UInkpotImportPipelineLibrary::GetPluginPath() + TEXT("/ThirdParty/InkCommandLine/linux/inklecate");
+#else
+		return TEXT("");
+#endif
 	}
 
 	bool CompileInkFile_Internal(const FString& InkFilePath, FString& OutCompiledJSON, TArray<FString>& Errors, TArray<FString>& Warnings, bool shouldCountVisits, bool bIsCompilationFailExpected )
@@ -58,7 +34,7 @@ namespace InkCompiler
 		FPaths::CollapseRelativeDirectories(sourceInkPath );
 		sourceInkPath  = FPaths::ConvertRelativePathToFull( sourceInkPath  );
 
-		FString compiledJsonPath = GetScratchDirectory() + FPaths::GetCleanFilename(sourceInkPath ) + TEXT(".json");
+		FString compiledJsonPath = UInkpotImportPipelineLibrary::GetScratchDirectory() + FPaths::GetCleanFilename(sourceInkPath ) + TEXT(".json");
 		FPaths::CollapseRelativeDirectories(compiledJsonPath);
 
 		FString args = FString::Printf(TEXT("%s -j -o \"%s\" \"%s\""), shouldCountVisits?TEXT(" -c"):TEXT(" "), *compiledJsonPath, *sourceInkPath );
@@ -99,28 +75,6 @@ namespace InkCompiler
 		INKPOT_LOG("CompileInkFile_Internal - Output: %s", *(stdOut + stdErr));
 
 		return FFileHelper::LoadFileToString(OutCompiledJSON, *compiledJsonPath);
-	}
-
-
-	void FlushScratchDirectory()
-	{
-		IPlatformFile::GetPlatformPhysical().DeleteDirectoryRecursively( *GetScratchDirectory() );
-		IPlatformFile::GetPlatformPhysical().CreateDirectory( *GetScratchDirectory() );
-	}
-
-	bool CompileInkFile(const FString& InSourceFilePath, FString& OutCompiledJSON, TArray<FString>& Errors, TArray<FString>& Warnings, bool shouldCountVisits, bool bIsCompilationFailExpected )
-	{
-		FlushScratchDirectory();
-		return CompileInkFile_Internal(InSourceFilePath, OutCompiledJSON, Errors, Warnings, shouldCountVisits, bIsCompilationFailExpected);
-	}
-
-	bool CompileInkString(const FString& SourceString, FString& OutCompiledJSON, TArray<FString>& Errors, TArray<FString>& Warnings, bool shouldCountVisits, bool bIsCompilationFailExpected )
-	{
-		// Save the ink source string to an ink file in the scratch directory for compiling 
-		FlushScratchDirectory();
-		FString tmpFileName = GetScratchFileName();
-		FFileHelper::SaveStringToFile(SourceString, *tmpFileName );
-		return CompileInkFile_Internal(tmpFileName, OutCompiledJSON, Errors, Warnings, shouldCountVisits, bIsCompilationFailExpected );
 	}
 
 	void ParseInklecateOutput(const FString& InklecateOutput, TArray<FString>& Errors, TArray<FString>& Warnings, bool& bCompileSuccess, bool& bExportSuccess)
@@ -165,6 +119,21 @@ namespace InkCompiler
 				bExportSuccess = elementObject->GetBoolField(TEXT("export-complete"));
 			}
 		}
+	}
+
+	bool CompileInkFile(const FString& InSourceFilePath, FString& OutCompiledJSON, TArray<FString>& Errors, TArray<FString>& Warnings, bool shouldCountVisits, bool bIsCompilationFailExpected)
+	{
+		UInkpotImportPipelineLibrary::FlushScratchDirectory();
+		return CompileInkFile_Internal(InSourceFilePath, OutCompiledJSON, Errors, Warnings, shouldCountVisits, bIsCompilationFailExpected);
+	}
+
+	bool CompileInkString(const FString& SourceString, FString& OutCompiledJSON, TArray<FString>& Errors, TArray<FString>& Warnings, bool shouldCountVisits, bool bIsCompilationFailExpected)
+	{
+		// Save the ink source string to an ink file in the scratch directory for compiling 
+		UInkpotImportPipelineLibrary::FlushScratchDirectory();
+		FString tmpFileName = UInkpotImportPipelineLibrary::GetScratchDirectory() + TEXT("InkFileTemp.ink");;
+		FFileHelper::SaveStringToFile(SourceString, *tmpFileName);
+		return CompileInkFile_Internal(tmpFileName, OutCompiledJSON, Errors, Warnings, shouldCountVisits, bIsCompilationFailExpected);
 	}
 
 }

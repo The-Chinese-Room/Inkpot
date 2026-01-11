@@ -43,6 +43,16 @@ public:
 	FString Continue();
 
 	/**
+	 * ContinueIfYouCan
+	 * If the story can continue, thie executes story script until choices or a newline are encountered.
+	 *
+	 * @param Continued - returns if the story continued or not
+	 * @returns The current line of text for the story.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
+	FString ContinueIfYouCan( bool &Continued );
+
+	/**
 	 * ContinueMaximally
 	 * Executes story script until choice or no more content.
 	 *
@@ -143,10 +153,35 @@ public:
 	 * Switches the flow of the story. A flow is a path of execution of the story. Simple stories have but one flow, but there can be many.
 	 *
 	 * @param FlowName - The name of the flow to switch to. If a flow of that name does not exist a new flow will be created. 
-	 * @returns true if the switch was succesful.
+	 * @returns true if the switch created a new flow.
 	 */
 	UFUNCTION(BlueprintCallable, Category="Inkpot|Story")
 	bool SwitchFlow( const FString &FlowName );
+
+	/**
+	 * SwitchFlowToPath
+	 * Switches the flow of the story and sets that flow to start from a spefcified path.
+	 *
+	 * @param FlowName - The name of the flow to switch to. If a flow of that name does not exist a new flow will be created.
+	 * @param Path - The path to switch the flow to, specified as knot.stitch.
+	 * @param Restart - Should the flow reset to the start of the path or not.
+	 * @returns true if the switch created a new flow.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
+	bool SwitchFlowToPath(const FString& FlowName, const FString& Path, bool Restart );
+
+	/**
+	 * SwitchFlowToPathGT
+	 * ( GameplayTag version of SwitchFlowToPath )
+	 * Switches the flow of the story and sets that flow to start from a spefcified path.
+	 *
+	 * @param FlowName - The name of the flow to switch to. If a flow of that name does not exist a new flow will be created.
+	 * @param Path - Tag for path start.
+	 * @param Restart - Should the flow reset to the start of the path or not.
+	 * @returns true if the switch created a new flow.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story", meta = (Categories = "Ink.Path"))
+	bool SwitchFlowToPathGT(const FString& FlowName, FGameplayTag  Path, bool Restart);
 
 	/**
 	 * RemoveFlow

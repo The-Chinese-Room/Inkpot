@@ -27,6 +27,11 @@ class INKPOTEDITOR_API UInkpotStoryAssetFactory : public UFactory, public FReimp
 
 private:
 	bool LoadAndCompileStory(const FString& InFilename, FString& OutStory, FString& OutCompiledStory) const;
-	void DumpStrings(UInkpotStoryAsset *InStoryAsset) const;
 	void GenerateTAGs( UObject* InParent, UInkpotStoryAsset *InStoryAsset ) const;
+
+	FSoftClassPath GetCustomPiplineClass() const;
+	bool IsUsingCustomPipeline() const;
+
+	UInkpotStoryAsset* ExecuteStandardImportPipeline(UClass* InClass, UObject* InParent, FName InName, EObjectFlags InFlags, const FString& InFullFilePath, const TCHAR* InParms, FFeedbackContext* InWarn, bool& bOutOperationCanceled);
+	UInkpotStoryAsset* ExecuteCustomImportPipeline(UClass* InClass, UObject* InParent, FName InName, EObjectFlags InFlags, const FString& InFullFilePath, const TCHAR* InParms, FFeedbackContext* InWarn, bool& bOutOperationCanceled);
 };

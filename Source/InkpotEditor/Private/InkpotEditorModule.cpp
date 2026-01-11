@@ -106,13 +106,13 @@ void FInkpotEditorModule::OpenEditorUtilityWidget( const FSoftObjectPath &InWidg
 
 void FInkpotEditorModule::OpenBlotter()
 {
-	FSoftObjectPath path( TEXT("/Inkpot/Inkpot/InkpotDebug.InkpotDebug") ); 
+	FSoftObjectPath path( TEXT("/Inkpot/Inkpot/Editor/InkpotDebug.InkpotDebug") ); 
 	OpenEditorUtilityWidget( path );
 }
 
 void FInkpotEditorModule::OpenOutliner()
 {
-	FSoftObjectPath path( TEXT("/Inkpot/Inkpot/InkpotOutliner.InkpotOutliner") ); 
+	FSoftObjectPath path( TEXT("/Inkpot/Inkpot/Editor/InkpotOutliner.InkpotOutliner") ); 
 	OpenEditorUtilityWidget( path );
 }
 

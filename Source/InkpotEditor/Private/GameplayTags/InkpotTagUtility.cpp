@@ -3,12 +3,19 @@
 #include "Engine/World.h"
 #include "Misc/ScopedSlowTask.h"
 #include "AssetRegistry/AssetRegistryModule.h"
+#include "GameplayTagsSettings.h"
+#include "GameplayTagsManager.h"
+#include "ISettingsModule.h"
+#include "ISettingsContainer.h"
+#include "ISettingsSection.h"
+#include "ISettingsCategory.h"
 
 #include "Asset/InkpotStoryAsset.h"
 #include "Inkpot/Inkpot.h"
 #include "Inkpot/InkpotStory.h"
 #include "Inkpot/InkpotValueLibrary.h"
 #include "Inkpot/InkpotListLibrary.h"
+#include "Settings/InkpotPreferences.h"
 
 bool UInkpotTagUtility::CopyTagsFromStoryToTable( UInkpotStoryAsset *InStoryAsset, UDataTable *TagTable)
 {
@@ -188,3 +195,65 @@ UPackage* UInkpotTagUtility::CreateTagTableAsset(const FString &InName, const FS
 	return Package;
 }
 
+void UInkpotTagUtility::ForceSettingsSave()
+{
+	ISettingsModule * SettingsModule = FModuleManager::GetModulePtr<ISettingsModule>("Settings");
+	if (!SettingsModule)
+		return;
+	ISettingsContainerPtr SettingsContainer = SettingsModule->GetContainer("Project");
+	if (!SettingsContainer.IsValid())
+		return;
+	TSharedPtr<ISettingsCategory>  SettingsCategory = SettingsContainer->GetCategory("Project");
+	if (!SettingsCategory.IsValid())
+		return;
+	ISettingsSectionPtr SettingsSection = SettingsCategory->GetSection("GameplayTags", true);
+	if (!SettingsSection.IsValid())
+		return;
+	SettingsSection->Save();
+}
+
+void UInkpotTagUtility::RefreshEditor()
+{
+	// Just notify a relaod of the tag tree
+	UGameplayTagsManager& tagsManager = UGameplayTagsManager::Get();
+	tagsManager.EditorRefreshGameplayTagTree();
+}
+
+void UInkpotTagUtility::AddTableAssetToGameplayTagTableList(UPackage* Package)
+{
+	const UInkpotPreferences* settings = GetDefault<UInkpotPreferences>();
+	if (!settings->bAutoUpdateGameplayTagsList)
+	{
+		RefreshEditor();
+	}
+	else
+	{
+		FString packagePath{ Package->GetPathName() };
+		FName path{ *packagePath };
+		FName name{ *FPaths::GetBaseFilename(packagePath) };
+		FTopLevelAssetPath assetPath(path, name);
+		FSoftObjectPath objpath(assetPath, FString());
+
+		UGameplayTagsSettings* Settings = GetMutableDefault<UGameplayTagsSettings>();
+		Settings->GameplayTagTableList.AddUnique(objpath);
+		// save confif *should* save back to the ini file, but does not seem to work
+		Settings->SaveConfig();
+
+		// forcing a property change event does not seem to work either
+		//FPropertyChangedEvent PropertyChangedEvent(UGameplayTagsSettings::StaticClass()->FindPropertyByName(GET_MEMBER_NAME_CHECKED(UGameplayTagsSettings, GameplayTagTableList)));
+		//Settings->PostEditChangeProperty(PropertyChangedEvent);
+
+		//so, notify editor of change and rebuild tag tree
+		RefreshEditor();
+
+		// and then brute force save of settings as SaveConfig does not seem to do this
+		ForceSettingsSave();
+	}
+}
+
+UPackage* UInkpotTagUtility::CreateTagTable(const FString& InName, const FString& InPath, UInkpotStoryAsset* InAsset)
+{
+	UPackage *package = CreateTagTableAsset(InName, InPath, InAsset);
+	AddTableAssetToGameplayTagTableList( package );
+	return package;
+}
