@@ -20,6 +20,7 @@ Gameplay tag tables automatically added to gameplay tags list with generated & s
 Added ContinueIfYouCan, combines CanContinue and Continue to simplify blueprint code.<br>
 Added SwitchFlowToPath reimplemented in the story class from the demo, added GameplayTag variant, SwitchFlowToPathGT.<br>
 InpotList library now has functions to add individual items to lists, AddItem & AddItemGT.<br>
+Inkpotwatch updated to work with gameplay tags.<br>
 Implemented scriptable import pipeline, Ink source import can now be fully customised.<br>
 
 ### Changes in 1.24.21
