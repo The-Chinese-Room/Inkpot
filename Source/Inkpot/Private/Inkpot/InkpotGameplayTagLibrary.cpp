@@ -19,5 +19,5 @@ FString UInkpotGameplayTagLibrary::PathTagToString(FGameplayTag InTag )
 
 FString UInkpotGameplayTagLibrary::VariableTagToString(FGameplayTag InTag )
 {
-	return TagToString( InTag, INK_PATH_GAMEPLAYTAG_PREFIX );
+	return TagToString( InTag, INK_VARIABLE_GAMEPLAYTAG_PREFIX);
 }
