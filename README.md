@@ -1,7 +1,7 @@
 # Inkpot
 **Inkpot** - A container for **Ink** within the Unreal Engine developed by [The Chinese Room](https://www.thechineseroom.co.uk/).<br><br>
 This is a plugin for Unreal Engine 5.6 or later.<br>
-This is version **1.24.21** of the plugin.</br>
+This is version **1.30.21** of the plugin.</br>
 The head revision contains work in progress towards the upcoming release.<br>
 
 Inkpot is a wrapper for the wonderful narrative scripting language **Ink** developed by [Inkle Studios](https://www.inklestudios.com/ink/).<br>
@@ -13,6 +13,14 @@ For general support and chat with other users, check out [Inkle's discord](https
 (You'll find Inkpot chat in #unreal-projects)
 
 ## Changelog  
+
+### Changes in 1.30.21
+Gameplay tag tables now automatically created on ink source import. Conditional on bAutogenerateGameplayTags.<br>
+Gameplay tag tables automatically added to gameplay tags list with generated & save to ini file. Conditional on bAutoUpdateGameplayTagsList<br>
+Added ContinueIfYouCan, combines CanContinue and Continue to simplify blueprint code.<br>
+Added SwitchFlowToPath reimplemented in the story class from the demo, added GameplayTag variant, SwitchFlowToPathGT.<br>
+InpotList library now has functions to add individual items to lists, AddItem & AddItemGT.<br>
+Implemented scriptable import pipeline, Ink source import can now be fully customised.<br>
 
 ### Changes in 1.24.21
 Fixed bad resolution of gameplay tags for getting variables. 
