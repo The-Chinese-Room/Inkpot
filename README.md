@@ -22,6 +22,8 @@ Added SwitchFlowToPath reimplemented in the story class from the demo, added Gam
 InpotList library now has functions to add individual items to lists, AddItem & AddItemGT.<br>
 Inkpotwatch updated to work with gameplay tags.<br>
 Implemented scriptable import pipeline, Ink source import can now be fully customised.<br>
+Can now query inkpot for the story asset for a runtime story.<br>
+Custom meta data can now be added to the story asset using the custom import pipeline.<br>
 
 ### Changes in 1.24.21
 Fixed bad resolution of gameplay tags for getting variables. 

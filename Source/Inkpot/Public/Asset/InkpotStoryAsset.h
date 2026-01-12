@@ -4,6 +4,8 @@
 #include "Engine/DataAsset.h"
 #include "InkpotStoryAsset.generated.h"
 
+class UInkpotStoryMetaData;
+
 UCLASS(BlueprintType)
 class INKPOT_API UInkpotStoryAsset : public UDataAsset
 {
@@ -37,6 +39,18 @@ public:
 	UFUNCTION(BlueprintPure)
 	const FString& GetCompiledJSON() const;
 
+	/* SetMetaData
+	* Sets the metadata to be associated with this story asset.
+	*/
+	UFUNCTION(BlueprintCallable)
+	void SetMetaData(UInkpotStoryMetaData *Source);
+
+	/* GetMetaData
+	* Gets the metadata associated with this story asset.
+	*/
+	UFUNCTION(BlueprintPure)
+	UInkpotStoryMetaData *GetMetaData() const;
+
 #if WITH_EDITOR
 	virtual void PostInitProperties() override;
 	virtual void GetAssetRegistryTags( FAssetRegistryTagsContext Context ) const override;
@@ -53,6 +67,9 @@ private:
 
 	UPROPERTY( VisibleAnywhere, Category="Inkpot|StoryAsset" )
 	FString JSON;
+
+	UPROPERTY(VisibleAnywhere, Instanced, Category = "Inkpot|StoryAsset")
+	TObjectPtr<UInkpotStoryMetaData> MetaData{ nullptr };
 
 #if WITH_EDITORONLY_DATA
 	UPROPERTY(VisibleAnywhere, Instanced, Category = ImportSettings)

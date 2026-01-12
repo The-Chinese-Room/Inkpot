@@ -9,6 +9,8 @@ FName UInkpotSettings::GetCategoryName() const
 #if WITH_EDITOR
 FText UInkpotSettings::GetSectionText() const
 {
+	
+
 	return NSLOCTEXT("InkpotPlugin", "InkpotSettingsSection", "Inkpot");
 }
 #endif

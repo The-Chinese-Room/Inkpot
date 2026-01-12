@@ -40,8 +40,18 @@ public:
 	 * @param InkpotStoryAsset - Soft object reference to the story asset. 
 	 * @return The runtime story.
 	 */
-	UFUNCTION(BlueprintCallable, Category = Inkpot)
+	UFUNCTION(BlueprintPure, Category = Inkpot)
 	UInkpotStory* GetStory( TSoftObjectPtr<UInkpotStoryAsset> InkpotStoryAsset );
+
+	/**
+	 * Get a StoryAsset
+	 * Story will need to have been started with BeginStory.
+	 *
+	 * @param InkpotStory - Soft object reference to the live story.
+	 * @return The story asset.
+	 */
+	UFUNCTION(BlueprintPure, Category = Inkpot)
+	UInkpotStoryAsset* GetStoryAsset( UInkpotStory* InkpotStory );
 
 	/**
 	 * End a story

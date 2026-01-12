@@ -26,6 +26,16 @@ const FString& UInkpotStoryAsset::GetCompiledJSON() const
 	return JSON;
 }
 
+void UInkpotStoryAsset::SetMetaData(UInkpotStoryMetaData* InMetaData)
+{
+	MetaData = InMetaData;
+}
+
+UInkpotStoryMetaData* UInkpotStoryAsset::GetMetaData() const
+{
+	return MetaData;
+}
+
 #if WITH_EDITORONLY_DATA
 UAssetImportData* UInkpotStoryAsset::GetAssetImportData()
 {
