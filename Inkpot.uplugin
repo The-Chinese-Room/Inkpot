@@ -25,7 +25,7 @@
 			"Name": "InkPlusPlus",
 			"Type": "Runtime",
 			"LoadingPhase": "PreDefault"
-			},
+		},
 		{
 			"Name": "InkpotEditor",
 			"Type": "Editor",

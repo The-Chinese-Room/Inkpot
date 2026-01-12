@@ -129,7 +129,7 @@ private:
 	UPROPERTY(Transient)
 	bool bOptionsOpen {false};
 
-  UPROPERTY(Transient)
+  	UPROPERTY(Transient)
 	bool bPinned {false};
 
 	UPROPERTY(Transient)
