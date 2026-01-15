@@ -26,7 +26,7 @@ FString UInkpotLibrary::GetTagWithPrefixAndStrip(UInkpotStory* InStory, const FS
 	return rval;
 }
 
-UInkpotStoryMetaData* UInkpotLibrary::GetMetaData(UInkpotStory* InStory)
+UAssetUserData* UInkpotLibrary::GetStoryAssetUserData(UInkpotStory* InStory, TSubclassOf<UAssetUserData> InClass)
 {
 	if (!IsValid(InStory))
 	{
@@ -41,6 +41,7 @@ UInkpotStoryMetaData* UInkpotLibrary::GetMetaData(UInkpotStory* InStory)
 		INKPOT_ERROR("Story asset is invalid");
 		return nullptr;
 	}
-
-	return asset->GetMetaData();
+	
+	return asset->GetAssetUserDataOfClass(InClass);
 }
+

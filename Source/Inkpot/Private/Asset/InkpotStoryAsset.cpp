@@ -26,16 +26,6 @@ const FString& UInkpotStoryAsset::GetCompiledJSON() const
 	return JSON;
 }
 
-void UInkpotStoryAsset::SetMetaData(UInkpotStoryMetaData* InMetaData)
-{
-	MetaData = InMetaData;
-}
-
-UInkpotStoryMetaData* UInkpotStoryAsset::GetMetaData() const
-{
-	return MetaData;
-}
-
 #if WITH_EDITORONLY_DATA
 UAssetImportData* UInkpotStoryAsset::GetAssetImportData()
 {
@@ -86,4 +76,21 @@ void UInkpotStoryAsset::Serialize(FStructuredArchiveRecord Record)
 	}
 }
 #endif
+
+void UInkpotStoryAsset::AddAssetUserData(UAssetUserData* InUserData)
+{
+	UserData = InUserData;
+	Modify();
+}
+
+UAssetUserData* UInkpotStoryAsset::GetAssetUserDataOfClass(TSubclassOf<UAssetUserData> InClass)
+{
+	if (!IsValid(UserData))
+		return nullptr;
+
+	if( UserData->GetClass() != InClass )
+		return nullptr;
+
+	return UserData;
+}
 

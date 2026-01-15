@@ -7,7 +7,7 @@
 class UInkpotStoryMetaData;
 
 UCLASS(BlueprintType)
-class INKPOT_API UInkpotStoryAsset : public UDataAsset
+class INKPOT_API UInkpotStoryAsset : public UDataAsset, public IInterface_AssetUserData
 {
 	GENERATED_BODY()
 
@@ -39,18 +39,6 @@ public:
 	UFUNCTION(BlueprintPure)
 	const FString& GetCompiledJSON() const;
 
-	/* SetMetaData
-	* Sets the metadata to be associated with this story asset.
-	*/
-	UFUNCTION(BlueprintCallable)
-	void SetMetaData(UInkpotStoryMetaData *Source);
-
-	/* GetMetaData
-	* Gets the metadata associated with this story asset.
-	*/
-	UFUNCTION(BlueprintPure)
-	UInkpotStoryMetaData *GetMetaData() const;
-
 #if WITH_EDITOR
 	virtual void PostInitProperties() override;
 	virtual void GetAssetRegistryTags( FAssetRegistryTagsContext Context ) const override;
@@ -61,6 +49,12 @@ public:
 	void UpdateAssetInfo( const FString &Filename );
 #endif
 
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|StoryAsset")
+	virtual void AddAssetUserData(UAssetUserData* UserData) override;
+
+	UFUNCTION(BlueprintPure, Category = "Inkpot|StoryAsset", meta = (DeterminesOutputType = "Class"))
+	virtual UAssetUserData* GetAssetUserDataOfClass(TSubclassOf<UAssetUserData> Class) override;
+
 private:
 	UPROPERTY( VisibleAnywhere, Category="Inkpot|StoryAsset" )
 	FString Source;
@@ -68,8 +62,8 @@ private:
 	UPROPERTY( VisibleAnywhere, Category="Inkpot|StoryAsset" )
 	FString JSON;
 
-	UPROPERTY(VisibleAnywhere, Instanced, Category = "Inkpot|StoryAsset")
-	TObjectPtr<UInkpotStoryMetaData> MetaData{ nullptr };
+	UPROPERTY(VisibleAnywhere, Category = "Inkpot|StoryAsset")
+	TObjectPtr <UAssetUserData> UserData;
 
 #if WITH_EDITORONLY_DATA
 	UPROPERTY(VisibleAnywhere, Instanced, Category = ImportSettings)

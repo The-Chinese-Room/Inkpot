@@ -1,22 +1,25 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Asset/InkpotStoryMetaData.h"
+#include "Engine/AssetUserData.h"
 #include "InkpotStoryMetaDataSimple.generated.h"
 
 UCLASS()
-class INKPOT_API UInkpotStoryMetaDataSimple : public UInkpotStoryMetaData
+class INKPOT_API UInkpotStoryMetaDataSimple : public UAssetUserData
 {
 	GENERATED_BODY()
 
 public:
 
 	UFUNCTION(BlueprintPure)
-	static UInkpotStoryMetaDataSimple* MakeInkpotStoryMetaDataSimple(FString SomeExtraData);
+	static UInkpotStoryMetaDataSimple* MakeInkpotStoryMetaDataSimple(FString SomeExtraData, FString EvenMoreExtraData);
 
 	UFUNCTION(BlueprintPure)
-	static void BreakInkpotStoryMetaDataSimple(UInkpotStoryMetaData* target, FString &SomeExtraData);
+	static void BreakInkpotStoryMetaDataSimple(UAssetUserData* target, FString &SomeExtraData, FString &EvenMoreExtraData);
 
 	UPROPERTY(VisibleAnywhere)
 	FString SomeExtraData;
+
+	UPROPERTY(VisibleAnywhere)
+	FString EvenMoreExtraData;
 };
