@@ -120,6 +120,10 @@ This plugin is distributed as source code which needs compiling.<br>
 You will need to install Visual Studio 2022.<br>
 https://visualstudio.microsoft.com/vs/<br>
 
+>[!TIP]
+> You'll need the "Game Development with C++" workload in Visual Studio to compile Unreal projects.
+> To install it, go to `Tools > Get Tools and Features...` and select "Game Development with C++" under "Gaming."
+
 ## Installing the plugin
 
 Make sure you have **.Net framework 5.0** and **Visual Studio 2022** installed.<br>
@@ -143,6 +147,9 @@ Make sure you have **Visual Studio 2022** installed.<br>
 * If you get this error _VisualStudioUnsupported x64 must be installed in order to build this target_.<br> 
 For Unreal Engine 5.6, you need to be on v17.8 of the MSCV v143 toolchain. See here for more details.<br>
 https://forums.unrealengine.com/t/visualstudiounsupported-x64-must-be-installed-trying-to-update-a-project-from-5-3-2-to-5-4-1/1835116/5
+
+* If you get this error _[YourProjectName] could not be compiled. Try rebuilding from source manually_.<br>
+Make sure you have the "Game Development with C++" workload installed in Visual Studio.
 
 ### My Ink files will not import.
 
