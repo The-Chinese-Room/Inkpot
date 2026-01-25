@@ -17,7 +17,11 @@ void UInkpotWatch::OnBeginStory( UInkpotStory* InStory )
 {
 	FOnInkpotVariableChange delegate;
 	delegate.BindDynamic(this, &UInkpotWatch::OnVariableChange);
-	InStory->SetOnVariableChange(delegate, VariableWatch);
+
+	if (bUseGameplayTagLookup)
+		InStory->SetOnVariableChangeGT(delegate, VariableWatchGT);
+	else
+		InStory->SetOnVariableChange(delegate, VariableWatch);
 }
 
 void UInkpotWatch::OnVariableChange( UInkpotStory* InStory, const FString & InVariable, const FInkpotValue & InNewValue )

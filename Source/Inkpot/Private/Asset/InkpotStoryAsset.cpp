@@ -77,3 +77,20 @@ void UInkpotStoryAsset::Serialize(FStructuredArchiveRecord Record)
 }
 #endif
 
+void UInkpotStoryAsset::AddAssetUserData(UAssetUserData* InUserData)
+{
+	UserData = InUserData;
+	Modify();
+}
+
+UAssetUserData* UInkpotStoryAsset::GetAssetUserDataOfClass(TSubclassOf<UAssetUserData> InClass)
+{
+	if (!IsValid(UserData))
+		return nullptr;
+
+	if( UserData->GetClass() != InClass )
+		return nullptr;
+
+	return UserData;
+}
+

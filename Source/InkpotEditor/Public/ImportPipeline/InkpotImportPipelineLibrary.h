@@ -68,4 +68,12 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "Inkpot|Import")
 	static INKPOTEDITOR_API void FlushScratchDirectory();
+
+	/* ShowInkpotImportMessageDialog
+	* Shows a modal dialogue with the given message and title
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Import")
+	static INKPOTEDITOR_API void ShowInkpotImportMessageDialog(FText Title, FText Message, EAppMsgCategory MessageCategory= EAppMsgCategory::Error);
+
+
 };

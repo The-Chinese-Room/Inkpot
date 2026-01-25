@@ -27,6 +27,7 @@ public:
 	void Replay( UInkpotStory* InkpotStory, bool bInResetState = true );
 
 	UInkpotStory* GetStory( TSoftObjectPtr<UInkpotStoryAsset> InkpotStoryAssetPath );
+	UInkpotStoryAsset* GetStoryAsset(UInkpotStory* InkpotStory);
 
 	TArray<UInkpotStory*> GetStories();
 

@@ -1,7 +1,7 @@
 # Inkpot
 **Inkpot** - A container for **Ink** within the Unreal Engine developed by [The Chinese Room](https://www.thechineseroom.co.uk/).<br><br>
 This is a plugin for Unreal Engine 5.6 or later.<br>
-This is version **1.24.21** of the plugin.</br>
+This is version **1.30.21** of the plugin.</br>
 The head revision contains work in progress towards the upcoming release.<br>
 
 Inkpot is a wrapper for the wonderful narrative scripting language **Ink** developed by [Inkle Studios](https://www.inklestudios.com/ink/).<br>
@@ -13,6 +13,17 @@ For general support and chat with other users, check out [Inkle's discord](https
 (You'll find Inkpot chat in #unreal-projects)
 
 ## Changelog  
+
+### Changes in 1.30.21
+Gameplay tag tables now automatically created on ink source import. Conditional on bAutogenerateGameplayTags.<br>
+Gameplay tag tables automatically added to gameplay tags list with generated & save to ini file. Conditional on bAutoUpdateGameplayTagsList<br>
+Added ContinueIfYouCan, combines CanContinue and Continue to simplify blueprint code.<br>
+Added SwitchFlowToPath reimplemented in the story class from the demo, added GameplayTag variant, SwitchFlowToPathGT.<br>
+InpotList library now has functions to add individual items to lists, AddItem & AddItemGT.<br>
+Inkpotwatch updated to work with gameplay tags.<br>
+Implemented scriptable import pipeline, Ink source import can now be fully customised.<br>
+Can now query inkpot for the story asset for a runtime story.<br>
+Custom meta data can now be added to the story asset using the custom import pipeline.<br>
 
 ### Changes in 1.24.21
 Fixed bad resolution of gameplay tags for getting variables. 
@@ -109,6 +120,10 @@ This plugin is distributed as source code which needs compiling.<br>
 You will need to install Visual Studio 2022.<br>
 https://visualstudio.microsoft.com/vs/<br>
 
+>[!TIP]<br>
+> You'll need the "Game Development with C++" workload in Visual Studio to compile Unreal projects.<br>
+> To install it, go to `Tools > Get Tools and Features...` and select "Game Development with C++" under "Gaming."<br>
+
 ## Installing the plugin
 
 Make sure you have **.Net framework 5.0** and **Visual Studio 2022** installed.<br>
@@ -132,6 +147,9 @@ Make sure you have **Visual Studio 2022** installed.<br>
 * If you get this error _VisualStudioUnsupported x64 must be installed in order to build this target_.<br> 
 For Unreal Engine 5.6, you need to be on v17.8 of the MSCV v143 toolchain. See here for more details.<br>
 https://forums.unrealengine.com/t/visualstudiounsupported-x64-must-be-installed-trying-to-update-a-project-from-5-3-2-to-5-4-1/1835116/5
+
+* If you get this error _[YourProjectName] could not be compiled. Try rebuilding from source manually_.<br>
+Make sure you have the "Game Development with C++" workload installed in Visual Studio.<br>
 
 ### My Ink files will not import.
 

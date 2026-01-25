@@ -7,6 +7,7 @@
 #include "GenericPlatform/GenericPlatformProcess.h"
 #include "Interfaces/IPluginManager.h"
 #include "Inkpot/Inkpot.h"
+#include "EditorDialogLibrary.h"
 
 void DumpWarningsAndErrors(const TArray<FString>& errors, const TArray<FString>& warnings)
 {
@@ -133,4 +134,8 @@ void UInkpotImportPipelineLibrary::FlushScratchDirectory()
 	IPlatformFile::GetPlatformPhysical().CreateDirectory(*GetScratchDirectory());
 }
 
+void UInkpotImportPipelineLibrary::ShowInkpotImportMessageDialog(FText InTitle, FText InMessage, EAppMsgCategory InCategory)
+{
+	UEditorDialogLibrary::ShowMessage(InTitle,InMessage,EAppMsgType::Type::Ok,EAppReturnType::Type::Ok,InCategory);
+}
 

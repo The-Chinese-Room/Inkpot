@@ -4,8 +4,10 @@
 #include "Engine/DataAsset.h"
 #include "InkpotStoryAsset.generated.h"
 
+class UInkpotStoryMetaData;
+
 UCLASS(BlueprintType)
-class INKPOT_API UInkpotStoryAsset : public UDataAsset
+class INKPOT_API UInkpotStoryAsset : public UDataAsset, public IInterface_AssetUserData
 {
 	GENERATED_BODY()
 
@@ -47,12 +49,21 @@ public:
 	void UpdateAssetInfo( const FString &Filename );
 #endif
 
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|StoryAsset")
+	virtual void AddAssetUserData(UAssetUserData* UserData) override;
+
+	UFUNCTION(BlueprintPure, Category = "Inkpot|StoryAsset", meta = (DeterminesOutputType = "Class"))
+	virtual UAssetUserData* GetAssetUserDataOfClass(TSubclassOf<UAssetUserData> Class) override;
+
 private:
 	UPROPERTY( VisibleAnywhere, Category="Inkpot|StoryAsset" )
 	FString Source;
 
 	UPROPERTY( VisibleAnywhere, Category="Inkpot|StoryAsset" )
 	FString JSON;
+
+	UPROPERTY(VisibleAnywhere, Category = "Inkpot|StoryAsset")
+	TObjectPtr <UAssetUserData> UserData;
 
 #if WITH_EDITORONLY_DATA
 	UPROPERTY(VisibleAnywhere, Instanced, Category = ImportSettings)

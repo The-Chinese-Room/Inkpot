@@ -115,6 +115,19 @@ UInkpotStory* UInkpotStories::GetStory( TSoftObjectPtr<UInkpotStoryAsset>  InSto
 	return StoryFactory->BadStory();
 }
 
+UInkpotStoryAsset* UInkpotStories::GetStoryAsset(UInkpotStory* InkpotStory)
+{
+	if (!IsValid(InkpotStory))
+		return nullptr;
+	int handle = InkpotStory->GetID();
+
+	TObjectPtr<UInkpotStoryAsset>* storyAssetPtr = StoryAssets.Find(handle);
+	if (!storyAssetPtr)
+		return nullptr;
+
+	return *storyAssetPtr;
+}
+
 UInkpotStory* UInkpotStories::Reload( UInkpotStoryAsset* InInkpotStoryAsset )
 {
 	const int32 *keyptr = StoryAssets.FindKey( InInkpotStoryAsset );

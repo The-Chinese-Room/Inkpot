@@ -6,6 +6,7 @@
 #include "InkpotLibrary.generated.h"
 
 class UInkpotStory;
+class UInkpotStoryMetaData;
 
 UCLASS(meta = (BlueprintThreadSafe, ScriptName = "InkpotLibrary"))
 class UInkpotLibrary : public UBlueprintFunctionLibrary
@@ -25,4 +26,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Inkpot|Story")
 	static INKPOT_API FString GetTagWithPrefixAndStrip(UInkpotStory *Story, const FString& TagPrefix);
 
+	/* GetStoryAssetUserData
+	* Get the asset user data instance (of class) from the story data asset used to create the story
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story", meta = (DeterminesOutputType = "Class"))
+	static UAssetUserData* GetStoryAssetUserData(UInkpotStory* Story, UPARAM(meta = (AllowAbstract = "false")) TSubclassOf<UAssetUserData> Class);
 };
