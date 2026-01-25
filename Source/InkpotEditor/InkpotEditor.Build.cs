@@ -46,7 +46,9 @@ public class InkpotEditor : ModuleRules
                 "Blutility",
                 "ContentBrowser",
                 "ToolMenus",
-                "GameplayTags"
+                "GameplayTags",
+
+				"EditorScriptingUtilities"
             }
         );
 		
