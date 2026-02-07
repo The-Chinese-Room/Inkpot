@@ -26,6 +26,28 @@ FString UInkpotLibrary::GetTagWithPrefixAndStrip(UInkpotStory* InStory, const FS
 	return rval;
 }
 
+TMap<FName, FString> UInkpotLibrary::MapCurrentTagsWithDelimiter(UInkpotStory* InStory, const FString& InTagDelimiter = ": ")
+{
+	TMap<FName, FString> rval;
+	if (IsValid(InStory))
+	{
+		const TArray<FString>& tags = InStory->GetCurrentTags();
+		for (const FString& tag : tags)
+		{
+			FString LeftKey, RightVal;
+			if (tag.Split(InTagDelimiter, &LeftKey, &RightVal))
+			{
+				rval.Add(*LeftKey, *RightVal);
+			}
+		}
+	}
+	else
+	{
+		INKPOT_ERROR("Story is not set");
+	}
+	return rval;
+}
+
 UAssetUserData* UInkpotLibrary::GetStoryAssetUserData(UInkpotStory* InStory, TSubclassOf<UAssetUserData> InClass)
 {
 	if (!IsValid(InStory))
