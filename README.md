@@ -142,6 +142,10 @@ LIke this:<br>
 For an example of how this plugin should sit in your project see the InkpotDemo.<br>
 https://github.com/The-Chinese-Room/InkpotDemo
 
+Once you have it installed, you'll need to enable it for your project. Open the project and go to `edit > plugins`. Search for "Inkpot."
+If everything is set up correctly, it should appear in the plugins interface. Tick the box to enable the plugin.
+It will prompt you to restart the editor. When you do, the plugin should compile.
+
 ## FAQ
 
 ### I cannot compile the plugin.
