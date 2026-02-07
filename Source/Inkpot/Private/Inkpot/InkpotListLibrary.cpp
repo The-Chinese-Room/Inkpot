@@ -52,10 +52,21 @@ void UInkpotListLibrary::ToStringArray(const FInkpotList &InList, TArray<FString
 	InList.ToStringArray( ReturnValue, bUseOrigin );
 }
 
-FInkpotList& UInkpotListLibrary::AddItem(FInkpotList &A, const FString &InItem)
+FString GetItemName(const FString& InListItemName)
+{
+	FString itemName;
+	bool bIsOriginSpecified = InListItemName.Split(TEXT("."), nullptr, &itemName);
+	if (bIsOriginSpecified)
+		return itemName;
+	else
+		return InListItemName;
+}
+
+FInkpotList& UInkpotListLibrary::AddItem(FInkpotList &A, const FString &InListItemName)
 {
 	Ink::FInkList& list = A.GetList();
-	list.AddItem( InItem );
+	FString itemName = GetItemName(InListItemName);
+	list.AddItem( itemName );
 	return A;
 }
 
@@ -158,14 +169,8 @@ bool UInkpotListLibrary::ContainsList( const FInkpotList &Source, const FInkpotL
 bool UInkpotListLibrary::ContainsItem(const FInkpotList &Source, const FString &InListItemName)
 {
 	Ink::FInkList &listSource = Source.GetList();
-
-	FString originName, itemName;
-	bool bIsOriginSpecified = InListItemName.Split(TEXT("."), &originName, &itemName);
-	if(!bIsOriginSpecified)
-		itemName = InListItemName;
-
+	FString itemName = GetItemName(InListItemName);
 	bool rval = listSource.ContainsItemNamed( itemName );
-
 	return rval;
 }
 
