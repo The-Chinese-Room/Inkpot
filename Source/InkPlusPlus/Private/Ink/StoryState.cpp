@@ -128,7 +128,7 @@ void Ink::FStoryState::LoadJSONObj(const FJsonObject& InJSONObj)
 			if ( InJSONObj.TryGetStringField(TEXT("currentFlowName"), currentFlowName) )
 				flowPtr = NamedFlows->Find(currentFlowName);
 
-			if ( flowPtr->IsValid() )
+			if (flowPtr && flowPtr->IsValid() )
 				CurrentFlow = *flowPtr;
 			else
 				UE_LOG(InkPlusPlus, Error, TEXT("failed to get current flow name!"));
