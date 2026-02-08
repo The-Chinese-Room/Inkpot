@@ -342,6 +342,27 @@ int32 UInkpotStory::GetAliveFlowCount()
 	return count; 
 }
 
+FGameplayTag UInkpotStory::GetKnotFromPathGT(const FGameplayTag InPath, bool& OutHasParentKnot)
+{
+	TArray< FGameplayTag > ParentTags;
+	InPath.ParseParentTags(ParentTags);
+	int32 ParentCount = ParentTags.Num();
+
+	if (ParentCount < 2)
+	{
+		INKPOT_ERROR("'%s' is not a knot or stitch", *InPath.ToString());
+		OutHasParentKnot = false;
+		return InPath;
+	}
+	else if (ParentCount == 2)
+	{
+		OutHasParentKnot = false;
+		return InPath;
+	}
+	OutHasParentKnot = true;
+	return InPath.RequestDirectParent();
+}
+
 void UInkpotStory::SetValue(const FString &InVariable, FInkpotValue InValue, bool &OutSuccess )
 {
 	TSharedPtr<Ink::FVariableState> variableState = StoryInternal->GetVariablesState();
