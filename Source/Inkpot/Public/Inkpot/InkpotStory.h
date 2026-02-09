@@ -276,6 +276,20 @@ public:
 	TArray<FString> TagsForContentAtPathGT( FGameplayTag Path );
 
 	/**
+	 * GetGTFromString
+	 * Gets the GameplayTag matching the supplied string and type, if a match exists.
+	 * Warning: slow and can introduce bugs.
+	 *
+	 * @param TagString - The tag string to search for, such as Knot.Stitch or Inventory.Apple.
+	 *						Don't include Ink.Origin, Ink.Path, or Ink.Variable.
+	 * @param TagType - The type of Ink tag: Origin, Path, or Variable.
+	 * @param FoundTag - Returns true if a tag was found; otherwise false.
+	 * @returns A GameplayTag if the string matches an existing tag, or an empty/invalid tag.
+	 */
+	UFUNCTION(BlueprintPure, Category = "Inkpot|Story")
+	FGameplayTag GetGTFromString(const FString TagString, const EInkGameplayTagTypes TagType, bool &FoundTag);
+
+	/**
 	 * ChoosePath
 	 * Choose a new point of execution for the current flow.
 	 *
