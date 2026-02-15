@@ -335,6 +335,17 @@ public:
 	int VisitCountAtPathStringGT( FGameplayTag Path );
 
 	/**
+	 * GetKnotFromPathGT
+	 * If passed a stitch or knot tag, it will return the knot tag.
+	 *
+	 * @param Path - Ink.Path GameplayTag from which to retrieve parent
+	 * @param HasParentKnot - returns True if the parent GameplayTag is a knot.
+	 * @returns GameplayTag of Knot, or returns Path if parent isn't a knot.
+	 */
+	UFUNCTION(BlueprintPure, Category = "Inkpot|Story", meta = (Categories = "Ink.Path"))
+	FGameplayTag GetKnotFromPathGT(const FGameplayTag Path, bool& HasParentKnot);
+
+	/**
 	 * SetValue
 	 * Sets the value of a variable in the story.
 	 *
