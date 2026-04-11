@@ -1,6 +1,9 @@
 #include "Inkpot/AsyncActions/AsyncAction_WaitVariableChange.h"
 #include "Inkpot/Inkpot.h"
 #include "Inkpot/InkpotStory.h"
+#include "Engine/Engine.h"
+#include "Engine/World.h"
+#include "TimerManager.h"
 
 UAsyncAction_WaitVariableChange* UAsyncAction_WaitVariableChange::ListenForVariableChange(UObject* WorldContextObject, const FString& VariableToListen, const bool bTriggerOnce)
 {

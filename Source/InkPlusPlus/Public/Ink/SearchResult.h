@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "CoreMinimal.h"
+
 namespace Ink
 {
 	class FObject;
