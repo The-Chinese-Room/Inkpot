@@ -2,6 +2,8 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
+#include "Engine/AssetUserData.h"
+#include "Interfaces/Interface_AssetUserData.h"
 #include "InkpotStoryAsset.generated.h"
 
 class UInkpotStoryMetaData;
@@ -17,26 +19,26 @@ public:
 	/* SetSource
 	* Set the source contents of the Asset, this is not used by the runtime and can be left blank.
 	*/
-	UFUNCTION( BlueprintCallable )
+	UFUNCTION( BlueprintCallable, Category = "Inkpot|StoryAsset" )
 	void SetSource( const FString &Source );
 
 	/* GetSource
 	* returns the source contents of the Asset.
 	*/
-	UFUNCTION(BlueprintPure)
+	UFUNCTION(BlueprintPure, Category = "Inkpot|StoryAsset")
 	const FString &GetSource() const;
 
 	/* SetCompiledJSON
 	* Sets the JSON content of the Asset.
 	* This is required for the story to be loadable by the Ink runtime.
 	*/
-	UFUNCTION( BlueprintCallable )
+	UFUNCTION( BlueprintCallable, Category = "Inkpot|StoryAsset" )
 	void SetCompiledJSON( const FString &JSON );
 
 	/* GetCompiledJSON
 	* Gets the JSON content of the Asset.
 	*/
-	UFUNCTION(BlueprintPure)
+	UFUNCTION(BlueprintPure, Category = "Inkpot|StoryAsset")
 	const FString& GetCompiledJSON() const;
 
 #if WITH_EDITOR

@@ -11,15 +11,15 @@ class INKPOT_API UInkpotStoryMetaDataSimple : public UAssetUserData
 
 public:
 
-	UFUNCTION(BlueprintPure)
+	UFUNCTION(BlueprintPure, Category = "Inkpot|StoryMetaData")
 	static UInkpotStoryMetaDataSimple* MakeInkpotStoryMetaDataSimple(FString SomeExtraData, FString EvenMoreExtraData);
 
-	UFUNCTION(BlueprintPure)
+	UFUNCTION(BlueprintPure, Category = "Inkpot|StoryMetaData")
 	static void BreakInkpotStoryMetaDataSimple(UAssetUserData* target, FString &SomeExtraData, FString &EvenMoreExtraData);
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Inkpot|StoryMetaData")
 	FString SomeExtraData;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Inkpot|StoryMetaData")
 	FString EvenMoreExtraData;
 };

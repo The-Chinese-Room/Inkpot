@@ -2,7 +2,8 @@
 
 #include "CoreMinimal.h"
 #include "PushPop.h"
-#include "Json.h"
+#include "Dom/JsonObject.h"
+#include "Serialization/JsonWriter.h"
 #include "Pointer.h"
 
 namespace Ink

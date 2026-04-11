@@ -1,4 +1,5 @@
 #include "Settings/InkpotCVars.h"
+#include "HAL/IConsoleManager.h"
 
 bool FInkpotCVars::bDebugLog{true};
 FAutoConsoleVariableRef CVarDebugLog(
@@ -20,5 +21,3 @@ FAutoConsoleVariableRef CVarReplayIfReloaded(
 	FInkpotCVars::bReplayIfReloaded,
 	TEXT("Should Inkpot replay the story on reload."),
 	ECVF_Default);
-
-	

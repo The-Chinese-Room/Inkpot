@@ -1,5 +1,6 @@
 ﻿#pragma once
-#include "Json.h"
+#include "Dom/JsonObject.h"
+#include "Dom/JsonValue.h"
 
 namespace Ink
 {
