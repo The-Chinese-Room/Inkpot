@@ -7,7 +7,7 @@
 #include "Ink/StoryState.h"
 #include "Ink/SearchResult.h"
 #include "Ink/Path.h"
-#include "Ink/Inklist.h"
+#include "Ink/InkList.h"
 #include "Utility/InkpotLog.h"
 #include "Inkpot/InkpotGameplayTagLibrary.h"
 
