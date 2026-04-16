@@ -68,6 +68,34 @@ TArray<FString> UInkpotStory::TagsForContentAtPathGT(FGameplayTag InPath )
 	return TagsForContentAtPath( UInkpotGameplayTagLibrary::PathTagToString(InPath) );
 }
 
+FGameplayTag UInkpotStory::GetGTFromString(const FString InTagString, const EInkGameplayTagTypes TagType, bool& FoundTag)
+{
+	FString TagString;
+	switch(TagType)
+	{
+	case EInkGameplayTagTypes::INK_ORIGIN:
+		TagString = INK_ORIGIN_GAMEPLAYTAG_PREFIX + InTagString;
+		break;
+	case EInkGameplayTagTypes::INK_PATH:
+		TagString = INK_PATH_GAMEPLAYTAG_PREFIX + InTagString;
+		break;
+	case EInkGameplayTagTypes::INK_VAR:
+		TagString = INK_VARIABLE_GAMEPLAYTAG_PREFIX + InTagString;
+		break;
+	}
+	FName TagName = FName(*TagString);
+	FGameplayTag OutTag = UGameplayTagsManager::Get().RequestGameplayTag(TagName, false);
+	if (OutTag.IsValid())
+	{
+		FoundTag = true;
+	}
+	else
+	{
+		FoundTag = false;
+	}
+	return OutTag;
+}
+
 void UInkpotStory::ChoosePath( const FString &InPath )
 {
 	ChoosePathInternal(InPath);
