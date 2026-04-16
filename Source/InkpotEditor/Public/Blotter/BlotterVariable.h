@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "EditorUtilityWidget.h"
-#include "ink/Object.h"
+#include "Ink/Object.h"
 #include "Blotter/BlotterOption.h"
 #include "BlotterVariable.generated.h"
 

@@ -6,6 +6,7 @@
 
 class UInkpotStory;
 class UInkpotStories;
+class UGameInstance;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStoryBegin, UInkpotStory*, Story );
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStoryEnd,   UInkpotStory*, Story );

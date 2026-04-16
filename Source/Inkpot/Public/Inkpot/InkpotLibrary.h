@@ -3,6 +3,8 @@
 #include "CoreMinimal.h"
 #include "UObject/ObjectMacros.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "Engine/AssetUserData.h"
+#include "Templates/SubclassOf.h"
 #include "InkpotLibrary.generated.h"
 
 class UInkpotStory;

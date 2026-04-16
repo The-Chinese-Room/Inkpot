@@ -3,6 +3,9 @@
 #include "Utility/InkpotLog.h"
 #include "Settings/InkpotCVars.h"
 #include "Asset/InkpotStoryAsset.h"
+#include "Engine/Engine.h"
+#include "Engine/World.h"
+#include "Engine/GameInstance.h"
 
 static FDelayedAutoRegisterHelper DelayedAutoRegister(
 EDelayedRegisterRunPhase::EndOfEngineInit, 
@@ -15,12 +18,12 @@ EDelayedRegisterRunPhase::EndOfEngineInit,
 UInkpot::UInkpot()
 : Super()
 {
-	Stories = CreateDefaultSubobject<UInkpotStories>(TEXT("InkpotStories"));
 }
 
 void UInkpot::Initialize(FSubsystemCollectionBase &InCollection )
-{ 
+{
 	Super::Initialize( InCollection );
+	Stories = NewObject<UInkpotStories>(this, TEXT("InkpotStories"));
 	Stories->Initialise();
 }
 
