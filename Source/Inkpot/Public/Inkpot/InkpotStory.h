@@ -867,6 +867,13 @@ public:
 	virtual void DumpMainContent();
 
 	/**
+	 * DumpMainContentPaths
+	 * Writes all container paths for story to debug log.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
+	virtual void DumpMainContentPaths();
+
+	/**
 	 * DumpContentAtPath
 	 * Writes all Ink opcodes for content at specified Knot & Stitch to debug log. 
 	 */
@@ -881,6 +888,7 @@ public:
 	void DumpContentAtKnot( const FString& InName );
 
 	void DumpContainer(const FString& InName, TSharedPtr<Ink::FContainer> InContainer, int Indent = 0);
+	void DumpContainerPaths(const FString& InName, TSharedPtr<Ink::FContainer> InContainer, int Indent = 0);
 
 	TSharedPtr<Ink::FListDefinition> GetListOrigin(const FString& InOriginName, const FString& InItemName);
 

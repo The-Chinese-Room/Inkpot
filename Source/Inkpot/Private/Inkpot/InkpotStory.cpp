@@ -732,7 +732,7 @@ void UInkpotStory::DumpContainer(const FString &InName, TSharedPtr<Ink::FContain
 		if( container )
 		{
 			containersDumped.Add(container);
-			FString name = container->GetName();
+			FString name = container->GetPath()->ToString();
 			if (name.IsEmpty())
 				name = "inline";
 			DumpContainer(name, container, Indent + 1 );
@@ -784,6 +784,55 @@ void UInkpotStory::DumpContentAtKnot( const FString& InName )
 		return;
 	}
 	DumpContainer(InName, knotContainer  );
+}
+
+void UInkpotStory::DumpMainContentPaths()
+{
+	TSharedPtr<Ink::FContainer> main = StoryInternal->GetMainContentContainer();
+	DumpContainerPaths("<root>", main);
+}
+
+void UInkpotStory::DumpContainerPaths(const FString& InName, TSharedPtr<Ink::FContainer> InContainer, int Indent)
+{
+	if (!InContainer)
+		return;
+
+	FString pad;
+	for (int i = 0; i < Indent; ++i)
+		pad += '\t';
+
+	INKPOT_LOG("%s%s", *pad, *InName);
+	TArray<TSharedPtr<Ink::FObject>>* contents = InContainer->GetContent().Get();
+	TSet<TSharedPtr<Ink::FContainer>> containersDumped;
+
+	for (TSharedPtr<Ink::FObject> obj : *contents)
+	{
+		TSharedPtr<Ink::FContainer> container = Ink::FObject::DynamicCastTo<Ink::FContainer>(obj);
+		if (container)
+		{
+			containersDumped.Add(container);
+			FString nameAlso = InContainer->GetPath()->ToString();
+			static volatile bool breakMe = false;
+			if (container->GetName().Equals(TEXT("Intro")))
+				breakMe = true;
+
+			FString name = container->GetPath()->ToString();
+			if (name.IsEmpty())
+				name = "inline";
+			DumpContainerPaths(name, container, Indent + 1);
+		}
+	}
+
+	TSharedPtr<TMap<FString, TSharedPtr<Ink::FObject>>> namedContentPtr = InContainer->GetNamedContent();
+	for (auto pair : *namedContentPtr)
+	{
+		TSharedPtr<Ink::FContainer> container = Ink::FObject::DynamicCastTo<Ink::FContainer>(pair.Value);
+		if (!container)
+			continue;
+		if (containersDumped.Contains(container))
+			continue;
+		DumpContainerPaths(pair.Key, container, Indent + 1);
+	}
 }
 
 void UInkpotStory::GatherAllStrings( TMap<FString, FString> &OutStrings )
