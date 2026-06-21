@@ -1,4 +1,4 @@
-﻿#include "Ink/VariableState.h"
+#include "Ink/VariableState.h"
 #include "Ink/Value.h"
 #include "Ink/Object.h"
 #include "Ink/JsonSerialisation.h"
@@ -127,7 +127,7 @@ void Ink::FVariableState::ApplyPatch()
 }
 
 
-void Ink::FVariableState::SetJsonToken(const TMap<FString, TSharedPtr<FJsonValue>>& JsonToken)
+void Ink::FVariableState::SetJsonToken(const TMap<FStringType, TSharedPtr<FJsonValue>>& JsonToken)
 {
 	_globalVariables.Reset();
 
@@ -135,7 +135,7 @@ void Ink::FVariableState::SetJsonToken(const TMap<FString, TSharedPtr<FJsonValue
 	{
 		const FString variableName = variablePair.Key;
 
-		const TSharedPtr<FJsonValue>* loadedTokenPtrPtr = JsonToken.Find(variableName);
+		const TSharedPtr<FJsonValue>* loadedTokenPtrPtr = JsonToken.Find(*variableName);
 		if (loadedTokenPtrPtr != nullptr && (*loadedTokenPtrPtr).IsValid())
 		{
 			_globalVariables.Emplace( variableName, Ink::FJsonSerialisation::JsonTokenToRuntimeObject(**loadedTokenPtrPtr) );

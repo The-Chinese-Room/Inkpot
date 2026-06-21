@@ -1,4 +1,4 @@
-﻿#include "Ink/Flow.h"
+#include "Ink/Flow.h"
 
 #include "Utility/InkPlusPlusLog.h"
 #include "Ink/Story.h"
@@ -91,7 +91,7 @@ void Ink::FFlow::WriteJSON(TJsonWriter<>* InJSONWriter)
 	InJSONWriter->WriteObjectEnd();
 }
 
-void Ink::FFlow::LoadFlowChoiceThreads(const TMap<FString, TSharedPtr<FJsonValue>>& InJSONChoiceThreads, const Ink::FStory& InStory)
+void Ink::FFlow::LoadFlowChoiceThreads(const TMap<FStringType, TSharedPtr<FJsonValue>>& InJSONChoiceThreads, const Ink::FStory& InStory)
 {
 	for (const TSharedPtr<Ink::FChoice>& choice : *CurrentChoices)
 	{
@@ -102,7 +102,7 @@ void Ink::FFlow::LoadFlowChoiceThreads(const TMap<FString, TSharedPtr<FJsonValue
 		}
 		else
 		{
-			const TSharedPtr<FJsonValue> jsonSavedChoiceThread = InJSONChoiceThreads[FString::FromInt(choice->GetOriginalThreadIndex())];
+			const TSharedPtr<FJsonValue> jsonSavedChoiceThread = InJSONChoiceThreads[*FString::FromInt(choice->GetOriginalThreadIndex())];
 			const TSharedPtr<FJsonObject>* jsonSavedChoiceThreadObject;
 			if (!jsonSavedChoiceThread->TryGetObject(jsonSavedChoiceThreadObject))
 			{

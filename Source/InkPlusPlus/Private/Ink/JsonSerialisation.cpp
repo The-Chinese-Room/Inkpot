@@ -1,4 +1,4 @@
-﻿#include "Ink/JsonSerialisation.h"
+#include "Ink/JsonSerialisation.h"
 
 #include "Ink/Object.h"
 #include "Ink/Container.h"
@@ -105,14 +105,14 @@ TSharedPtr<TArray<TSharedPtr<Ink::FChoice>>> Ink::FJsonSerialisation::JsonArrayT
 	return list;
 }
 
-TMap<FString, TSharedPtr<Ink::FObject>> Ink::FJsonSerialisation::JsonObjectToDictionaryRuntimeObjects(const FJsonObject& InJSONObject)
+TMap<Ink::FStringType, TSharedPtr<Ink::FObject>> Ink::FJsonSerialisation::JsonObjectToDictionaryRuntimeObjects(const FJsonObject& InJSONObject)
 {
-	TMap<FString, TSharedPtr<Ink::FObject>> dictionary;
+	TMap<FStringType, TSharedPtr<Ink::FObject>> dictionary;
 
-	const TMap<FString, TSharedPtr<FJsonValue>> jsonDict = InJSONObject.Values;
+	const TMap<FStringType, TSharedPtr<FJsonValue>>& jsonDict = InJSONObject.Values;
 	dictionary.Reserve(jsonDict.Num());
 
-	for (const TPair<FString, TSharedPtr<FJsonValue>>& pair : jsonDict)
+	for (const TPair<FStringType, TSharedPtr<FJsonValue>>& pair : jsonDict)
 	{
 		dictionary.Add(pair.Key, TSharedPtr<FObject>(JsonTokenToRuntimeObject(*pair.Value)));
 	}
@@ -120,14 +120,14 @@ TMap<FString, TSharedPtr<Ink::FObject>> Ink::FJsonSerialisation::JsonObjectToDic
 	return dictionary;
 }
 
-TMap<FString, int32> Ink::FJsonSerialisation::JsonObjectToIntDictionary(const FJsonObject& InJSONObject)
+TMap<Ink::FStringType, int32> Ink::FJsonSerialisation::JsonObjectToIntDictionary(const FJsonObject& InJSONObject)
 {
-	TMap<FString, int32> dictionary;
+	TMap<FStringType, int32> dictionary;
 
-	const TMap<FString, TSharedPtr<FJsonValue>> jsonDict = InJSONObject.Values;
+	const TMap<FStringType, TSharedPtr<FJsonValue>>& jsonDict = InJSONObject.Values;
 	dictionary.Reserve(jsonDict.Num());
 
-	for (const TPair<FString, TSharedPtr<FJsonValue>>& pair : jsonDict)
+	for (const TPair<FStringType, TSharedPtr<FJsonValue>>& pair : jsonDict)
 	{
 		int32 value;
 		if (pair.Value->TryGetNumber(value))
@@ -227,7 +227,7 @@ TSharedPtr<Ink::FContainer> Ink::FJsonSerialisation::JsonArrayToContainer(const 
 	return container;
 }
 
-void Ink::FJsonSerialisation::WriteDictionaryRuntimeObjects(TJsonWriter<>* InJSONWriter, const TMap<FString, TSharedPtr<Ink::FObject>>& InDictionary)
+void Ink::FJsonSerialisation::WriteDictionaryRuntimeObjects(TJsonWriter<>* InJSONWriter, const TMap<FStringType, TSharedPtr<Ink::FObject>>& InDictionary)
 {
 	InJSONWriter->WriteObjectStart();
 	for (const TPair<FString, TSharedPtr<Ink::FObject>>& pair : InDictionary)
@@ -248,7 +248,7 @@ void Ink::FJsonSerialisation::WriteListRuntimeObjects(TJsonWriter<>* InJSONWrite
 	InJSONWriter->WriteArrayEnd();
 }
 
-void Ink::FJsonSerialisation::WriteIntDictionary(TJsonWriter<>* InJSONWriter,const TMap<FString, int32>& InDictionary)
+void Ink::FJsonSerialisation::WriteIntDictionary(TJsonWriter<>* InJSONWriter,const TMap<FStringType, int32>& InDictionary)
 {
 	InJSONWriter->WriteObjectStart();
 	for (const TPair<FString, int32>& pair : InDictionary)
@@ -772,7 +772,7 @@ TSharedPtr<Ink::FObject> Ink::FJsonSerialisation::JsonTokenToRuntimeObject(const
 		// List Value
 		if (Ink::FJsonExtension::TryGetField(TEXT("list"), *objectValue, propertyValue))
 		{
-			TMap<FString, TSharedPtr<FJsonValue>> listContent = propertyValue->AsObject()->Values;
+			TMap<FStringType, TSharedPtr<FJsonValue>> listContent = propertyValue->AsObject()->Values;
 			
 			Ink::FInkList rawList;			
 			if (Ink::FJsonExtension::TryGetField(TEXT("origins"), *objectValue, propertyValue))

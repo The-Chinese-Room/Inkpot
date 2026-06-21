@@ -86,7 +86,7 @@ void Ink::FStoryState::LoadJSONObj(const FJsonObject& InJSONObj)
 	const TSharedPtr<FJsonObject>* flowsObject = nullptr;
 	if (InJSONObj.TryGetObjectField(TEXT("flows"), flowsObject))
 	{
-		TMap<FString, TSharedPtr<FJsonValue>> flowsObjectMap = flowsObject->Get()->Values;
+		TMap<Ink::FStringType, TSharedPtr<FJsonValue>> flowsObjectMap = flowsObject->Get()->Values;
 
 		if (flowsObjectMap.Num() == 1) // Single default flow
 		{
@@ -149,7 +149,7 @@ void Ink::FStoryState::LoadJSONObj(const FJsonObject& InJSONObj)
 	const TSharedPtr<FJsonObject>* variableStateObjectField = nullptr;
 	if (InJSONObj.TryGetObjectField(TEXT("variablesState"), variableStateObjectField))
 	{
-		const TMap<FString, TSharedPtr<FJsonValue>> variableStateObjectMap = variableStateObjectField->Get()->Values;
+		const TMap<Ink::FStringType, TSharedPtr<FJsonValue>> variableStateObjectMap = variableStateObjectField->Get()->Values;
 		VariableState->SetJsonToken(variableStateObjectMap);
 		VariableState->SetCallStack(CurrentFlow->GetCallStack());
 	}
@@ -166,10 +166,10 @@ void Ink::FStoryState::LoadJSONObj(const FJsonObject& InJSONObj)
 		DivertedPointer = Story->PointerAtPath(divertPath);
 	}
 
-	TMap<FString, TSharedPtr<FJsonValue>> visitCountsDictionary = InJSONObj.GetObjectField(TEXT("visitCounts")).Get()->Values;
+	TMap<Ink::FStringType, TSharedPtr<FJsonValue>> visitCountsDictionary = InJSONObj.GetObjectField(TEXT("visitCounts")).Get()->Values;
 	VisitCounts = Ink::FJsonExtension::JSONObjectToIntDictionary(visitCountsDictionary);
 
-	TMap<FString, TSharedPtr<FJsonValue>> turnIndicesDictionary = InJSONObj.GetObjectField(TEXT("turnIndices")).Get()->Values;
+	TMap<Ink::FStringType, TSharedPtr<FJsonValue>> turnIndicesDictionary = InJSONObj.GetObjectField(TEXT("turnIndices")).Get()->Values;
 	TurnIndices = Ink::FJsonExtension::JSONObjectToIntDictionary(turnIndicesDictionary);
 
 	CurrentTurnIndex = InJSONObj.GetIntegerField(TEXT("turnIdx"));
