@@ -701,7 +701,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 									TSharedPtr<FJsonValue> value = (*expectedTags)[i];
 									if (value->Type != EJson::String)
 									{
-										INKPOT_ERROR("%s : TEST_CURRENT_TAGS Tag is not a string, check test script JSON\n", *InkTestName, expectedTags->Num(), actualTags.Num());
+										INKPOT_ERROR("%s : TEST_CURRENT_TAGS Tag is not a string, check test script JSON\n", *InkTestName);
 										return false;
 									}
 
@@ -749,7 +749,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 									TSharedPtr<FJsonValue> value = (*expectedTags)[i];
 									if (value->Type != EJson::String)
 									{
-										INKPOT_ERROR("%s : TEST_STORY_GLOBAL_TAGS Tag is not a string, check test script JSON\n", *InkTestName, expectedTags->Num(), actualTags.Num());
+										INKPOT_ERROR("%s : TEST_STORY_GLOBAL_TAGS Tag is not a string, check test script JSON\n", *InkTestName);
 										return false;
 									}
 
