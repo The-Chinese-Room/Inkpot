@@ -297,8 +297,6 @@ bool UInkpotStory::SwitchFlowToPath(const FString& InFlowName, const FString& In
 	if (bIsNewFlow || bInRestart)
 	{
 		ChoosePath(InPath);
-		if (CanContinueInternal())
-			ContinueInternal();
 	}
 	return bIsNewFlow;
 }
