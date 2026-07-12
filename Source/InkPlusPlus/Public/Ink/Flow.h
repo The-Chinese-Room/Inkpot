@@ -1,8 +1,7 @@
-﻿#pragma once
+#pragma once
 #include "CoreMinimal.h"
-#include "Dom/JsonObject.h"
-#include "Dom/JsonValue.h"
-#include "Serialization/JsonWriter.h"
+#include "Json.h"
+#include "Containers/StringFwd.h"
 
 
 namespace Ink
@@ -11,7 +10,9 @@ namespace Ink
 	class FObject;
 	class FChoice;
 	class FCallStack;
-	
+
+	using FStringType = UE::FSharedString;
+
 	class FFlow
 	{
 	public:
@@ -22,7 +23,7 @@ namespace Ink
 		void WriteJSON(TJsonWriter<>* InJSONWriter);
 
 		// Used both to load old format and current
-		void LoadFlowChoiceThreads(const TMap<FString, TSharedPtr<FJsonValue>>& InJSONChoiceThreads,  const Ink::FStory& InStory);
+		void LoadFlowChoiceThreads(const FJsonObject& InJSONChoiceThreads,  const Ink::FStory& InStory);
 
 		TSharedPtr<Ink::FCallStack> GetCallStack() const;
 		void SetCallStack(const Ink::FCallStack& InCallStack);

@@ -1,9 +1,10 @@
-﻿#pragma once
+#pragma once
 #include "CoreMinimal.h"
 #include "Dom/JsonObject.h"
 #include "Dom/JsonValue.h"
 #include "Serialization/JsonWriter.h"
 #include "Utility/InkPlusPlusLog.h"
+#include "Containers/StringFwd.h"
 
 namespace Ink
 {
@@ -13,6 +14,8 @@ namespace Ink
 	class FValueList;
 	class FListDefinitionsOrigin;
 
+	using FStringType = UE::FSharedString;
+
 	// May need wrappers for "WritePropertyStart / WritePropertyEnd" that are in source parser (SimpleJson), currently just using Unreal's Write Value and hope to be sufficient
 	class INKPLUSPLUS_API FJsonSerialisation
 	{
@@ -21,15 +24,15 @@ namespace Ink
 		
 		static TArray<TSharedPtr<Ink::FObject>> JsonArrayToRuntimeObjectList(const TArray<TSharedPtr<FJsonValue>>& InJSONArray, bool InSkipLast = false);
 		static TSharedPtr<TArray<TSharedPtr<Ink::FChoice>>> JsonArrayToChoiceList(const TArray<TSharedPtr<FJsonValue>>& InJSONArray, bool InSkipLast = false);
-		static TMap<FString, TSharedPtr<Ink::FObject>> JsonObjectToDictionaryRuntimeObjects(const FJsonObject& InJSONObject);
-		static TMap<FString, int32> JsonObjectToIntDictionary(const FJsonObject& InJSONObject);
+		static TMap<FStringType, TSharedPtr<Ink::FObject>> JsonObjectToDictionaryRuntimeObjects(const FJsonObject& InJSONObject);
+		static TMap<FStringType, int32> JsonObjectToIntDictionary(const FJsonObject& InJSONObject);
 		static TSharedPtr<Ink::FChoice> JsonObjectToChoice(const FJsonObject& InJSONObject);
 
 		static TSharedPtr<Ink::FContainer> JsonArrayToContainer(const TArray<TSharedPtr<FJsonValue>>& InJSONArray);
 		
-		static void WriteDictionaryRuntimeObjects(TJsonWriter<>* InJSONWriter, const TMap<FString, TSharedPtr<Ink::FObject>>& InDictionary);
+		static void WriteDictionaryRuntimeObjects(TJsonWriter<>* InJSONWriter, const TMap<FStringType, TSharedPtr<Ink::FObject>>& InDictionary);
 		static void WriteListRuntimeObjects(TJsonWriter<>* InJSONWriter, const TArray<TSharedPtr<Ink::FObject>>& InList);
-		static void WriteIntDictionary(TJsonWriter<>* InJSONWriter, const TMap<FString, int32>& InDictionary);
+		static void WriteIntDictionary(TJsonWriter<>* InJSONWriter, const TMap<FStringType, int32>& InDictionary);
 		static void WriteRuntimeObject(TJsonWriter<>* InJSONWriter, TSharedPtr<Ink::FObject> InObject);
 		static void WriteRuntimeContainer(TJsonWriter<>* InJSONWriter, const Ink::FContainer& InContainer, bool InWithoutName = false);
 

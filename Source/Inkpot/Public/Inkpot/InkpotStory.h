@@ -17,6 +17,7 @@ DECLARE_DYNAMIC_DELEGATE_ThreeParams(FOnInkpotVariableChange, UInkpotStory*, Sto
 DECLARE_DYNAMIC_DELEGATE_RetVal_OneParam(FInkpotValue, FInkpotExternalFunction, const TArray<FInkpotValue> & , Values );
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStoryLoadJSON, UInkpotStory*, Story );
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams( FOnLineComplete, UInkpotStory*, Story, const FName&, Context, bool, bSuccess );
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FOnFlowEnded, UInkpotStory*, Story, const FString&, FlowName );
 
 // macro for binding functions in your derived story classes
 #define BindInkFunction( NameInk, NameCPP ) \
@@ -818,6 +819,15 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Inkpot|Story")
 	bool IsLineRendering() const;
 
+	/**
+	 * IsLineRenderingForFlow
+	 * returns whether a line is still rendering for the named flow specifically.
+	 * Used to gate Continue / CanContinue per flow so concurrent flows do not block
+	 * one another.
+	 */
+	UFUNCTION(BlueprintPure, Category = "Inkpot|Story")
+	bool IsLineRenderingForFlow(const FString& FlowName) const;
+
 	
 	/**
 	 * ToJSON
@@ -849,11 +859,12 @@ public:
 
 	void ObserveVariable( const FString& Variable, TSharedPtr<FStoryVariableObserver> Observer );
 
-	FOnStoryContinue& OnContinue(); 
-	FOnMakeChoice& OnMakeChoice(); 
-	FOnChoosePath& OnChoosePath(); 
-	FOnSwitchFlow& OnSwitchFlow(); 
-	FOnStoryLoadJSON& OnStoryLoadJSON(); 
+	FOnStoryContinue& OnContinue();
+	FOnMakeChoice& OnMakeChoice();
+	FOnChoosePath& OnChoosePath();
+	FOnSwitchFlow& OnSwitchFlow();
+	FOnStoryLoadJSON& OnStoryLoadJSON();
+	FOnFlowEnded& OnFlowEnded();
 
 #if WITH_EDITOR 
 	FOnStoryContinue& OnDebugRefresh();
@@ -892,6 +903,13 @@ public:
 	virtual void DumpMainContent();
 
 	/**
+	 * DumpMainContentPaths
+	 * Writes all container paths for story to debug log.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Story")
+	virtual void DumpMainContentPaths();
+
+	/**
 	 * DumpContentAtPath
 	 * Writes all Ink opcodes for content at specified Knot & Stitch to debug log. 
 	 */
@@ -906,6 +924,7 @@ public:
 	void DumpContentAtKnot( const FString& InName );
 
 	void DumpContainer(const FString& InName, TSharedPtr<Ink::FContainer> InContainer, int Indent = 0);
+	void DumpContainerPaths(const FString& InName, TSharedPtr<Ink::FContainer> InContainer, int Indent = 0);
 
 	TSharedPtr<Ink::FListDefinition> GetListOrigin(const FString& InOriginName, const FString& InItemName);
 
@@ -923,6 +942,11 @@ protected:
 	virtual void OnFlowChangeInternal();
 	void BroadcastFlowChange();
 	void UpdateChoices();
+
+	// Fires EventOnFlowEnded for a flow, or defers it until the flow's last in-flight
+	// line render ends if one is still in progress.
+	void NotifyFlowEndedOrDefer(const FString& FlowName);
+	void BroadcastFlowEnded(const FString& FlowName);
 
 	void DumpDebug(UInkpotChoice *Choice);
 	
@@ -963,6 +987,10 @@ protected:
 	UPROPERTY(BlueprintAssignable, Category = "Inkpot|Story", meta = (DisplayName = "OnLineComplete"))
 	FOnLineComplete EventOnLineComplete;
 
+	// Fired (per flow) when the current flow runs out of content and has no choices.
+	UPROPERTY(BlueprintAssignable, Category = "Inkpot|Story", meta = (DisplayName = "OnFlowEnded"))
+	FOnFlowEnded EventOnFlowEnded;
+
 #if WITH_EDITORONLY_DATA 
 	UPROPERTY(BlueprintAssignable, Category = "Inkpot|Story", meta = (DisplayName = "OnDebugRefresh"))
 	FOnStoryContinue EventOnDebugRefresh;
@@ -975,8 +1003,14 @@ private:
 	UPROPERTY(Transient)
 	bool bIsInFunctionEvaluation{ false };
 
+	// In-flight line-render contexts mapped to the flow that owned them at begin time.
+	// Lets the render gate be scoped per flow.
 	UPROPERTY(Transient)
-	TSet<FName> LineRenderContextsInFlight;
+	TMap<FName, FString> LineRenderContextsInFlight;
+
+	// Flows that became exhausted (no content, no choices) while a line was still
+	// rendering. OnFlowEnded for these is deferred until the flow's last render ends.
+	TSet<FString> FlowsPendingEnd;
 };
 
 
