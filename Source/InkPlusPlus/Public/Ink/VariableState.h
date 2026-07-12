@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "CoreMinimal.h"
 #include "Object.h"
 #include "CallStack.h"
@@ -6,6 +6,8 @@
 #include "VariableAssignment.h"
 #include "Dom/JsonValue.h"
 #include "ListDefinitionsOrigin.h"
+#include "Containers/StringFwd.h"
+#include "TypeDeclarations.h"
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FInkVariableObserver, const FString&, TSharedPtr<Ink::FObject>);
 
@@ -14,9 +16,6 @@ class JsonObject;
 
 namespace Ink
 {
-	class FValueVariablePointer;
-
-
 	class INKPLUSPLUS_API FVariableState
 	{
 	public:
@@ -39,7 +38,7 @@ namespace Ink
 		bool SetVariable(const FString& VariableName, const TSharedPtr<Ink::FObject>& Value);
 
 		void ApplyPatch();
-		void SetJsonToken(const TMap<FString, TSharedPtr<FJsonValue>>& JsonToken);
+		void SetJsonToken(const FJsonObject& InJSONToken);
 		void WriteJson(TJsonWriter<>* Writer);
 		bool RuntimeObjectsEqual(TSharedPtr<Ink::FObject> Object1, TSharedPtr<Ink::FObject> Object2) const;
 

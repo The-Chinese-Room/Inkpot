@@ -1,4 +1,5 @@
 ﻿#include "Ink/Story.h"
+#include "Math/RandomStream.h"
 
 #include "Ink/CallStack.h"
 #include "Ink/Path.h"
