@@ -107,12 +107,12 @@ TSharedPtr<TArray<TSharedPtr<Ink::FChoice>>> Ink::FJsonSerialisation::JsonArrayT
 
 TMap<Ink::FStringType, TSharedPtr<Ink::FObject>> Ink::FJsonSerialisation::JsonObjectToDictionaryRuntimeObjects(const FJsonObject& InJSONObject)
 {
-	TMap<FString, TSharedPtr<Ink::FObject>> dictionary;
+	TMap<FStringType, TSharedPtr<Ink::FObject>> dictionary;
 	dictionary.Reserve(InJSONObject.Values.Num());
 
 	for (const auto& pair : InJSONObject.Values)
 	{
-		dictionary.Add(FString(*pair.Key), TSharedPtr<FObject>(JsonTokenToRuntimeObject(*pair.Value)));
+		dictionary.Add(FStringType(*pair.Key), TSharedPtr<FObject>(JsonTokenToRuntimeObject(*pair.Value)));
 	}
 
 	return dictionary;
@@ -120,14 +120,14 @@ TMap<Ink::FStringType, TSharedPtr<Ink::FObject>> Ink::FJsonSerialisation::JsonOb
 
 TMap<Ink::FStringType, int32> Ink::FJsonSerialisation::JsonObjectToIntDictionary(const FJsonObject& InJSONObject)
 {
-	TMap<FString, int32> dictionary;
+	TMap<FStringType, int32> dictionary;
 	dictionary.Reserve(InJSONObject.Values.Num());
 
 	for (const auto& pair : InJSONObject.Values)
 	{
 		int32 value;
 		if (pair.Value->TryGetNumber(value))
-			dictionary.Add(FString(*pair.Key), value);
+			dictionary.Add(FStringType(*pair.Key), value);
 		else
 			UE_LOG(InkPlusPlus, Error, TEXT("JsonSerialisation : could not convert %s to int"), *pair.Value->AsString());
 	}
