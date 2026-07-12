@@ -1,6 +1,7 @@
-﻿#pragma once
+#pragma once
 #include "CoreMinimal.h"
 #include "Json.h"
+#include "Containers/StringFwd.h"
 
 
 namespace Ink
@@ -9,7 +10,9 @@ namespace Ink
 	class FObject;
 	class FChoice;
 	class FCallStack;
-	
+
+	using FStringType = UE::FSharedString;
+
 	class FFlow
 	{
 	public:

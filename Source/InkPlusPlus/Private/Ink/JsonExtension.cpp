@@ -1,16 +1,16 @@
-﻿#include "Ink/JsonExtension.h"
+#include "Ink/JsonExtension.h"
 #include "Ink/Object.h"
 #include "Ink/JsonSerialisation.h"
 
 
-TMap<FString, TSharedPtr<Ink::FObject>> Ink::FJsonExtension::JSONObjectToInkObject(const TMap<FString, TSharedPtr<FJsonValue>>& InJSONObject)
+TMap<FString, TSharedPtr<Ink::FObject>> Ink::FJsonExtension::JSONObjectToInkObject(const TMap<FStringType, TSharedPtr<FJsonValue>>& InJSONObject)
 {
 	TMap<FString, TSharedPtr<Ink::FObject>> convertedMap;
 	convertedMap.Reserve(InJSONObject.Num());
 
 	for (const TPair<FString, TSharedPtr<FJsonValue>>& jsonPair : InJSONObject)
 	{
-		const FString& key = jsonPair.Key;
+		const FString& key = *jsonPair.Key;
 		TSharedPtr<Ink::FObject> value(Ink::FJsonSerialisation::JsonTokenToRuntimeObject(*jsonPair.Value));
 		convertedMap.Add(jsonPair.Key, value);
 	}

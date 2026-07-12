@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "CoreMinimal.h"
 #include "Object.h"
 #include "CallStack.h"
@@ -6,6 +6,7 @@
 #include "VariableAssignment.h"
 #include "Dom/JsonValue.h"
 #include "ListDefinitionsOrigin.h"
+#include "Containers/StringFwd.h"
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FInkVariableObserver, const FString&, TSharedPtr<Ink::FObject>);
 
@@ -15,6 +16,8 @@ class JsonObject;
 namespace Ink
 {
 	class FValueVariablePointer;
+
+	using FStringType = UE::FSharedString;
 
 
 	class INKPLUSPLUS_API FVariableState

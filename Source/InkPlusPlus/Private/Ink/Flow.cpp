@@ -1,4 +1,4 @@
-﻿#include "Ink/Flow.h"
+#include "Ink/Flow.h"
 
 #include "Utility/InkPlusPlusLog.h"
 #include "Ink/Story.h"

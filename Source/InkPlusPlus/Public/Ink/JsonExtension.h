@@ -1,10 +1,14 @@
-﻿#pragma once
+#pragma once
 #include "Json.h"
+#include "Containers/StringFwd.h"
+
 
 namespace Ink
 {
 	class FObject;
-	
+
+	using FStringType = UE::FSharedString;
+
 	struct FJsonExtension
 	{
 		static TMap<FString, TSharedPtr<Ink::FObject>> JSONObjectToInkObject(const TMap<FString, TSharedPtr<FJsonValue>>& InJSONObject);

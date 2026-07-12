@@ -18,6 +18,7 @@
 #include <Serialization/JsonTypes.h>
 #include <Ink/VariableState.h>
 #include "Test/InkFunctionTests.h"
+#include "Containers/StringFwd.h"
 
 
 #define TEST_ERROR_EQUAL                         TEXT("TEST_ERROR_EQUAL")
@@ -302,7 +303,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 					return false;
 				}
 
-				const FString& instruction = keys[0];
+				const FString& instruction = *keys[0];
 				if (!IsStoryInstruction(instruction))
 				{
 					if (testInstruction->HasField(TEST_ERROR_EQUAL))
