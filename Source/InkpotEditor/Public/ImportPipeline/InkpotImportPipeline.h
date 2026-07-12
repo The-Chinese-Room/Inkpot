@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Coreminimal.h"
+#include "CoreMinimal.h"
 #include "EditorUtilityObject.h"
 #include "IEditorUtilityExtension.h"
 #include "Logging/MessageLog.h"
@@ -42,4 +42,3 @@ private:
 	UPROPERTY()
 	bool bFinalised{ false };
 };
-

@@ -1,16 +1,14 @@
-﻿#pragma once
+#pragma once
 
 #include "CoreMinimal.h"
 #include "PushPop.h"
-#include "Json.h"
+#include "Dom/JsonObject.h"
+#include "Serialization/JsonWriter.h"
 #include "Pointer.h"
+#include "TypeDeclarations.h"
 
 namespace Ink
 {
-	class FObject;
-	class FStory;
-	class FThread;
-
 
 #pragma region Element
 	class FElement
@@ -43,7 +41,7 @@ namespace Ink
 		they generate, so we make sure know where the function's start and end are.	*/
 		int32 FunctionStartInOutputStream;
 
-		TMap<FString, TSharedPtr<Ink::FObject>> TemporaryVariables;
+		TMap<FStringType, TSharedPtr<Ink::FObject>> TemporaryVariables;
 	
 	private:
 		bool bInExpressionEvaluation;

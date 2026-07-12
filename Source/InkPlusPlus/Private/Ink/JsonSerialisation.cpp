@@ -1,4 +1,4 @@
-﻿#include "Ink/JsonSerialisation.h"
+#include "Ink/JsonSerialisation.h"
 
 #include "Ink/Object.h"
 #include "Ink/Container.h"
@@ -105,33 +105,29 @@ TSharedPtr<TArray<TSharedPtr<Ink::FChoice>>> Ink::FJsonSerialisation::JsonArrayT
 	return list;
 }
 
-TMap<FString, TSharedPtr<Ink::FObject>> Ink::FJsonSerialisation::JsonObjectToDictionaryRuntimeObjects(const FJsonObject& InJSONObject)
+TMap<Ink::FStringType, TSharedPtr<Ink::FObject>> Ink::FJsonSerialisation::JsonObjectToDictionaryRuntimeObjects(const FJsonObject& InJSONObject)
 {
-	TMap<FString, TSharedPtr<Ink::FObject>> dictionary;
+	TMap<FStringType, TSharedPtr<Ink::FObject>> dictionary;
+	dictionary.Reserve(InJSONObject.Values.Num());
 
-	const TMap<FString, TSharedPtr<FJsonValue>> jsonDict = InJSONObject.Values;
-	dictionary.Reserve(jsonDict.Num());
-
-	for (const TPair<FString, TSharedPtr<FJsonValue>>& pair : jsonDict)
+	for (const auto& pair : InJSONObject.Values)
 	{
-		dictionary.Add(pair.Key, TSharedPtr<FObject>(JsonTokenToRuntimeObject(*pair.Value)));
+		dictionary.Add(FStringType(*pair.Key), TSharedPtr<FObject>(JsonTokenToRuntimeObject(*pair.Value)));
 	}
 
 	return dictionary;
 }
 
-TMap<FString, int32> Ink::FJsonSerialisation::JsonObjectToIntDictionary(const FJsonObject& InJSONObject)
+TMap<Ink::FStringType, int32> Ink::FJsonSerialisation::JsonObjectToIntDictionary(const FJsonObject& InJSONObject)
 {
-	TMap<FString, int32> dictionary;
+	TMap<FStringType, int32> dictionary;
+	dictionary.Reserve(InJSONObject.Values.Num());
 
-	const TMap<FString, TSharedPtr<FJsonValue>> jsonDict = InJSONObject.Values;
-	dictionary.Reserve(jsonDict.Num());
-
-	for (const TPair<FString, TSharedPtr<FJsonValue>>& pair : jsonDict)
+	for (const auto& pair : InJSONObject.Values)
 	{
 		int32 value;
 		if (pair.Value->TryGetNumber(value))
-			dictionary.Add(pair.Key, value);
+			dictionary.Add(FStringType(*pair.Key), value);
 		else
 			UE_LOG(InkPlusPlus, Error, TEXT("JsonSerialisation : could not convert %s to int"), *pair.Value->AsString());
 	}
@@ -187,9 +183,10 @@ TSharedPtr<Ink::FContainer> Ink::FJsonSerialisation::JsonArrayToContainer(const 
 	{
 		TMap<FString, TSharedPtr<Ink::FObject>> namedOnlyContent;
 		namedOnlyContent.Reserve(terminatingObject->Get()->Values.Num());
-		for (const TPair<FString, TSharedPtr<FJsonValue>>& pair : terminatingObject->Get()->Values)
+		for (const auto& pair : terminatingObject->Get()->Values)
 		{
-			if (pair.Key == TEXT("#f"))
+			const FString key = FString(*pair.Key);
+			if (key == TEXT("#f"))
 			{
 				uint8 countFlags;
 				if (!pair.Value->TryGetNumber(countFlags))
@@ -200,7 +197,7 @@ TSharedPtr<Ink::FContainer> Ink::FJsonSerialisation::JsonArrayToContainer(const 
 				container->SetCountFlags(static_cast<Ink::ECountFlags>(countFlags));
 			}
 
-			else if (pair.Key == TEXT("#n"))
+			else if (key == TEXT("#n"))
 			{
 				FString name;
 				if (!pair.Value->TryGetString(name))
@@ -216,9 +213,9 @@ TSharedPtr<Ink::FContainer> Ink::FJsonSerialisation::JsonArrayToContainer(const 
 				TSharedPtr<Ink::FObject> namedContentItem(JsonTokenToRuntimeObject(*pair.Value));
 				TSharedPtr<Ink::FContainer> namedSubContainer = FObject::DynamicCastTo<Ink::FContainer>(namedContentItem);
 				if (namedSubContainer)
-					namedSubContainer->SetName(pair.Key);
+					namedSubContainer->SetName(key);
 
-				namedOnlyContent.Add(pair.Key, namedContentItem);
+				namedOnlyContent.Add(key, namedContentItem);
 			}
 		}
 		container->SetNamedOnlyContent(namedOnlyContent);
@@ -227,7 +224,7 @@ TSharedPtr<Ink::FContainer> Ink::FJsonSerialisation::JsonArrayToContainer(const 
 	return container;
 }
 
-void Ink::FJsonSerialisation::WriteDictionaryRuntimeObjects(TJsonWriter<>* InJSONWriter, const TMap<FString, TSharedPtr<Ink::FObject>>& InDictionary)
+void Ink::FJsonSerialisation::WriteDictionaryRuntimeObjects(TJsonWriter<>* InJSONWriter, const TMap<FStringType, TSharedPtr<Ink::FObject>>& InDictionary)
 {
 	InJSONWriter->WriteObjectStart();
 	for (const TPair<FString, TSharedPtr<Ink::FObject>>& pair : InDictionary)
@@ -248,7 +245,7 @@ void Ink::FJsonSerialisation::WriteListRuntimeObjects(TJsonWriter<>* InJSONWrite
 	InJSONWriter->WriteArrayEnd();
 }
 
-void Ink::FJsonSerialisation::WriteIntDictionary(TJsonWriter<>* InJSONWriter,const TMap<FString, int32>& InDictionary)
+void Ink::FJsonSerialisation::WriteIntDictionary(TJsonWriter<>* InJSONWriter,const TMap<FStringType, int32>& InDictionary)
 {
 	InJSONWriter->WriteObjectStart();
 	for (const TPair<FString, int32>& pair : InDictionary)
@@ -772,9 +769,10 @@ TSharedPtr<Ink::FObject> Ink::FJsonSerialisation::JsonTokenToRuntimeObject(const
 		// List Value
 		if (Ink::FJsonExtension::TryGetField(TEXT("list"), *objectValue, propertyValue))
 		{
-			TMap<FString, TSharedPtr<FJsonValue>> listContent = propertyValue->AsObject()->Values;
-			
-			Ink::FInkList rawList;			
+			// Hold the object alive: propertyValue is reused for "origins" below.
+			const TSharedPtr<FJsonObject> listContentObject = propertyValue->AsObject();
+
+			Ink::FInkList rawList;
 			if (Ink::FJsonExtension::TryGetField(TEXT("origins"), *objectValue, propertyValue))
 			{
 				const TArray<TSharedPtr<FJsonValue>> namesAsObjects = propertyValue->AsArray();
@@ -788,10 +786,10 @@ TSharedPtr<Ink::FObject> Ink::FJsonSerialisation::JsonTokenToRuntimeObject(const
 				rawList.SetInitialOriginNames(objectNames);
 			}
 
-			rawList.Reserve(listContent.Num());
-			for (const TPair<FString, TSharedPtr<FJsonValue>>& pair : listContent)
+			rawList.Reserve(listContentObject->Values.Num());
+			for (const auto& pair : listContentObject->Values)
 			{
-				Ink::FInkListItem item(pair.Key);
+				Ink::FInkListItem item(FString(*pair.Key));
 				int32 value = 0;
 				pair.Value->TryGetNumber(value);
 				rawList.Add(item, value);
@@ -827,9 +825,9 @@ TSharedPtr<Ink::FListDefinitionsOrigin> Ink::FJsonSerialisation::JsonTokenToList
 	}
 
 	TArray<TSharedPtr<Ink::FListDefinition>> allDefinitions;
-	for (const TPair<FString, TSharedPtr<FJsonValue>>& pair : definitionsObject->Get()->Values)
+	for (const auto& pair : definitionsObject->Get()->Values)
 	{
-		const FString name = pair.Key;
+		const FString name = FString(*pair.Key);
 		const TSharedPtr<FJsonObject>* listDefinitionJson;
 		if (!pair.Value->TryGetObject(listDefinitionJson))
 		{
@@ -840,7 +838,7 @@ TSharedPtr<Ink::FListDefinitionsOrigin> Ink::FJsonSerialisation::JsonTokenToList
 		// Cast (string, value) to (string, int) for items
 		TMap<FString, int32> items;
 		items.Reserve(listDefinitionJson->Get()->Values.Num());
-		for (const TPair<FString, TSharedPtr<FJsonValue>>& definitionsPair : listDefinitionJson->Get()->Values)
+		for (const auto& definitionsPair : listDefinitionJson->Get()->Values)
 		{
 			int32 value;
 			if (!definitionsPair.Value->TryGetNumber(value))
@@ -848,7 +846,7 @@ TSharedPtr<Ink::FListDefinitionsOrigin> Ink::FJsonSerialisation::JsonTokenToList
 				UE_LOG(InkPlusPlus, Error, TEXT("JsonSerialisation : failed to get int value out of definition pair"));
 				continue;
 			}
-			items.Add(definitionsPair.Key, value);
+			items.Add(FString(*definitionsPair.Key), value);
 		}
 
 		TSharedPtr<Ink::FListDefinition> listDefinition = MakeShared<Ink::FListDefinition>(name, items);

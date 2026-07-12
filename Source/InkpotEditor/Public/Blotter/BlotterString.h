@@ -14,6 +14,6 @@ public:
 	const FText& GetText() const;
 
 private:
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Inkpot|Blotter")
 	FText Text;
 };

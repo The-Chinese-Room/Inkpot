@@ -7,9 +7,10 @@
 #include "Ink/StoryState.h"
 #include "Ink/SearchResult.h"
 #include "Ink/Path.h"
-#include "Ink/Inklist.h"
+#include "Ink/InkList.h"
 #include "Utility/InkpotLog.h"
 #include "Inkpot/InkpotGameplayTagLibrary.h"
+#include "GameplayTagsManager.h"
 
 void UInkpotStory::Initialise( TSharedPtr<FInkpotStoryInternal>  InInkpotStory )
 {
@@ -83,6 +84,7 @@ FGameplayTag UInkpotStory::GetGTFromString(const FString InTagString, const EInk
 		TagString = INK_VARIABLE_GAMEPLAYTAG_PREFIX + InTagString;
 		break;
 	}
+
 	FName TagName = FName(*TagString);
 	FGameplayTag OutTag = UGameplayTagsManager::Get().RequestGameplayTag(TagName, false);
 	if (OutTag.IsValid())
@@ -208,6 +210,11 @@ FString UInkpotStory::ContinueIfYouCan(bool& Continued)
 
 FString UInkpotStory::ContinueInternal()
 {
+	if (IsLineRenderingForFlow(GetCurrentFlowName()))
+	{
+		INKPOT_WARN("Continue ignored while a line is rendering for flow '%s'", *GetCurrentFlowName());
+		return GetCurrentText();
+	}
 	return StoryInternal->Continue();
 }
 
@@ -218,6 +225,11 @@ FString UInkpotStory::ContinueMaximally()
 
 FString UInkpotStory::ContinueMaximallyInternal()
 {
+	if (IsLineRenderingForFlow(GetCurrentFlowName()))
+	{
+		INKPOT_WARN("ContinueMaximally ignored while a line is rendering for flow '%s'", *GetCurrentFlowName());
+		return GetCurrentText();
+	}
 	return StoryInternal->ContinueMaximally();
 }
 
@@ -242,6 +254,8 @@ bool UInkpotStory::CanContinue()
 
 bool UInkpotStory::CanContinueInternal()
 {
+	if (IsLineRenderingForFlow(GetCurrentFlowName()))
+		return false;
 	return StoryInternal->CanContinue();
 }
 
@@ -297,8 +311,6 @@ bool UInkpotStory::SwitchFlowToPath(const FString& InFlowName, const FString& In
 	if (bIsNewFlow || bInRestart)
 	{
 		ChoosePath(InPath);
-		if (CanContinueInternal())
-			ContinueInternal();
 	}
 	return bIsNewFlow;
 }
@@ -622,9 +634,20 @@ void UInkpotStory::OnContinueInternal()
 	{
 		UpdateChoices();
 		DumpDebug();
-		if (!EventOnContinue.IsBound())
-			return;
-		EventOnContinue.Broadcast(this);
+
+		if (EventOnContinue.IsBound())
+			EventOnContinue.Broadcast(this);
+
+		// Natural completion: the current flow has run out of content and has no
+		// choices. Reported per flow so listeners can tear down without polling.
+		// Uses the raw VM state rather than CanContinue()/HasChoices() because those
+		// are gated by line rendering.
+		// Deferred until the last line of the flow has finished rendering, so the
+		// event arrives after the final line is presented, not while it is in flight.
+		if (!StoryInternal->CanContinue() && !StoryInternal->HasChoices())
+		{
+			NotifyFlowEndedOrDefer(GetCurrentFlowName());
+		}
 	}
 	DebugRefresh();
 }
@@ -781,7 +804,7 @@ void UInkpotStory::DumpContainer(const FString &InName, TSharedPtr<Ink::FContain
 		if( container )
 		{
 			containersDumped.Add(container);
-			FString name = container->GetName();
+			FString name = container->GetPath()->ToString();
 			if (name.IsEmpty())
 				name = "inline";
 			DumpContainer(name, container, Indent + 1 );
@@ -833,6 +856,55 @@ void UInkpotStory::DumpContentAtKnot( const FString& InName )
 		return;
 	}
 	DumpContainer(InName, knotContainer  );
+}
+
+void UInkpotStory::DumpMainContentPaths()
+{
+	TSharedPtr<Ink::FContainer> main = StoryInternal->GetMainContentContainer();
+	DumpContainerPaths("<root>", main);
+}
+
+void UInkpotStory::DumpContainerPaths(const FString& InName, TSharedPtr<Ink::FContainer> InContainer, int Indent)
+{
+	if (!InContainer)
+		return;
+
+	FString pad;
+	for (int i = 0; i < Indent; ++i)
+		pad += '\t';
+
+	INKPOT_LOG("%s%s", *pad, *InName);
+	TArray<TSharedPtr<Ink::FObject>>* contents = InContainer->GetContent().Get();
+	TSet<TSharedPtr<Ink::FContainer>> containersDumped;
+
+	for (TSharedPtr<Ink::FObject> obj : *contents)
+	{
+		TSharedPtr<Ink::FContainer> container = Ink::FObject::DynamicCastTo<Ink::FContainer>(obj);
+		if (container)
+		{
+			containersDumped.Add(container);
+			FString nameAlso = InContainer->GetPath()->ToString();
+			static volatile bool breakMe = false;
+			if (container->GetName().Equals(TEXT("Intro")))
+				breakMe = true;
+
+			FString name = container->GetPath()->ToString();
+			if (name.IsEmpty())
+				name = "inline";
+			DumpContainerPaths(name, container, Indent + 1);
+		}
+	}
+
+	TSharedPtr<TMap<FString, TSharedPtr<Ink::FObject>>> namedContentPtr = InContainer->GetNamedContent();
+	for (auto pair : *namedContentPtr)
+	{
+		TSharedPtr<Ink::FContainer> container = Ink::FObject::DynamicCastTo<Ink::FContainer>(pair.Value);
+		if (!container)
+			continue;
+		if (containersDumped.Contains(container))
+			continue;
+		DumpContainerPaths(pair.Key, container, Indent + 1);
+	}
 }
 
 void UInkpotStory::GatherAllStrings( TMap<FString, FString> &OutStrings )
@@ -1004,6 +1076,27 @@ FOnStoryLoadJSON& UInkpotStory::OnStoryLoadJSON()
 	return EventOnStoryLoadJSON;
 }
 
+FOnFlowEnded& UInkpotStory::OnFlowEnded()
+{
+	return EventOnFlowEnded;
+}
+
+void UInkpotStory::NotifyFlowEndedOrDefer(const FString& InFlowName)
+{
+	// If a line is still rendering for this flow, wait for NotifyLineRenderEnd to fire
+	// the event so it arrives after the final line is presented.
+	if (IsLineRenderingForFlow(InFlowName))
+		FlowsPendingEnd.Add(InFlowName);
+	else
+		BroadcastFlowEnded(InFlowName);
+}
+
+void UInkpotStory::BroadcastFlowEnded(const FString& InFlowName)
+{
+	if (EventOnFlowEnded.IsBound())
+		EventOnFlowEnded.Broadcast(this, InFlowName);
+}
+
 UInkpotLine *UInkpotStory::GetCurrentLine()
 {
 	UInkpotLine* line = NewObject<UInkpotLine>( this );
@@ -1110,24 +1203,45 @@ FOnStoryContinue& UInkpotStory::OnDebugRefresh()
 
 void UInkpotStory::NotifyLineRenderBegin(FName InContext)
 {
-	LineRenderContextsInFlight.Add( InContext );
+	// Record the flow that owns this render so the gate can be scoped per flow.
+	LineRenderContextsInFlight.Add( InContext, GetCurrentFlowName() );
 }
 
 void UInkpotStory::NotifyLineRenderEnd(FName InContext, bool bInSuccess)
 {
-	if (!LineRenderContextsInFlight.Contains(InContext))
+	const FString* OwnerFlow = LineRenderContextsInFlight.Find(InContext);
+	if (!OwnerFlow)
 	{
 		INKPOT_ERROR("Could not find context for end of line render. '%s'", *InContext.ToString() );
 		return;
 	}
 
+	FString Flow = *OwnerFlow;
 	LineRenderContextsInFlight.Remove(InContext);
 
 	if (EventOnLineComplete.IsBound())
 		EventOnLineComplete.Broadcast(this, InContext, bInSuccess);
+
+	// If this flow was waiting to report its end until rendering finished, and this was
+	// the last render in flight for it, fire OnFlowEnded now.
+	if (FlowsPendingEnd.Contains(Flow) && !IsLineRenderingForFlow(Flow))
+	{
+		FlowsPendingEnd.Remove(Flow);
+		BroadcastFlowEnded(Flow);
+	}
 }
 
 bool UInkpotStory::IsLineRendering() const
 {
 	return LineRenderContextsInFlight.Num() > 0;
+}
+
+bool UInkpotStory::IsLineRenderingForFlow(const FString& InFlowName) const
+{
+	for (const TPair<FName, FString>& Context : LineRenderContextsInFlight)
+	{
+		if (Context.Value == InFlowName)
+			return true;
+	}
+	return false;
 }

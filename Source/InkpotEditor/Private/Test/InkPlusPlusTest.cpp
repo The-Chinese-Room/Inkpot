@@ -18,6 +18,7 @@
 #include <Serialization/JsonTypes.h>
 #include <Ink/VariableState.h>
 #include "Test/InkFunctionTests.h"
+#include "Containers/StringFwd.h"
 
 
 #define TEST_ERROR_EQUAL                         TEXT("TEST_ERROR_EQUAL")
@@ -289,17 +290,20 @@ bool FInkTests::RunTest(const FString& InkTestName)
 			for (TSharedPtr<FJsonValue> element : Array)
 			{
 				const TSharedPtr<FJsonObject>& testInstruction = element->AsObject();
-
-
+				
 				TArray<FString> keys;
-				testInstruction->Values.GetKeys(keys);
+				keys.Reserve(testInstruction->Values.Num());
+				for (const auto& valuePair : testInstruction->Values)
+				{
+					keys.Add(FString(*valuePair.Key));
+				}
 				if (keys.Num() != 1)
 				{
 					INKPOT_ERROR("Invalid test script, expected only one field per instruction: %s\n", *InkTestName);
 					return false;
 				}
 
-				const FString& instruction = keys[0];
+				const FString& instruction = *keys[0];
 				if (!IsStoryInstruction(instruction))
 				{
 					if (testInstruction->HasField(TEST_ERROR_EQUAL))
@@ -701,7 +705,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 									TSharedPtr<FJsonValue> value = (*expectedTags)[i];
 									if (value->Type != EJson::String)
 									{
-										INKPOT_ERROR("%s : TEST_CURRENT_TAGS Tag is not a string, check test script JSON\n", *InkTestName, expectedTags->Num(), actualTags.Num());
+										INKPOT_ERROR("%s : TEST_CURRENT_TAGS Tag is not a string, check test script JSON\n", *InkTestName);
 										return false;
 									}
 
@@ -749,7 +753,7 @@ bool FInkTests::RunTest(const FString& InkTestName)
 									TSharedPtr<FJsonValue> value = (*expectedTags)[i];
 									if (value->Type != EJson::String)
 									{
-										INKPOT_ERROR("%s : TEST_STORY_GLOBAL_TAGS Tag is not a string, check test script JSON\n", *InkTestName, expectedTags->Num(), actualTags.Num());
+										INKPOT_ERROR("%s : TEST_STORY_GLOBAL_TAGS Tag is not a string, check test script JSON\n", *InkTestName);
 										return false;
 									}
 

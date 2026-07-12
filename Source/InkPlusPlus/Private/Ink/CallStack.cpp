@@ -457,7 +457,7 @@ TSharedPtr<Ink::FObject> Ink::FCallStack::GetTemporaryVariableWithName(const FSt
 
 
 	const TSharedPtr<Ink::FElement> contextElement = callStack[InContextIndex - 1];
-	const TSharedPtr<Ink::FObject>* object = contextElement->TemporaryVariables.Find(InName);
+	const TSharedPtr<Ink::FObject>* object = contextElement->TemporaryVariables.Find(*InName);
 	if (object != nullptr && object->IsValid())
 		return *object;
 
@@ -477,24 +477,24 @@ void Ink::FCallStack::SetTemporaryVariable(const FString& InName, TSharedPtr<Ink
 	}
 
 	const TSharedPtr<Ink::FElement> contextElement = callStack[InContextIndex - 1];
-	if(!InDeclareNew && !contextElement->TemporaryVariables.Contains(InName))
+	if(!InDeclareNew && !contextElement->TemporaryVariables.Contains(*InName))
 	{
 		UE_LOG(InkPlusPlus, Error, TEXT("CallStack : could not find temporary variable to set: %s"), *InName);
 		return;;
 	}
 
-	TSharedPtr<Ink::FObject>* oldValue = contextElement->TemporaryVariables.Find(InName);
+	TSharedPtr<Ink::FObject>* oldValue = contextElement->TemporaryVariables.Find(*InName);
 	if (oldValue != nullptr && oldValue->IsValid())
 		Ink::FValueList::RetainListOriginsForAssignment(*oldValue, InValue);
 
-	contextElement->TemporaryVariables.Add(InName, InValue);
+	contextElement->TemporaryVariables.Add(*InName, InValue);
 }
 
 int32 Ink::FCallStack::ContextForVariableNamed(const FString& InName)
 {
 	// Current temporary context?
 	// (Shouldn't attempt to access contexts higher in the callstack.)
-	if (CurrentElement()->TemporaryVariables.Contains(InName))
+	if (CurrentElement()->TemporaryVariables.Contains(*InName))
 		return GetCurrentElementIndex() + 1;
 
 	// Global
