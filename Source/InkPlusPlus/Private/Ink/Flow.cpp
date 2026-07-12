@@ -40,7 +40,7 @@ Ink::FFlow::FFlow(const FString& InName, Ink::FStory* InStory, const TSharedPtr<
 	// Choice Threads is optional
 	const TSharedPtr<FJsonObject>* jsonChoiceThreadsObject;
 	if (InJSONObject->TryGetObjectField(TEXT("choiceThreads"), jsonChoiceThreadsObject))
-		LoadFlowChoiceThreads(jsonChoiceThreadsObject->Get()->Values, *InStory);
+		LoadFlowChoiceThreads(*jsonChoiceThreadsObject->Get(), *InStory);
 }
 
 
@@ -91,7 +91,7 @@ void Ink::FFlow::WriteJSON(TJsonWriter<>* InJSONWriter)
 	InJSONWriter->WriteObjectEnd();
 }
 
-void Ink::FFlow::LoadFlowChoiceThreads(const TMap<FString, TSharedPtr<FJsonValue>>& InJSONChoiceThreads, const Ink::FStory& InStory)
+void Ink::FFlow::LoadFlowChoiceThreads(const FJsonObject& InJSONChoiceThreads, const Ink::FStory& InStory)
 {
 	for (const TSharedPtr<Ink::FChoice>& choice : *CurrentChoices)
 	{
@@ -102,9 +102,8 @@ void Ink::FFlow::LoadFlowChoiceThreads(const TMap<FString, TSharedPtr<FJsonValue
 		}
 		else
 		{
-			const TSharedPtr<FJsonValue> jsonSavedChoiceThread = InJSONChoiceThreads[FString::FromInt(choice->GetOriginalThreadIndex())];
 			const TSharedPtr<FJsonObject>* jsonSavedChoiceThreadObject;
-			if (!jsonSavedChoiceThread->TryGetObject(jsonSavedChoiceThreadObject))
+			if (!InJSONChoiceThreads.TryGetObjectField(FString::FromInt(choice->GetOriginalThreadIndex()), jsonSavedChoiceThreadObject))
 			{
 				UE_LOG(InkPlusPlus, Error, TEXT("Flow : cannot get JSON Saved Choice Thread object from JSON Saved Choice Thread Value!"))
 				return;

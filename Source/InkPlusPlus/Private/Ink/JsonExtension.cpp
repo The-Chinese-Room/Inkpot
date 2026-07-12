@@ -18,16 +18,15 @@ TMap<FString, TSharedPtr<Ink::FObject>> Ink::FJsonExtension::JSONObjectToInkObje
 	return convertedMap;
 }
 
-TMap<FString, int32> Ink::FJsonExtension::JSONObjectToIntDictionary(const TMap<FString, TSharedPtr<FJsonValue>>& InJSONObject)
+TMap<FString, int32> Ink::FJsonExtension::JSONObjectToIntDictionary(const FJsonObject& InJSONObject)
 {
 	TMap<FString, int32> convertedMap;
-	convertedMap.Reserve(InJSONObject.Num());
+	convertedMap.Reserve(InJSONObject.Values.Num());
 
-	for (const TPair<FString, TSharedPtr<FJsonValue>>& jsonPair : InJSONObject)
+	for (const auto& jsonPair : InJSONObject.Values)
 	{
-		const FString& key = jsonPair.Key;
 		int32 value = static_cast<int32>(jsonPair.Value->AsNumber());
-		convertedMap.Add(jsonPair.Key, value);
+		convertedMap.Add(FString(*jsonPair.Key), value);
 	}
 
 	return convertedMap;

@@ -86,7 +86,7 @@ void Ink::FStoryState::LoadJSONObj(const FJsonObject& InJSONObj)
 	const TSharedPtr<FJsonObject>* flowsObject = nullptr;
 	if (InJSONObj.TryGetObjectField(TEXT("flows"), flowsObject))
 	{
-		TMap<FString, TSharedPtr<FJsonValue>> flowsObjectMap = flowsObject->Get()->Values;
+		const auto& flowsObjectMap = flowsObject->Get()->Values;
 
 		if (flowsObjectMap.Num() == 1) // Single default flow
 		{
@@ -102,9 +102,9 @@ void Ink::FStoryState::LoadJSONObj(const FJsonObject& InJSONObj)
 		}
 
 		// Load up each flow (there may only be one)
-		for (const TPair<FString, TSharedPtr<FJsonValue>>& flowPair : flowsObjectMap)
+		for (const auto& flowPair : flowsObjectMap)
 		{
-			FString name = flowPair.Key;
+			FString name = FString(*flowPair.Key);
 			const TSharedPtr<FJsonObject> flowObject = flowPair.Value->AsObject();
 
 			// Load up this flow using JSON data
@@ -149,8 +149,7 @@ void Ink::FStoryState::LoadJSONObj(const FJsonObject& InJSONObj)
 	const TSharedPtr<FJsonObject>* variableStateObjectField = nullptr;
 	if (InJSONObj.TryGetObjectField(TEXT("variablesState"), variableStateObjectField))
 	{
-		const TMap<FString, TSharedPtr<FJsonValue>> variableStateObjectMap = variableStateObjectField->Get()->Values;
-		VariableState->SetJsonToken(variableStateObjectMap);
+		VariableState->SetJsonToken(*variableStateObjectField->Get());
 		VariableState->SetCallStack(CurrentFlow->GetCallStack());
 	}
 
@@ -166,11 +165,9 @@ void Ink::FStoryState::LoadJSONObj(const FJsonObject& InJSONObj)
 		DivertedPointer = Story->PointerAtPath(divertPath);
 	}
 
-	TMap<FString, TSharedPtr<FJsonValue>> visitCountsDictionary = InJSONObj.GetObjectField(TEXT("visitCounts")).Get()->Values;
-	VisitCounts = Ink::FJsonExtension::JSONObjectToIntDictionary(visitCountsDictionary);
+	VisitCounts = Ink::FJsonExtension::JSONObjectToIntDictionary(*InJSONObj.GetObjectField(TEXT("visitCounts")).Get());
 
-	TMap<FString, TSharedPtr<FJsonValue>> turnIndicesDictionary = InJSONObj.GetObjectField(TEXT("turnIndices")).Get()->Values;
-	TurnIndices = Ink::FJsonExtension::JSONObjectToIntDictionary(turnIndicesDictionary);
+	TurnIndices = Ink::FJsonExtension::JSONObjectToIntDictionary(*InJSONObj.GetObjectField(TEXT("turnIndices")).Get());
 
 	CurrentTurnIndex = InJSONObj.GetIntegerField(TEXT("turnIdx"));
 	StorySeed = InJSONObj.GetIntegerField(TEXT("storySeed"));

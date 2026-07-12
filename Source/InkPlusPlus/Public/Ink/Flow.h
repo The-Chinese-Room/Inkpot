@@ -20,7 +20,7 @@ namespace Ink
 		void WriteJSON(TJsonWriter<>* InJSONWriter);
 
 		// Used both to load old format and current
-		void LoadFlowChoiceThreads(const TMap<FString, TSharedPtr<FJsonValue>>& InJSONChoiceThreads,  const Ink::FStory& InStory);
+		void LoadFlowChoiceThreads(const FJsonObject& InJSONChoiceThreads,  const Ink::FStory& InStory);
 
 		TSharedPtr<Ink::FCallStack> GetCallStack() const;
 		void SetCallStack(const Ink::FCallStack& InCallStack);
