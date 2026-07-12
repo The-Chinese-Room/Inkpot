@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "GameplayTags.h"
+#include "GameplayTagContainer.h"
 #include "InkpotGameplayTagLibrary.generated.h"
 
 // gameplay tag prefixes
@@ -14,6 +14,14 @@
 //#define INK_ORIGIN_GAMEPLAYTAG_FILTER "Ink.Origin"
 //#define INK_PATH_GAMEPLAYTAG_FILTER "Ink.Path"
 //#define INK_VARIABLE_GAMEPLAYTAG_FILTER "Ink.Variable"
+
+UENUM(BlueprintType)
+enum class EInkGameplayTagTypes : uint8
+{
+	INK_ORIGIN	UMETA(DisplayName = "Origin"),
+	INK_PATH	UMETA(DisplayName = "Path"),
+	INK_VAR		UMETA(DisplayName = "Variable")
+};
 
 UCLASS(meta=(ScriptName="InkpotGameplayTagLibrary"), MinimalAPI)
 class UInkpotGameplayTagLibrary : public UBlueprintFunctionLibrary

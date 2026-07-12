@@ -3,6 +3,7 @@
 #include "Inkpot/InkpotStory.h"
 #include "Asset/InkpotStoryAsset.h"
 #include "Utility/InkpotLog.h"
+#include "Engine/Engine.h"
 
 FString UInkpotLibrary::GetTagWithPrefixAndStrip(UInkpotStory* InStory, const FString& InTagPrefix)
 {

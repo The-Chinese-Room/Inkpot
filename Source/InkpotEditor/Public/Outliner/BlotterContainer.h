@@ -11,20 +11,20 @@ class INKPOTEDITOR_API UBlotterContainer : public UBlotterString
 	GENERATED_BODY()
 public:
 
-	UFUNCTION(BlueprintPure)
+	UFUNCTION(BlueprintPure, Category = "Inkpot|Blotter")
 	int32 GetLevel() const;
 
 	void SetLevel( int32 Level );
 
 	void Add(UBlotterContainer *Container);
 
-	UFUNCTION(BlueprintPure)
+	UFUNCTION(BlueprintPure, Category = "Inkpot|Blotter")
 	const TArray<UBlotterContainer*> &GetChildren() const;
 
 protected:
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Inkpot|Blotter")
 	TArray<TObjectPtr<UBlotterContainer>> Children;
 
-	UPROPERTY(VisibleAnywhere)
-	int32 Level; 
+	UPROPERTY(VisibleAnywhere, Category = "Inkpot|Blotter")
+	int32 Level;
 };
