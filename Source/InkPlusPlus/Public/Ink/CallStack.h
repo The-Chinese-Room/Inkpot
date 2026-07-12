@@ -5,16 +5,10 @@
 #include "Dom/JsonObject.h"
 #include "Serialization/JsonWriter.h"
 #include "Pointer.h"
-#include "Containers/StringFwd.h"
+#include "TypeDeclarations.h"
 
 namespace Ink
 {
-	class FObject;
-	class FStory;
-	class FThread;
-
-	using FStringType = UE::FSharedString;
-
 
 #pragma region Element
 	class FElement

@@ -2,17 +2,10 @@
 #include "CoreMinimal.h"
 #include "Json.h"
 #include "Containers/StringFwd.h"
-
+#include "TypeDeclarations.h"
 
 namespace Ink
 {
-	class FStory;
-	class FObject;
-	class FChoice;
-	class FCallStack;
-
-	using FStringType = UE::FSharedString;
-
 	class FFlow
 	{
 	public:

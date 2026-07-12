@@ -84,6 +84,7 @@ FGameplayTag UInkpotStory::GetGTFromString(const FString InTagString, const EInk
 		TagString = INK_VARIABLE_GAMEPLAYTAG_PREFIX + InTagString;
 		break;
 	}
+
 	FName TagName = FName(*TagString);
 	FGameplayTag OutTag = UGameplayTagsManager::Get().RequestGameplayTag(TagName, false);
 	if (OutTag.IsValid())

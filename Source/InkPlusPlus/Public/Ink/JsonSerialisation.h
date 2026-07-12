@@ -5,17 +5,10 @@
 #include "Serialization/JsonWriter.h"
 #include "Utility/InkPlusPlusLog.h"
 #include "Containers/StringFwd.h"
+#include "TypeDeclarations.h"
 
 namespace Ink
 {
-	class FObject;
-	class FContainer;
-	class FChoice;
-	class FValueList;
-	class FListDefinitionsOrigin;
-
-	using FStringType = UE::FSharedString;
-
 	// May need wrappers for "WritePropertyStart / WritePropertyEnd" that are in source parser (SimpleJson), currently just using Unreal's Write Value and hope to be sufficient
 	class INKPLUSPLUS_API FJsonSerialisation
 	{
