@@ -10,6 +10,7 @@
 #include "Ink/InkList.h"
 #include "Utility/InkpotLog.h"
 #include "Inkpot/InkpotGameplayTagLibrary.h"
+#include "GameplayTagsManager.h"
 
 void UInkpotStory::Initialise( TSharedPtr<FInkpotStoryInternal>  InInkpotStory )
 {
