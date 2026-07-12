@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "GameplayTags.h"
+#include "GameplayTagContainer.h"
 #include "InkpotGameplayTagLibrary.generated.h"
 
 // gameplay tag prefixes

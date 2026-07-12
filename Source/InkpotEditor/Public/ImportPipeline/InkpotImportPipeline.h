@@ -42,4 +42,3 @@ private:
 	UPROPERTY()
 	bool bFinalised{ false };
 };
-

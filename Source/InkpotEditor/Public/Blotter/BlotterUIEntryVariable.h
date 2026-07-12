@@ -15,16 +15,16 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnVariableUpdate"))
 	void ReceiveOnVariableUpdate();
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Blotter")
 	void SetVariableFromText( const FText& Value );
 
 	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Inkpot|Blotter")
 	void Refresh();
 
 protected:
-	UPROPERTY(Transient, BluePrintReadOnly )
+	UPROPERTY(Transient, BluePrintReadOnly, Category = "Inkpot|Blotter")
 	TObjectPtr<UBlotterVariable> BlotterVariable;
 };
 

@@ -1,5 +1,7 @@
 
 #include "Ink/StoryState.h"
+#include "Serialization/JsonReader.h"
+#include "Serialization/JsonSerializer.h"
 #include "Utility/InkPlusPlusLog.h"
 #include "Ink/Flow.h"
 #include "Ink/CallStack.h"

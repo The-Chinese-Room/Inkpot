@@ -1,6 +1,8 @@
 #pragma once
 #include "CoreMinimal.h"
-#include "Json.h"
+#include "Dom/JsonObject.h"
+#include "Dom/JsonValue.h"
+#include "Serialization/JsonWriter.h"
 #include "Utility/InkPlusPlusLog.h"
 #include "Containers/StringFwd.h"
 

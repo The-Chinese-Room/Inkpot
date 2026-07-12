@@ -21,6 +21,6 @@ public:
 	void SetSelected( bool bIsSelected );
 
 private:
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Inkpot|Blotter")
 	bool bIsSelected;
 };
