@@ -42,7 +42,7 @@ namespace Ink
 		bool SetVariable(const FString& VariableName, const TSharedPtr<Ink::FObject>& Value);
 
 		void ApplyPatch();
-		void SetJsonToken(const TMap<FStringType, TSharedPtr<FJsonValue>>& JsonToken);
+		void SetJsonToken(const FJsonObject& InJSONToken);
 		void WriteJson(TJsonWriter<>* Writer);
 		bool RuntimeObjectsEqual(TSharedPtr<Ink::FObject> Object1, TSharedPtr<Ink::FObject> Object2) const;
 

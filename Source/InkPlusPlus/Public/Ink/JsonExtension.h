@@ -11,8 +11,8 @@ namespace Ink
 
 	struct FJsonExtension
 	{
-		static TMap<FString, TSharedPtr<Ink::FObject>> JSONObjectToInkObject(const TMap<FStringType, TSharedPtr<FJsonValue>>& InJSONObject);
-		static TMap<FString, int32> JSONObjectToIntDictionary(const TMap<FStringType, TSharedPtr<FJsonValue>>& InJSONObject);
+		static TMap<FString, TSharedPtr<Ink::FObject>> JSONObjectToInkObject(const TMap<FString, TSharedPtr<FJsonValue>>& InJSONObject);
+		static TMap<FString, int32> JSONObjectToIntDictionary(const FJsonObject& InJSONObject);
 		static TArray<TSharedPtr<Ink::FObject>> JSONValueToInkObject(const TArray<TSharedPtr<FJsonValue>>& InJSONArray);
 		static TSharedPtr<Ink::FObject> JSONTokenToInkObject(const TSharedPtr<FJsonValue> InJSONToken);
 

@@ -127,7 +127,7 @@ void Ink::FVariableState::ApplyPatch()
 }
 
 
-void Ink::FVariableState::SetJsonToken(const TMap<FStringType, TSharedPtr<FJsonValue>>& JsonToken)
+void Ink::FVariableState::SetJsonToken(const FJsonObject& InJSONToken)
 {
 	_globalVariables.Reset();
 
@@ -135,10 +135,10 @@ void Ink::FVariableState::SetJsonToken(const TMap<FStringType, TSharedPtr<FJsonV
 	{
 		const FString variableName = variablePair.Key;
 
-		const TSharedPtr<FJsonValue>* loadedTokenPtrPtr = JsonToken.Find(*variableName);
-		if (loadedTokenPtrPtr != nullptr && (*loadedTokenPtrPtr).IsValid())
+		const TSharedPtr<FJsonValue> loadedToken = InJSONToken.TryGetField(variableName);
+		if (loadedToken.IsValid())
 		{
-			_globalVariables.Emplace( variableName, Ink::FJsonSerialisation::JsonTokenToRuntimeObject(**loadedTokenPtrPtr) );
+			_globalVariables.Emplace( variableName, Ink::FJsonSerialisation::JsonTokenToRuntimeObject(*loadedToken) );
 		}
 		else
 		{

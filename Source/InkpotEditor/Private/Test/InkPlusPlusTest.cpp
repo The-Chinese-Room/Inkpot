@@ -290,10 +290,13 @@ bool FInkTests::RunTest(const FString& InkTestName)
 			for (TSharedPtr<FJsonValue> element : Array)
 			{
 				const TSharedPtr<FJsonObject>& testInstruction = element->AsObject();
-
-
-				TArray<UE::FSharedString> keys;
-				testInstruction->Values.GetKeys(keys);
+				
+				TArray<FString> keys;
+				keys.Reserve(testInstruction->Values.Num());
+				for (const auto& valuePair : testInstruction->Values)
+				{
+					keys.Add(FString(*valuePair.Key));
+				}
 				if (keys.Num() != 1)
 				{
 					INKPOT_ERROR("Invalid test script, expected only one field per instruction: %s\n", *InkTestName);
