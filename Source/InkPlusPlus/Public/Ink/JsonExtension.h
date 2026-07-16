@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Json.h"
 #include "Containers/StringFwd.h"
 #include "TypeDeclarations.h"

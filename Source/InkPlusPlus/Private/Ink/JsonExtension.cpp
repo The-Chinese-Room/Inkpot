@@ -1,4 +1,4 @@
-#include "Ink/JsonExtension.h"
+﻿#include "Ink/JsonExtension.h"
 #include "Ink/Object.h"
 #include "Ink/JsonSerialisation.h"
 

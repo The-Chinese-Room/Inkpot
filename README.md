@@ -21,6 +21,10 @@ Fixed SwitchPathToFlow incorrectly consuming lines. ( Internal continue is incor
 FJsonObject keys are now FSharedString for 5.8.<br>
 Linux build fixed for capitalisation on includes.<br>
 
+
+### Changes in 1.32.21
+Fixed naming of paths in debug dump.<br>
+
 ### Changes in 1.31.21
 Changed flow not found from assert to error, fixes reported crash during serlialisation.<br>
 List add item now does correct name resolution for item names containing an origin prefix.<br>
