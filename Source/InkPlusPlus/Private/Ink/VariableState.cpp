@@ -1,4 +1,4 @@
-#include "Ink/VariableState.h"
+﻿#include "Ink/VariableState.h"
 #include "Ink/Value.h"
 #include "Ink/Object.h"
 #include "Ink/JsonSerialisation.h"
