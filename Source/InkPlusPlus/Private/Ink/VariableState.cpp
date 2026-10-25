@@ -346,7 +346,7 @@ void Ink::FVariableState::SnapshotDefaultGlobals()
 void Ink::FVariableState::SetGlobal(const FString& VariableName, TSharedPtr<Ink::FObject> Value)
 {
 	TSharedPtr<Ink::FObject> oldValue;
-	if (!patch.IsValid() || !patch->TryGetGlobal(VariableName, Value))
+	if (!patch.IsValid() || !patch->TryGetGlobal(VariableName, oldValue))
 	{
 		TSharedPtr<Ink::FObject>* findValue = _globalVariables.Find(VariableName);
 		if (findValue != nullptr)
