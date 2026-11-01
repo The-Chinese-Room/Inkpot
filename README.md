@@ -1,7 +1,7 @@
 # Inkpot
 **Inkpot** - A container for **Ink** within the Unreal Engine developed by [The Chinese Room](https://www.thechineseroom.co.uk/).<br><br>
 This is a plugin for Unreal Engine 5.7 or later.<br>
-This is version **1.41.21** of the plugin.</br>
+This is version **1.42.21** of the plugin.</br>
 The head revision contains work in progress towards the upcoming release.<br>
 
 Inkpot is a wrapper for the wonderful narrative scripting language **Ink** developed by [Inkle Studios](https://www.inklestudios.com/ink/).<br>
@@ -14,6 +14,9 @@ For general support and chat with other users, check out [Inkle's discord](https
 
 ## Changelog  
 
+### Changes in 1.42.21
+fixed bad ref in FVariableState::SetGlobal; look up the old value into oldValue, not into the new Value
+
 ### Changes in 1.41.21
 Repackaged with missing header, TypeDeclarations.h
 
@@ -23,7 +26,6 @@ Continue blocked whilst rendering lines are in flight.<br>
 Fixed SwitchPathToFlow incorrectly consuming lines. ( Internal continue is incorrect )<br>
 FJsonObject keys are now FSharedString for 5.8.<br>
 Linux build fixed for capitalisation on includes.<br>
-
 
 ### Changes in 1.32.21
 Fixed naming of paths in debug dump.<br>
